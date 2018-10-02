@@ -75,6 +75,7 @@ def main():
 	elif config['Requires']['Type'] == "VISA":
 		device = attach_VISA(manager, config['Requires'].get('Default', None))
 
+
 	print(device)
 
 
