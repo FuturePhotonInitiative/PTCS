@@ -7,8 +7,17 @@
                   {
                     "Name":           "Board1",
                     "Type":           "VCU108",
-                    "Connection":     "SERIAL",
-                    "Default":        "COM3"
+                    "Default":        "COM5"
+                  },
+                  {
+                    "Name":           "Board2",
+                    "Type":           "CSA8000",
+                    "Default":        "COM14"
+                  },
+                  {
+                    "Name":           "Board3",
+                    "Type":           "CSA8000",
+                    "Default":        "COM10"
                   }
                 ]
               },

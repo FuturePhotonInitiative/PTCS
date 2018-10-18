@@ -1,50 +1,30 @@
 import json
 import sys
 import pyvisa
-import serial.tools.list_ports
 
 
-def attach_serial(manager, default):
-	"""
-	Attaches a device with COM format
-	:param manager: A pyVISA resource manager
-	:param default:
-	:return:
-	"""
-	print("Finding devices...")
-	ports = serial.tools.list_ports.comports(False)
-	if default:
-		for item in ports:
-			if str(item.device) == default:
-				return manager.open_resource(default)
-		print("Default port not found")
-
-	print("*****Connected Devices*****")
-	for item in ports:
-		print(item)
-	print("***************************")
-	port = raw_input("Choose serial device to connect to: ")
-	return manager.open_resource(port)
-
-
-def attach_VISA(manager, default):
+def attach_VISA(manager, name, default):
 	"""
 	Attaches device in VISA format
 	:param manager: A pyVISA resource manager
 	:param default: The default address to connect to or None
 	:return: A pyVISA device
 	"""
-	print("Finding devices...")
-	instruments = manager.list_resources()
+	instruments = manager.list_resources_info()
 	if default:
-		for item in instruments:
-			if str(item) == default:
+		for item in instruments.values():
+			if str(item.resource_name) == default or item.alias is not None and str(item.alias) == default:
 				return manager.open_resource(default)
-		print("Default port not found")
+		print("The default port " + default + " for " + name + " could not be found, please select it manually")
+	else:
+		print("The default port for " + name + " was not specified, please choose one manually")
 
 	print("*****Connected Devices*****")
-	for item in instruments:
-		print(item)
+	for item in instruments.values():
+		line = item.resource_name
+		if item.alias is not None:
+			line += " -> '" + item.alias + "'"
+		print(line)
 	print("***************************")
 	instr = raw_input("Choose instrument to connect to: ")
 	return manager.open_resource(instr)
@@ -69,14 +49,15 @@ def main():
 
 	print("Running Experiment: " + config['Name'] + "\n\n")
 	manager = pyvisa.ResourceManager()
-	device = None
-	if config['Requires']['Type'] == "SERIAL":
-		device = attach_serial(manager, config['Requires'].get('Default', None))
-	elif config['Requires']['Type'] == "VISA":
-		device = attach_VISA(manager, config['Requires'].get('Default', None))
+	devices = {}
+	print "Finding Devices...."
+	for device in config['Requires']['Devices']:
+		devices[device['Name']] = attach_VISA(manager, device['Name'], device.get('Default', None))
+	for key in devices.keys():
+		print key
+	# device = attach_VISA(manager, config['Requires'].get('Default', None))
 
 
-	print(device)
 
 
 if __name__ == '__main__':

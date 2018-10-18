@@ -1,6 +1,8 @@
 import inspect
 import re
 
+import pyvisa
+
 
 class CSA8000(object):
 	methods = []
@@ -25,9 +27,8 @@ class CSA8000(object):
 		if not self.device:
 			return False
 		try:
-			self.device.session
-			return True
-		except:
+			return self.device.session is not None
+		except pyvisa.errors.InvalidSession:
 			self.device = None
 			return False
 
@@ -39,7 +40,7 @@ class CSA8000(object):
 		average = bool(average)
 		envelope = bool(envelope)
 
-		if int(sample) + int(average) + int(envelope) != 1:
+		if (sample ^ average ^ envelope) & ~(sample & average & envelope):
 			print "Exactly one parameter needs to be set to True"
 			return
 
