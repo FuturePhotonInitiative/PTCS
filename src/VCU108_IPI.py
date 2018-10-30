@@ -14,6 +14,14 @@ class VCU108(object):
 	def __init__(self, device):
 		self.device = device
 		self._locked = False
+		pass
+
+	def __enter__(self):
+		return self
+
+	def __exit__(self, exc_type, exc_val, exc_tb):
+		self.device.close()
+		pass
 
 	def who_am_i(self):
 		if self.check_connected():
@@ -37,8 +45,6 @@ class VCU108(object):
 					VCU108.methods.append(method)
 		return VCU108.methods
 
-	def __exit__(self, exc_type, exc_val, exc_tb):
-		self.device.close()
 
 	def run_raw_command(self, command):
 		if not self.check_connected():
