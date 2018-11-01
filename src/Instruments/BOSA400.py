@@ -25,6 +25,20 @@ class BOSA400(object):
 		self.max_wavelength = 1579.9
 		self.min_wavelength = 1520
 
+	def __enter__(self):
+		"""
+		Enter method for ability to use "with open" statements
+		:return: Driver Object
+		"""
+		return self
+
+	def __exit__(self):
+		"""
+		Exit to close object
+		:return:
+		"""
+		self.device.close()
+
 	def who_am_i(self):
 		"""
 		:returns: reference to device

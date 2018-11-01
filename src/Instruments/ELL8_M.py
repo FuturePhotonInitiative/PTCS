@@ -170,6 +170,20 @@ class ELL8_M(ELL8):
 		self.deg_pos = 0  # position of motor, in degrees
 		self.deg_zeros = 0  # the origin, in degrees
 
+	def __enter__(self):
+		"""
+		Enter method for ability to use "with open" statements
+		:return: Driver Object
+		"""
+		return self
+
+	def __exit__(self):
+		"""
+		Exit to close object
+		:return:
+		"""
+		self.device.close()
+
 	def what_can_i(self):
 		"""
 		:returns: reference to device

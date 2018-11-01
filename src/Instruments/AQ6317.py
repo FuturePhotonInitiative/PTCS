@@ -26,6 +26,20 @@ class AQ6317(object):
 		"""
 		self.device = device
 
+	def __enter__(self):
+		"""
+		Enter method for ability to use "with open" statements
+		:return: Driver Object
+		"""
+		return self
+
+	def __exit__(self):
+		"""
+		Exit to close object
+		:return:
+		"""
+		self.device.close()
+
 	def who_am_i(self):
 		"""
 		:returns: reference to device

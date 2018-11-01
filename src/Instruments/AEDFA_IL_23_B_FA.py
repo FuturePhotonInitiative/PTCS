@@ -20,6 +20,20 @@ class AEDFA_IL_23_B_FA(object):
 
 		self.device = device
 
+	def __enter__(self):
+		"""
+		Enter method for ability to use "with open" statements
+		:return: Driver Object
+		"""
+		return self
+
+	def __exit__(self):
+		"""
+		Exit to close object
+		:return:
+		"""
+		self.device.close()
+
 	def who_am_i(self):
 		if self.check_connected():
 			return "AEDFA-IL-23-B-FA at " + self.device.resource_info[0].alias
