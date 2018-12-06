@@ -45,7 +45,6 @@ class VCU108(object):
 					VCU108.methods.append(method)
 		return VCU108.methods
 
-
 	def run_raw_command(self, command):
 		if not self.check_connected():
 			return False

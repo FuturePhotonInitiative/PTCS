@@ -1,6 +1,13 @@
+import inspect
 import json
 import sys
+import types
+
 import pyvisa
+import os
+import contextlib2
+import imp
+instruments = None
 
 
 def attach_VISA(manager, name, default):
@@ -10,7 +17,10 @@ def attach_VISA(manager, name, default):
 	:param default: The default address to connect to or None
 	:return: A pyVISA device
 	"""
-	instruments = manager.list_resources_info()
+	global instruments
+	if instruments is None:
+		instruments = manager.list_resources_info()
+
 	if default:
 		for item in instruments.values():
 			if str(item.resource_name) == default or item.alias is not None and str(item.alias) == default:
@@ -30,12 +40,25 @@ def attach_VISA(manager, name, default):
 	return manager.open_resource(instr)
 
 
+def extract_scripts(json_file):
+	scripts = {}
+	for item in json_file['Experiment']:
+		if item['Order'] in scripts.keys():
+			scripts[item['Order']].append(item['Source'])
+		else:
+			scripts[item['Order']] = [item['Source']]
+	sorted_scripts = []
+	for key in sorted(scripts.keys()):
+		sorted_scripts.append(scripts[key])
+	return sorted_scripts
+
+
 def main():
 	"""
 	Loads Experiment JSON file
 	:return: None
 	"""
-	print('Starting Prober...')
+	print('Starting SPAE...')
 	if len(sys.argv) == 1:
 		file_name = raw_input("Enter config file name or nothing to exit: ")
 		if len(file_name) == 0:
@@ -50,12 +73,32 @@ def main():
 	print("Running Experiment: " + config['Name'] + "\n\n")
 	manager = pyvisa.ResourceManager()
 	devices = {}
+	scripts = extract_scripts(config)
+	print "Finding Drivers...."
+	drivers = os.listdir('./Instruments')
+	drivers = [i for i in drivers if not (i == '__init__.py' or i[-3:] != '.py')]
+
 	print "Finding Devices...."
-	for device in config['Requires']['Devices']:
-		devices[device['Name']] = attach_VISA(manager, device['Name'], device.get('Default', None))
-	for key in devices.keys():
-		print key
-	# device = attach_VISA(manager, config['Requires'].get('Default', None))
+	with contextlib2.ExitStack() as stack:
+		for device in config['Requires']['Devices']:
+			connection = None
+			if device['Type'] is "VISA":
+				connection = attach_VISA(manager, device['Name'], device.get('Default', None))
+			else:
+				connection = raw_input("\'" + device['Name'] + "\' cannot be used with VISA, Please enter connection info (eg. IP address): ")
+
+			driver = device['Driver']
+			if driver in drivers:
+				if driver not in [i[0] for i in globals().items() if isinstance(i[1], types.ModuleType)]:
+					__import__(driver, locals(), globals())
+				devices[device['Name']] = stack.enter_context(inspect.getmembers(driver, inspect.isclass)[0][1](connection))
+
+		for frame in scripts:
+			threads = []
+			for task in frame:
+				module = task['Source'][:-3]
+				if module not in [i[0] for i in globals().items() if isinstance(i[1], types.ModuleType)]:
+					__import__(module, locals(), globals())
 
 
 
