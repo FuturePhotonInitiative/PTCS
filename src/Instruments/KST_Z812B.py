@@ -46,3 +46,24 @@ class KST_Z812B(Motor_KST_ZST):
 					KST_Z812B.methods.append(method)
 		return KST_Z812B.methods
 
+	def run_home(self):
+		"""
+		Puts the motor to backward limit position so that the
+		position markers make sense
+		"""
+
+		# variable moving is not necessary
+		# self.moving = True
+		self.device.write_raw([0x43, 0x04, 0x01, 0x00, 0x50, 0x01])
+		response = self.device.read()
+		if response != [0x44, 0x04, 0x01, 0x00, 0x01, 0x50]:
+			# self.logger.error('problem homing', extra=self.ext)
+			# raise error?
+			exit()
+		#
+		# self.logger.info('homed successfully.', extra=self.ext)
+		# self.moving = False
+
+	def run_delta_root(self, degrees):
+		if self.deg_pos + degrees > self.STOP_LIMIT or self.deg_pos + degrees < -self.STOP_LIMIT:
+			return False
