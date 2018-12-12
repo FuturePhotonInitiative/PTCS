@@ -61,7 +61,7 @@ class Agilent16802A(object):
 			if self.busSignals.Item(index).Name == bus_name:
 				return self.busSignals.Item(index)
 
-	def run_get_bus_data(self, bus):
+	def run_get_bus_data(self, bus, output_chars=True):
 		inner_bus = bus
 		if isinstance(bus, str):
 			inner_bus = self.run_get_bus(bus)
@@ -69,7 +69,10 @@ class Agilent16802A(object):
 		bus_type = inner_bus.BusSignalType
 		if bus_data.Type == "Sample":
 			sample_data = win32com.client.CastTo(bus_data, "ISampleBusSignalData")
-			return sample_data.GetDataByTime(-float("inf"), float("inf"), bus_type)[0]
+			result = sample_data.GetDataByTime(-float("inf"), float("inf"), bus_type)[0]
+			if not output_chars:
+				result = [ord(i) for i in result]
+			return result
 
 	def run_get_bus_info(self, bus):
 		inner_bus = bus
@@ -92,14 +95,15 @@ class Agilent16802A(object):
 			value += step
 		return result
 
-	def run_attach_time_to_sample(self, bus, zipped=False):
+	def run_attach_time_to_sample(self, bus, zipped=False, output_chars=True):
 		inner_bus = bus
 		if isinstance(bus, str):
 			inner_bus = self.run_get_bus(bus)
 		bus_info = self.run_get_bus_info(inner_bus)
 		sample_rate = (abs(bus_info['Start_Time']) + abs(bus_info['End_Time'])) / (bus_info['Sample_Count'])
-		y_axis = self.run_get_bus_data(inner_bus)
+		y_axis = self.run_get_bus_data(inner_bus, output_chars)
 		x_axis = self.dec_range(bus_info['Start_Time'], bus_info['End_Time'], sample_rate)
+
 		if zipped:
 			temp = zip(x_axis, y_axis)
 		else:

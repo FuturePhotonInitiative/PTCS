@@ -3,7 +3,7 @@ def main(data_map):
 	data_map['Data']['Reduce'] = {}
 
 	for voltage in samples.keys():
-		percent = sum(samples[voltage][1])/len(samples[voltage])
+		percent = sum(samples[voltage])/len(samples[voltage])
 		data_map['Data']['Reduce'][voltage] = percent
 
 	return
