@@ -2,6 +2,8 @@ import json
 import sys
 import pyvisa
 import imp
+# Figure out how to import this file and access check_config_checker
+import SPAE.src.ConfigChecker
 
 
 def attach_VISA(manager, name, default):
@@ -49,6 +51,8 @@ def main():
 	with open(file_name) as f:
 		config = json.load(f)
 
+	# check_config_file(config)
+
 	print("Running Experiment: " + config['Name'] + "\n\n")
 	manager = pyvisa.ResourceManager()
 	devices = {}
@@ -57,16 +61,11 @@ def main():
 		devices[device['Name']] = attach_VISA(manager, device['Name'], device.get('Default', None))
 	for key in devices.keys():
 		print key
-	# device = attach_VISA(manager, config['Requires'].get('Default', None))
+
 	# Run filepath test
 	print "Importing file path..."
 	testfile = imp.load_source('voltage_test', config['TestScript']['Filepath'])
 	testfile.run(devices)
-
-	# typ = config['Requires']['Devices']['Type']
-	# example = imp.load_source(typ, "SPAE\\src\\Instruments\\"+typ+".py")
-	# with example.AgilentE3643A(devices[config['Requires']['Devices']['Name']]) as device:
-	#  		device.who_am_i()
 
 
 if __name__ == '__main__':
