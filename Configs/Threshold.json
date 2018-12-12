@@ -2,10 +2,6 @@
   "Name": "Determine Voltage Threshold",
   "Requires":
             {
-              "System":
-                      {
-                        "OS": "WIN"
-                      },
               "Files":
                       {
                         "Script_Root": "./Scripts",

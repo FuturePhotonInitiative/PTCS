@@ -6,6 +6,7 @@ import types
 import pyvisa
 import os
 import contextlib2
+import importlib
 import imp
 instruments = None
 
@@ -41,8 +42,18 @@ def attach_VISA(manager, name, default):
 
 
 def extract_scripts(json_file):
+	scripts_root = str(json_file['Requires']['Files'].get('Script_Root', './Scripts'))
+	if scripts_root[0] is '.':
+		scripts_root = os.path.join(os.path.dirname(__file__), scripts_root)
+	available_scripts = os.listdir(scripts_root)
+	available_scripts = [i for i in available_scripts if not (i == '__init__.py' or i[-3:] != '.py')]
+
 	scripts = {}
-	for item in json_file['Experiment']:
+	for item in [i for i in json_file['Experiment'] if i['Type'] == "PY_SCRIPT"]:
+
+		if str(item['Source']) not in available_scripts:
+			sys.exit("Required script \'" + item['Source'] + "\' not found")
+
 		if item['Order'] in scripts.keys():
 			scripts[item['Order']].append(item['Source'])
 		else:
@@ -51,6 +62,53 @@ def extract_scripts(json_file):
 	for key in sorted(scripts.keys()):
 		sorted_scripts.append(scripts[key])
 	return sorted_scripts
+
+
+def connect_devices(json_file, exit_stack):
+	manager = pyvisa.ResourceManager()
+	driver_root = str(json_file['Requires']['Files'].get('Driver_Root', './Instruments'))
+	if driver_root[0] is '.':
+		driver_root = os.path.join(os.path.dirname(__file__), driver_root)
+	drivers = os.listdir(driver_root)
+	drivers = [i[:-3] for i in drivers if not (i == '__init__.py' or i[-3:] != '.py')]
+	devices = {}
+
+	print "Finding Devices...."
+
+	for device in json_file['Requires']['Devices']:
+		connection = None
+		if str(device['Type']) == "VISA":
+			connection = attach_VISA(manager, str(device['Name']), device.get('Default', None))
+		else:
+			connection = raw_input(
+				"\'" + str(device['Name']) + "\' cannot be used with VISA, Please enter connection info (eg. IP address): ")
+
+		driver = str(device['Driver'])
+		if driver in drivers:
+			if driver not in [i[0] for i in globals().items() if isinstance(i[1], types.ModuleType)]:
+				globals()[driver] = imp.load_source(driver, driver_root + '\\' + driver + '.py')
+				# importlib.import_module(driver, driver_root)
+				# __import__(driver, locals(), globals())
+			devices[str(device['Name'])] = exit_stack.enter_context(inspect.getmembers(globals()[driver], inspect.isclass)[0][1](connection))
+		else:
+			sys.exit("Driver file for \'" + driver + "\' not found in Driver Root: \'" + driver_root)
+	return devices
+
+
+def spawn_scripts(scripts, data_map, json_file):
+	script_root = str(json_file['Requires']['Files'].get('Script_Root', './Scripts'))
+	if script_root[0] is '.':
+		script_root = os.path.join(os.path.dirname(__file__), script_root)
+
+	for frame in scripts:
+		threads = []
+		for task in frame:  # Add Multi-Threading support here
+			module = str(task)[:-3]
+			if module not in [i[0] for i in globals().items() if isinstance(i[1], types.ModuleType)]:
+				globals()[module] = imp.load_source(module, script_root + '\\' + module + '.py')
+			[i[1] for i in inspect.getmembers(globals()[module], inspect.isfunction) if i[0] is 'main'][0](data_map)
+	print "DONE " + str(data_map['Data'])
+	return
 
 
 def main():
@@ -71,36 +129,16 @@ def main():
 		config = json.load(f)
 
 	print("Running Experiment: " + config['Name'] + "\n\n")
-	manager = pyvisa.ResourceManager()
-	devices = {}
+
 	scripts = extract_scripts(config)
-	print "Finding Drivers...."
-	drivers = os.listdir('./Instruments')
-	drivers = [i for i in drivers if not (i == '__init__.py' or i[-3:] != '.py')]
 
-	print "Finding Devices...."
+	data_map = {'Data': {}, 'Config': config}
+
 	with contextlib2.ExitStack() as stack:
-		for device in config['Requires']['Devices']:
-			connection = None
-			if device['Type'] is "VISA":
-				connection = attach_VISA(manager, device['Name'], device.get('Default', None))
-			else:
-				connection = raw_input("\'" + device['Name'] + "\' cannot be used with VISA, Please enter connection info (eg. IP address): ")
+		data_map['Devices'] = connect_devices(config, stack)
+		spawn_scripts(scripts, data_map, config)
 
-			driver = device['Driver']
-			if driver in drivers:
-				if driver not in [i[0] for i in globals().items() if isinstance(i[1], types.ModuleType)]:
-					__import__(driver, locals(), globals())
-				devices[device['Name']] = stack.enter_context(inspect.getmembers(driver, inspect.isclass)[0][1](connection))
-
-		for frame in scripts:
-			threads = []
-			for task in frame:
-				module = task['Source'][:-3]
-				if module not in [i[0] for i in globals().items() if isinstance(i[1], types.ModuleType)]:
-					__import__(module, locals(), globals())
-
-
+	print 'Experiment complete, goodbye!'
 
 
 if __name__ == '__main__':
