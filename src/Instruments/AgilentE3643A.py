@@ -2,7 +2,9 @@
 
 import inspect
 import re
+import time
 import pyvisa
+import pyvisa.constants
 
 
 class AgilentE3643A(object):
@@ -31,9 +33,13 @@ class AgilentE3643A(object):
 	def __exit__(self, exc_type, exc_val, exc_tb):
 		"""
 		Exit to close object
+		:param exc_type:
+		:param exc_val:
+		:param exc_tb:
 		:return:
 		"""
 		self.device.close()
+		pass
 
 	def who_am_i(self):
 		if self.check_connected():
@@ -57,6 +63,17 @@ class AgilentE3643A(object):
 			self.device = None
 			return False
 
+	def run_identify(self):
+		"""
+		Identifies itself using IDN query
+		:return:
+		"""
+		if self.check_connected():
+			identity = self.device.query("*IDN?")
+			return identity
+		else:
+			raise Exception('Serial communication port is not open.')
+
 	def run_get_voltage(self):
 		"""
 		Gets the voltage.
@@ -64,9 +81,8 @@ class AgilentE3643A(object):
 		:raises: Exception when serial communication port is not open
 		"""
 		if self.check_connected():
-			self.device.write(b'MEAS:VOLT:DC?\n')
-			voltage = self.device.read().strip('\n')
-			return float(voltage)
+			voltage = self.device.query("MEAS:VOLT:DC?")
+			return voltage
 		else:
 			raise Exception('Serial communication port is not open.')
 
@@ -76,8 +92,7 @@ class AgilentE3643A(object):
 		:raises: Exception when serial communication port is not open
 		"""
 		if self.check_connected():
-			self.device.write(b'MEAS:CURR:DC?\n')
-			current = self.device.read().strip('\n')
+			current = self.device.query('MEAS:CURR:DC?')
 			return float(current)
 		else:
 			raise Exception('Serial communication port is not open.')
@@ -91,8 +106,8 @@ class AgilentE3643A(object):
 		:raises: Exception when serial communication port is not open
 		"""
 		if self.check_connected():
-			self.device.write(b'VOLT {}\n'.format(str(value)))
-			self.device.read()
+			self.device.write('VOLT {}'.format(str(value)))
+			time.sleep(0.25)
 		else:
 			raise Exception('Serial communication port is not open.')
 
@@ -105,8 +120,8 @@ class AgilentE3643A(object):
 		:raises: Exception when serial communication port is not open
 		"""
 		if self.check_connected():
-			self.device.write(b'CURR {}\n'.format(str(value)))
-			self.device.read()
+			self.device.write('CURR {}'.format(str(value)))
+			time.sleep(0.25)
 		else:
 			raise Exception('Serial communication port is not open.')
 
@@ -119,8 +134,8 @@ class AgilentE3643A(object):
 		:raises: Exception when serial communication port is not open
 		"""
 		if self.check_connected():
-			self.device.write(b'VOLT:PROT {}\n'.format(str(value)))
-			self.device.read()
+			self.device.write('VOLT:PROT {}'.format(str(value)))
+			time.sleep(0.25)
 		else:
 			raise Exception('Serial communication port is not open.')
 
@@ -135,10 +150,10 @@ class AgilentE3643A(object):
 		if self.check_connected():
 			if value == 0 or value == 1:
 				if value == 1:
-					self.device.write(b'OUTPUT ON\n')
+					self.device.write("OUTP:STAT ON")
 				else:
-					self.device.write(b'OUTPUT OFF\n')
-				self.device.read()
+					self.device.write("OUTP:STAT OFF")
+				time.sleep(0.25)
 			else:
 				raise Exception('Input value is incorrect, must be 1 for ON or 0 for OFF')
 		else:
@@ -154,8 +169,8 @@ class AgilentE3643A(object):
 		if mem > 5 or mem < 1:
 			raise Exception('Invalid memory space: ' + str(mem) + ', valid states are {1,2,3,4,5}')
 		if self.check_connected():
-			self.device.write(b'*SAV {}\n'.format(mem))
-			self.device.read()
+			self.device.write('*SAV {}'.format(mem))
+			time.sleep(0.25)
 		else:
 			raise Exception('Serial communication port is not open.')
 
@@ -169,7 +184,7 @@ class AgilentE3643A(object):
 		if mem > 5 or mem < 1:
 			raise Exception('Invalid memory space: ' + str(mem) + ', valid states are {1,2,3,4,5}')
 		if self.check_connected():
-			self.device.write(b'*RCL {}\n'.format(mem))
-			self.device.read()
+			self.device.write('*RCL {}'.format(mem))
+			time.sleep(0.25)
 		else:
 			raise Exception('Serial communication port is not open.')

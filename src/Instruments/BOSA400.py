@@ -1,5 +1,4 @@
 import inspect
-import logging
 import re
 
 import numpy
@@ -320,43 +319,43 @@ class BOSAException(Exception):
 	pass
 
 
-# create logger
-log = logging.getLogger(__name__)
-if len(log.handlers) is 0:  # check if the logger already exists
-	# create logger
-	log.setLevel(logging.INFO)
+# no need for logger or main as this code will be implemented in a test script
+# log = logging.getLogger(__name__)
+# if len(log.handlers) is 0:  # check if the logger already exists
+# 	# create logger
+# 	log.setLevel(logging.INFO)
+#
+# 	# create console handler and set level to debug
+# 	ch = logging.StreamHandler()
+# 	ch.setLevel(logging.DEBUG)
+# 	# create formatter
+# 	formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+# 	# add formatter to ch
+# 	ch.setFormatter(formatter)
+#
+# 	# add ch to logger
+# 	log.addHandler(ch)
 
-	# create console handler and set level to debug
-	ch = logging.StreamHandler()
-	ch.setLevel(logging.DEBUG)
-	# create formatter
-	formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-	# add formatter to ch
-	ch.setFormatter(formatter)
-
-	# add ch to logger
-	log.addHandler(ch)
-
-if __name__ == '__main__':
-	import visa
-	import matplotlib.pyplot as plt
-
-	resource_manager = pyvisa.ResourceManager()
-
-	# THIS IS AN EXAMPLE FROM TEST. PLEASE CHANGE FOR SPECS NEEDED
-	dev = resource_manager.open_resource("LAN", write_termination='\n', read_termination='\n', baud_rate='115200',
-	                                     data_bits=8, flow_control=0, stop_bits=visa.constants.StopBits.one,
-	                                     parity=visa.constants.Parity.none)
-
-	bosa = BOSA400(dev)
-
-	spec = bosa.run_get_spectrum(1540.5, 1560, 0.01)
-	print len(spec)
-
-	plt.scatter(*zip(*spec))
-	plt.show()
-
-	print('Done!')
+# if __name__ == '__main__':
+# 	import visa
+# 	import matplotlib.pyplot as plt
+#
+# 	resource_manager = pyvisa.ResourceManager()
+#
+# 	# THIS IS AN EXAMPLE FROM TEST. PLEASE CHANGE FOR SPECS NEEDED
+# 	dev = resource_manager.open_resource("LAN", write_termination='\n', read_termination='\n', baud_rate='115200',
+# 	                                     data_bits=8, flow_control=0, stop_bits=visa.constants.StopBits.one,
+# 	                                     parity=visa.constants.Parity.none)
+#
+# 	bosa = BOSA400(dev)
+#
+# 	spec = bosa.run_get_spectrum(1540.5, 1560, 0.01)
+# 	print len(spec)
+#
+# 	plt.scatter(*zip(*spec))
+# 	plt.show()
+#
+# 	print('Done!')
 
 # This class was performing what pyvisa can do with read, write, and query (ask)
 # pyvisa will be used to instantiate a resource object, and that is sent into BOSA400
