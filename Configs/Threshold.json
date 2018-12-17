@@ -12,7 +12,13 @@
                         {
                           "Name":     "Voltage_Source",
                           "Driver":   "AgilentE3643A",
-                          "Type":     "VISA"
+                          "Type":     "VISA",
+                          "Default":  "COM6"
+                        },
+                        {
+                          "Name":     "Logic_Analyzer",
+                          "Driver":   "Agilent16802A",
+                          "Type":     "DIRECT"
                         }
                       ]
             },
@@ -33,5 +39,11 @@
                   "Source": "VoltageDataExport.py",
                   "Order":  3
                 }
-              ]
+              ],
+  "Data" :
+          {
+            "Start_Voltage": 0.0,
+            "Final_Voltage": 5.0,
+            "Step_Voltage": 0.1
+          }
 }

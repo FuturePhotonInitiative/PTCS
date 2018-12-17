@@ -6,15 +6,17 @@ import types
 import pyvisa
 import os
 import contextlib2
-import importlib
 import imp
 instruments = None
 
 
 def attach_VISA(manager, name, default):
 	"""
-	Attaches device in VISA format
+	Attaches device in VISA format, will scan for devices once because it is a slow process, caches results for future
+		use. This will attempt to connect to a default address if it is specified in the JSON config, otherwise it will
+		prompt the user to input an address from the list of currently connected devices.
 	:param manager: A pyVISA resource manager
+	:param name: The name of the device being connected
 	:param default: The default address to connect to or None
 	:return: A pyVISA device
 	"""
@@ -42,6 +44,12 @@ def attach_VISA(manager, name, default):
 
 
 def extract_scripts(json_file):
+	"""
+	Extracts the scripts from the JSON config and stages them for execution. This will put the scripts in an ordered
+		list where each element is a list of tasks to be spawned in parallel
+	:param json_file: The JSON config object
+	:return: The list of staged task lists
+	"""
 	scripts_root = str(json_file['Requires']['Files'].get('Script_Root', './Scripts'))
 	if scripts_root[0] is '.':
 		scripts_root = os.path.join(os.path.dirname(__file__), scripts_root)
@@ -65,6 +73,13 @@ def extract_scripts(json_file):
 
 
 def connect_devices(json_file, exit_stack):
+	"""
+	Initializes all devices specified in the JSON config, this will also dynamically import the drivers specified if one
+		hasn't been imported already
+	:param json_file: Ths JSON config object
+	:param exit_stack: A Exit Stack that will close all devices when the program exits
+	:return: A dict of device names mapping to their objects
+	"""
 	manager = pyvisa.ResourceManager()
 	driver_root = str(json_file['Requires']['Files'].get('Driver_Root', './Instruments'))
 	if driver_root[0] is '.':
@@ -87,8 +102,6 @@ def connect_devices(json_file, exit_stack):
 		if driver in drivers:
 			if driver not in [i[0] for i in globals().items() if isinstance(i[1], types.ModuleType)]:
 				globals()[driver] = imp.load_source(driver, driver_root + '\\' + driver + '.py')
-				# importlib.import_module(driver, driver_root)
-				# __import__(driver, locals(), globals())
 			devices[str(device['Name'])] = exit_stack.enter_context(inspect.getmembers(globals()[driver], inspect.isclass)[0][1](connection))
 		else:
 			sys.exit("Driver file for \'" + driver + "\' not found in Driver Root: \'" + driver_root)
@@ -96,6 +109,14 @@ def connect_devices(json_file, exit_stack):
 
 
 def spawn_scripts(scripts, data_map, json_file):
+	"""
+	Runs the scripts defined in the JSON config. The tasks are called based on the order specified in the config,
+		two different tasks can have the same order, meaning they should be spawned at the same time.
+	:param scripts: The scripts pulled from the config
+	:param data_map: The dictionary to store data between tasks
+	:param json_file: The JSON config object
+	:return: None
+	"""
 	script_root = str(json_file['Requires']['Files'].get('Script_Root', './Scripts'))
 	if script_root[0] is '.':
 		script_root = os.path.join(os.path.dirname(__file__), script_root)
@@ -111,9 +132,25 @@ def spawn_scripts(scripts, data_map, json_file):
 	return
 
 
+def initialize_data(data_map, json_file):
+	"""
+	Initializes optional Data section of the JSON config into the data map for the tasks
+	:param data_map: The dictionary to store data between tasks
+	:param json_file: The JSON config object
+	:return: None
+	"""
+	data_section = json_file.get('Data', None)
+	if data_section is None:
+		return
+	data_map['Data']['Initial'] = {}
+	for key in data_section.keys():
+		data_map['Data']['Initial'][key] = data_section[key]
+	return
+
+
 def main():
 	"""
-	Loads Experiment JSON file
+	Entry point of SPAE, loads config file
 	:return: None
 	"""
 	print('Starting SPAE...')
@@ -136,6 +173,7 @@ def main():
 
 	with contextlib2.ExitStack() as stack:
 		data_map['Devices'] = connect_devices(config, stack)
+		initialize_data(data_map, config)
 		spawn_scripts(scripts, data_map, config)
 
 	print 'Experiment complete, goodbye!'

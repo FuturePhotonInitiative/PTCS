@@ -40,21 +40,43 @@ class Agilent16802A(object):
 		return Agilent16802A.methods
 
 	def run_load_config(self, path):
+		"""
+		This will load a config file given a file path, NOTE: throws exception if config is already loaded
+		:param path: The path on the logic analyzer to the config file
+		:return: None
+		"""
 		self.instance.Open(path)
 
 	def run_open_module(self, module):
+		"""
+		Opens one of the hardware modules on the logic analyzer
+		:param module: The name or index of the module to open
+		:return: None
+		"""
 		if isinstance(module, str):
 			self.module = self.instance.GetModuleByName(module)
 		elif isinstance(module, int):
 			self.module = self.instance.Modules(module)
 
-	def run_start_capture(self, async=True):
+	def run_start_capture(self, async=True, timeout=10):
+		"""
+		Starts a capture on the logic analyzer, can be told to wait for completion
+		:param async: If True this will immediately return after starting the capture, otherwise it will wait for the
+			capture to complete
+		:param timeout: The maximum time to wait if not asynchronous
+		:return: None
+		"""
 		self.instance.Run()
 		if not async:
-			self.instance.WaitComplete(10)
+			self.instance.WaitComplete(timeout)
 		self.busSignals = None
 
 	def run_get_bus(self, bus_name):
+		"""
+		Retrieves a bus from the logic analyzer
+		:param bus_name: The name of the bus to retrieve
+		:return: The requested Bus or None
+		"""
 		if self.busSignals is None:
 			self.busSignals = self.module.BusSignals
 		for index in range(self.busSignals.Count):
@@ -62,6 +84,12 @@ class Agilent16802A(object):
 				return self.busSignals.Item(index)
 
 	def run_get_bus_data(self, bus, output_chars=True):
+		"""
+		Gets the data associated with a bus from the last sample
+		:param bus: The name or instance of the bus to get data from
+		:param output_chars: If true the sample is converted to an int
+		:return:
+		"""
 		inner_bus = bus
 		if isinstance(bus, str):
 			inner_bus = self.run_get_bus(bus)
@@ -75,6 +103,11 @@ class Agilent16802A(object):
 			return result
 
 	def run_get_bus_info(self, bus):
+		"""
+		Gets information associated with a bus from the last sample
+		:param bus: The name or instance of the bus to get data from
+		:return: A dict containing useful information
+		"""
 		inner_bus = bus
 		if isinstance(bus, str):
 			inner_bus = self.run_get_bus(bus)
@@ -84,10 +117,17 @@ class Agilent16802A(object):
 			bus_start_time = sample_data.StartTime
 			bus_end_time = sample_data.EndTime
 			bus_sample_count = (abs(sample_data.StartSample) + abs(sample_data.EndSample))
-			return {'Start_Time': bus_start_time, 'End_Time': bus_end_time, 'Sample_Count': bus_sample_count}
+			return {'Start_Time': bus_start_time, 'End_Time': bus_end_time, 'Sample_Count': bus_sample_count, 'Bits': inner_bus.BitSize, "Bytes": inner_bus.BytesSize}
 
 	@staticmethod
 	def dec_range(start, end, step):
+		"""
+		Port of built in generator "Range" for floating point and decimal numbers
+		:param start: The starting decimal
+		:param end: The ending decimal
+		:param step: The interval of the range
+		:return: A list of decimals
+		"""
 		result = []
 		value = start
 		while value <= (end + step):
@@ -96,6 +136,13 @@ class Agilent16802A(object):
 		return result
 
 	def run_attach_time_to_sample(self, bus, zipped=False, output_chars=True):
+		"""
+		Attaches each sample to its corresponding time
+		:param bus: The name or instance of the bus to get data from
+		:param zipped: If true this will Zip the results into a list of tuples, otherwise two lists are returned
+		:param output_chars: If true the sample is converted to an int
+		:return: Either a list of zipped tuples or a tuple with two lists
+		"""
 		inner_bus = bus
 		if isinstance(bus, str):
 			inner_bus = self.run_get_bus(bus)
@@ -111,6 +158,11 @@ class Agilent16802A(object):
 		return temp
 
 	def run_display_bus(self, bus):
+		"""
+		Displays the data from a bus
+		:param bus: The name or instance of the bus to get data from
+		:return: None
+		"""
 		inner_bus = bus
 		if isinstance(bus, str):
 			inner_bus = self.run_get_bus(bus)
