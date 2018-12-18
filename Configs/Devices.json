@@ -1,0 +1,12 @@
+{
+  "Device_Name_1" : {
+    "Driver" : "Name_Of_Driver",
+    "Type" : "VISA",
+    "Default" : "COM6"
+  },
+  "Device_Name_2" : {
+    "Driver" : "Name_Of_Driver",
+    "Type" : "VISA",
+    "Default" : "COM4"
+  }
+}

@@ -5,9 +5,11 @@
 
 
 def check_config_file(config):
-	# config is a dictionary based on the JSON config
-	# See Reed's example of the config file
-	# base this check off of his config file
+	"""
+	Checks the config file to ensure that information is properly input in json configuration
+	:param config: json dictionary containing all information
+	:return: True/False: depending on pass or fail of configuration check
+	"""
 	if config:
 		return True
 	return False

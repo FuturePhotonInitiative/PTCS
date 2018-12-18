@@ -1,0 +1,41 @@
+{
+  "Name": "Determine Voltage Threshold",
+  "Requires":
+            {
+              "Files":
+                      {
+                        "Script_Root": "./Scripts",
+                        "Driver_Root": "./Instruments",
+                        "Results_Root": "../Results"
+                      },
+              "Devices":
+                      [
+                          "Voltage_Source",
+                          "Logic_Analyzer"
+                      ]
+            },
+  "Experiment" :
+              [
+                {
+                  "Type":"PY_SCRIPT",
+                  "Source": "VoltageDataCollect.py",
+                  "Order":  1
+                },
+                {
+                  "Type":"PY_SCRIPT",
+                  "Source": "VoltageDataReduce.py",
+                  "Order":  2
+                },
+                {
+                  "Type":"PY_SCRIPT",
+                  "Source": "VoltageDataExport.py",
+                  "Order":  3
+                }
+              ],
+  "Data" :
+          {
+            "Start_Voltage": 2.45,
+            "Final_Voltage": 2.55,
+            "Step_Voltage": 0.001
+          }
+}

@@ -90,6 +90,8 @@ def connect_devices(json_file, exit_stack):
 
 	print "Finding Devices...."
 
+	# this will need to be edited with using Devices.json as a hardware manager
+
 	for device in json_file['Requires']['Devices']:
 		connection = None
 		if str(device['Type']) == "VISA":
@@ -164,6 +166,8 @@ def main():
 
 	with open(file_name) as f:
 		config = json.load(f)
+
+	# implement config checker here
 
 	print("Running Experiment: " + config['Name'] + "\n\n")
 
