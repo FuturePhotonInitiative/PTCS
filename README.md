@@ -2,7 +2,7 @@
 #### Introduction
 
 ###### What is *SPAE* ?
-The **S**implified **P**rober for **A**utomated **E**xperimentation project is inspired by the [ProberControl](https://probercontrol.github.io/ProberControl/index.html) project created by Columbia Univerity's Lightwave Reasearch Laboratory and is being developed by the Center for Detectors at Rochester Institute of Technology.
+The **S**implified **P**rober for **A**utomated **E**xperimentation project is inspired by the [ProberControl](https://probercontrol.github.io/ProberControl/index.html) project created by Columbia University’s Lightwave Research Laboratory and is being developed by the Center for Detectors at Rochester Institute of Technology.
 
 ###### What is a Prober Controller?
 In this context, a Prober Controller is a piece of software that can automatically:
@@ -13,10 +13,10 @@ In this context, a Prober Controller is a piece of software that can automatical
 * Store the output in a logical manner for future analysis
 
 ###### How Does SPAE differ from ProberControl?
-While ProberControl focueses on the testing of wafer devices, SPAE places emphasis on package level testing. However, SPAE is flexible enough that wafer testing should be possible in the future if the need arises.
+While ProberControl focuses on the testing of wafer devices, SPAE places emphasis on package level testing. However, SPAE is flexible enough that wafer testing should be possible in the future if the need arises.
 
 ###### Where Can I get SPAE?
-SPAE is currently available from the [Future Photon Initialive public GitHub repository.](https://github.com/FuturePhotonInitiative/SPAE)
+SPAE is currently available from the [Future Photon Initiative public GitHub repository.](https://github.com/FuturePhotonInitiative/SPAE)
 
 * * *
 #### Anatomy of SPAE
@@ -50,7 +50,7 @@ and an `__exit__` method. Finally, SPAE also expects a few methods used to gathe
 * who_am_i
   This method should return a string that contains a reference to the type of device and it's connection status.
 * check_connected
-  this method should return a boolean indicating if the device is currently connected
+  this method should return a Boolean indicating if the device is currently connected
 * what_can_i
   this method should return a list of methods in the class that are prepended by the "run_" phrase, for optimal performance this list can be cached for later use
   the following is an example where methods is a static list of the Agilent class
