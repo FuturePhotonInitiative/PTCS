@@ -1,0 +1,48 @@
+{
+  "Name": "Determine Voltage Threshold",
+  "Requires":
+            {
+              "Files":
+                      {
+                        "Script_Root": "./Scripts",
+                        "Driver_Root": "./Instruments"
+                      },
+              "Devices":
+                      [
+                        {
+                          "Name":     "Voltage_Source",
+                          "Driver":   "AgilentE3643A",
+                          "Type":     "VISA"
+                        },
+                        {
+                          "Name":     "Logic_Analyzer",
+                          "Driver":   "Agilent16802A",
+                          "Type":     "DIRECT"
+                        }
+                      ]
+            },
+  "Experiment" :
+              [
+                {
+                  "Type":"PY_SCRIPT",
+                  "Source": "VoltageDataCollect.py",
+                  "Order":  1
+                },
+                {
+                  "Type":"PY_SCRIPT",
+                  "Source": "VoltageDataReduce.py",
+                  "Order":  2
+                },
+                {
+                  "Type":"PY_SCRIPT",
+                  "Source": "VoltageDataExport.py",
+                  "Order":  3
+                }
+              ],
+  "Data" :
+          {
+            "Start_Voltage": 0.0,
+            "Final_Voltage": 5.0,
+            "Step_Voltage": 0.1
+          }
+}
