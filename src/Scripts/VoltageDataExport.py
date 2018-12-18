@@ -4,18 +4,25 @@ import time
 
 
 def main(data_map):
+	"""
+	This stage saves results into 2 separate CSV files for both collect and reduce
+	Also displays and saves a plot of the reduce data
+	:param data_map: The dictionary to store data between tasks
+	:return: None
+	"""
 	results_reduce = data_map['Data']['Reduce']
 	results_collect = data_map['Data']['Collect']
 	config = data_map['Config']
 	# create unique file with time stamp and name of experiment
 	identifier = time.strftime("%m%d%Y_%H%M%S", time.gmtime())+"_"+str(data_map['Config']['Name'].replace(' ', '_'))
 	print identifier
-	# os.chdir("../../")
 
+	# create path for results if not existent
 	if not os.path.exists("Results"):
 		os.mkdir("Results")
 	os.chdir("Results")
 
+	# create path for unique identifier for experiment
 	if not os.path.exists(identifier):
 		os.mkdir(identifier)
 	os.chdir(identifier)
@@ -24,9 +31,10 @@ def main(data_map):
 	with open("config.json", "w+") as config_file:
 		config_file.write(str(config).replace('}, ', '}, \n').replace('], ', '], \n').replace("\'", "\""))
 
+	# arrays for plotting x and y axis
 	x_axis = []
 	y_axis = []
-	# Writing out collect results
+	# Writing out collect results to csv
 	with open("collect_results.csv", "w+") as collect_csv:
 		collect_csv.write('Voltage,Logic Data\n')
 		for voltage in sorted(results_collect.keys()):
@@ -35,7 +43,7 @@ def main(data_map):
 				collect_csv.write(','+str(logic))
 			collect_csv.write('\n')
 
-	# Writing out and plotting reduce results
+	# Writing out and plotting reduce results to csv
 	with open("reduce_results.csv", "w+") as reduce_csv:
 		reduce_csv.write('Voltage,Percentage\n')
 		for voltage in sorted(results_reduce.keys()):
