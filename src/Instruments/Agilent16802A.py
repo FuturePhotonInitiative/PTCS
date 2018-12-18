@@ -21,7 +21,7 @@ class Agilent16802A(object):
 		return self
 
 	def __exit__(self, exc_type, exc_val, exc_tb):
-		print "Agilent Exiting"
+		pass
 
 	def who_am_i(self):
 		if self.check_connected():
