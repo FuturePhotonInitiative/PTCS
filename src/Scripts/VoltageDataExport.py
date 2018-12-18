@@ -3,72 +3,6 @@ import os
 import sys
 import time
 
-data = {}
-data['Config'] = {
-  "Name": "Determine Voltage Threshold",
-  "Requires": {
-              "Files": {
-                        "Script_Root": "./Scripts",
-                        "Driver_Root": "./Instruments"
-                       },
-              "Devices": [
-                         {
-                           "Name":     "Voltage_Source",
-                           "Driver":   "AgilentE3643A",
-                           "Type":     "VISA"
-                         },
-	                     {
-		                     "Name": "Logic_Analyzer",
-		                     "Driver": "Agilent16802A",
-		                     "Type": "Direct"
-	                     }
-                         ]
-              },
-  "Experiment": [
-                {
-                  "Type": "PY_SCRIPT",
-                  "Source": "VoltageDataCollect.py",
-                  "Order":  1
-                },
-                {
-                  "Type": "PY_SCRIPT",
-                  "Source": "VoltageDataReduce.py",
-                  "Order":  2
-                },
-                {
-                  "Type": "PY_SCRIPT",
-                  "Source": "VoltageDataExport.py",
-                  "Order":  3
-                }
-                ]
-}
-data["Data"] = {
-	  "Collect": {
-		  '0.9': [1, 1, 1, 1, 1, 1, 1],
-		  '0.8': [1, 1, 1, 1, 1, 1, 1],
-		  '0.7': [1, 1, 1, 1, 1, 1, 1],
-		  '0.6': [1, 0, 1, 0, 1, 1, 1],
-		  '0.5': [0, 0, 1, 1, 0, 0, 0],
-		  '0.4': [0, 1, 0, 0, 0, 0, 0],
-		  '0.3': [0, 0, 0, 0, 0, 0, 0],
-		  '0.2': [0, 0, 0, 0, 0, 0, 0],
-		  '0.1': [0, 0, 0, 0, 0, 0, 0],
-		  '0.0': [0, 0, 0, 0, 0, 0, 0]
-	  },
-	  "Reduce": {
-		  '0.9': 1.00,
-		  '0.8': 1.00,
-		  '0.7': 1.00,
-		  '0.6': 0.7142,
-		  '0.5': 0.2857,
-		  '0.4': 0.1429,
-		  '0.3': 0.00,
-		  '0.2': 0.00,
-		  '0.1': 0.00,
-		  '0.0': 0.00
-	  }
-}
-
 
 def main(data_map):
 	results_reduce = data_map['Data']['Reduce']
@@ -119,8 +53,3 @@ def main(data_map):
 	plt.show()
 
 	# save plot in folder somehow? Look into this tomorrow morning
-
-	sys.exit("Done")
-
-
-main(data)
