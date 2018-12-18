@@ -128,7 +128,7 @@ def spawn_scripts(scripts, data_map, json_file):
 			if module not in [i[0] for i in globals().items() if isinstance(i[1], types.ModuleType)]:
 				globals()[module] = imp.load_source(module, script_root + '\\' + module + '.py')
 			[i[1] for i in inspect.getmembers(globals()[module], inspect.isfunction) if i[0] is 'main'][0](data_map)
-	print "DONE " + str(data_map['Data'])
+	print "Scripts Completed"
 	return
 
 

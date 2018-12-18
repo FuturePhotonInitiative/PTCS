@@ -1,6 +1,5 @@
 import matplotlib.pyplot as plt
 import os
-import sys
 import time
 
 
@@ -11,7 +10,7 @@ def main(data_map):
 	# create unique file with time stamp and name of experiment
 	identifier = time.strftime("%m%d%Y_%H%M%S", time.gmtime())+"_"+str(data_map['Config']['Name'].replace(' ', '_'))
 	print identifier
-	os.chdir("../../")
+	# os.chdir("../../")
 
 	if not os.path.exists("Results"):
 		os.mkdir("Results")
@@ -30,7 +29,7 @@ def main(data_map):
 	# Writing out collect results
 	with open("collect_results.csv", "w+") as collect_csv:
 		collect_csv.write('Voltage,Logic Data\n')
-		for voltage in results_collect.keys():
+		for voltage in sorted(results_collect.keys()):
 			collect_csv.write(str(voltage))
 			for logic in results_collect[voltage]:
 				collect_csv.write(','+str(logic))
@@ -39,8 +38,8 @@ def main(data_map):
 	# Writing out and plotting reduce results
 	with open("reduce_results.csv", "w+") as reduce_csv:
 		reduce_csv.write('Voltage,Percentage\n')
-		for voltage in results_reduce.keys():
-			print str(voltage)+' : '+str(results_reduce[voltage])
+		for voltage in sorted(results_reduce.keys()):
+			# print str(voltage)+' : '+str(results_reduce[voltage])
 			reduce_csv.write(str(voltage)+','+str(results_reduce[voltage])+'\n')
 			x_axis.append(float(voltage))
 			y_axis.append(results_reduce[voltage])
@@ -50,6 +49,5 @@ def main(data_map):
 	plt.autoscale()
 	plt.xlabel('Voltage')
 	plt.ylabel('Percentage of 1\'s')
+	plt.savefig("Voltage_vs_Percentage")
 	plt.show()
-
-	# save plot in folder somehow? Look into this tomorrow morning
