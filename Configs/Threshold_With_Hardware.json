@@ -10,8 +10,9 @@
                       },
               "Devices":
                       [
-                          "Voltage_Source",
-                          "Logic_Analyzer"
+                          "Voltage Source 1",
+                          "Voltage Source 2",
+                          "Logic Analyzer"
                       ]
             },
   "Experiment" :
