@@ -1,6 +1,8 @@
 import sys
 import json
 import os
+# This file can be deleted as it was created to simply test the function
+# The function is currently in Prober.py under check_config_file
 
 
 def check_config_file(config):

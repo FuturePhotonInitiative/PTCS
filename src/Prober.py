@@ -91,23 +91,52 @@ def connect_devices(json_file, exit_stack):
 	print "Finding Devices...."
 
 	# this will need to be edited with using Devices.json as a hardware manager
-
-	for device in json_file['Requires']['Devices']:
-		connection = None
-		if str(device['Type']) == "VISA":
-			connection = attach_VISA(manager, str(device['Name']), device.get('Default', None))
+	with open(json_file["Requires"]["Files"]["Hardware_Config"]) as d:
+		hardware_manager = json.load(d)
+	# this one is updated for the hardware manager
+	for dev in json_file['Requires']['Devices']:
+		if dev not in hardware_manager.keys():
+			print "Device not found in Devices.json: "+dev
 		else:
-			connection = raw_input(
-				"\'" + str(device['Name']) + "\' cannot be used with VISA, Please enter connection info (eg. IP address): ")
+			connection = None
+			device = hardware_manager[dev]
+			print device
+			if str(device['Type']) == "VISA":
+				connection = attach_VISA(manager, str(dev), str(device['Default']))
+			elif str(device['Type']) == "DIRECT" and "Default" in device.keys():
+				connection = str(device['Default'])
+			else:
+				connection = raw_input(
+					"\'" + str(dev) + "\' cannot be used with VISA, Please enter connection info (eg. IP address): ")
 
-		driver = str(device['Driver'])
-		if driver in drivers:
-			if driver not in [i[0] for i in globals().items() if isinstance(i[1], types.ModuleType)]:
-				globals()[driver] = imp.load_source(driver, driver_root + '\\' + driver + '.py')
-			devices[str(device['Name'])] = exit_stack.enter_context(inspect.getmembers(globals()[driver], inspect.isclass)[0][1](connection))
-		else:
-			sys.exit("Driver file for \'" + driver + "\' not found in Driver Root: \'" + driver_root)
+			driver = str(device['Driver'])
+			if driver in drivers:
+				if driver not in [i[0] for i in globals().items() if isinstance(i[1], types.ModuleType)]:
+					globals()[driver] = imp.load_source(driver, driver_root + '\\' + driver + '.py')
+				devices[str(dev)] = exit_stack.enter_context(inspect.getmembers(globals()[driver],
+				                                             inspect.isclass)[0][1](connection))
+			else:
+				sys.exit("Driver file for \'" + driver + "\' not found in Driver Root: \'" + driver_root)
 	return devices
+
+	# This is the code that works with the last revision of SPAE. Above code involves hardware manager
+	# for device in json_file['Requires']['Devices']:
+	# 	connection = None
+	# 	if str(device['Type']) == "VISA":
+	# 		connection = attach_VISA(manager, str(device['Name']), device.get('Default', None))
+	# 	else:
+	# 		connection = raw_input(
+	# 			"\'" + str(device['Name']) + "\' cannot be used with VISA, Please enter connection info (eg. IP address): ")
+#
+	# 	driver = str(device['Driver'])
+	# 	if driver in drivers:
+	# 		if driver not in [i[0] for i in globals().items() if isinstance(i[1], types.ModuleType)]:
+	# 			globals()[driver] = imp.load_source(driver, driver_root + '\\' + driver + '.py')
+	# 		devices[str(device['Name'])] = exit_stack.enter_context(inspect.getmembers(globals()[driver],
+#                                                                   inspect.isclass)[0][1](connection))
+	# 	else:
+	# 		sys.exit("Driver file for \'" + driver + "\' not found in Driver Root: \'" + driver_root)
+	# return devices
 
 
 def spawn_scripts(scripts, data_map, json_file):
@@ -200,11 +229,11 @@ def main():
 		config = json.load(f)
 
 	# Configuration file check. Ensures the configuration files are formatted properly
-	check = check_config_file(config)
-	if len(check) is not 0:
-		print "Configuration file not formatted correctly."
-		for problem in check:
-			print problem
+	# check = check_config_file(config)
+	# if len(check) is not 0:
+	# 	print "Configuration file not formatted correctly."
+	#    for problem in check:
+	# 		print problem
 
 	print("Running Experiment: " + config['Name'] + "\n\n")
 
