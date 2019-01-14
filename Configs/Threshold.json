@@ -12,8 +12,7 @@
                         {
                           "Name":     "Voltage_Source",
                           "Driver":   "AgilentE3643A",
-                          "Type":     "VISA",
-                          "Default":  "COM6"
+                          "Type":     "VISA"
                         },
                         {
                           "Name":     "Logic_Analyzer",
@@ -42,8 +41,8 @@
               ],
   "Data" :
           {
-            "Start_Voltage": 2.45,
-            "Final_Voltage": 2.55,
-            "Step_Voltage": 0.001
+            "Start_Voltage": 0.0,
+            "Final_Voltage": 5.0,
+            "Step_Voltage": 0.1
           }
 }
