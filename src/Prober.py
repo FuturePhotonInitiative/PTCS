@@ -190,6 +190,8 @@ def check_config_file(config):
 	files = config["Requires"]["Files"]
 	devices = config["Requires"]["Devices"]
 	experiments = config["Experiment"]
+	with open(files["Hardware_Config"]) as d:
+		hardware_manager = json.load(d)
 	if "Name" not in config.keys():
 		problems.append("Name : does not exist in configuration file")
 	for fil in ["Script_Root", "Driver_Root"]:
@@ -198,12 +200,21 @@ def check_config_file(config):
 		else:
 			if not os.path.exists(files[fil]):
 				problems.append("Requires-Files-"+fil+" : path does not exist")
-	for device in devices:  # this will change when the hardware manager is implemented
-							# at that point, only the name of the device will need to be verified
-							# as driver and type will already be constants in Devices.json
-		for dev in ["Name", "Driver", "Type"]:
-			if dev not in device.keys():
-				problems.append("Requires-Devices-"+dev+" : does not exist in configuration file")
+	# this portion of the check works for when there is a hardware manager
+	for device in devices:
+		if device not in hardware_manager.keys():
+			problems.append("Requires-Devices-"+device+" : device not found in hardware manager. Check spelling.")
+		else:
+			for key in hardware_manager[device].keys():
+				if key not in ["Driver", "Type", "Default"]:
+					problems.append(device+"-"+key+" : improper structure of json hardware manager file.")
+	# this portion of the check works for when there is no hardware manager.
+	# for device in devices:  # this will change when the hardware manager is implemented
+	# 						# at that point, only the name of the device will need to be verified
+	# 						# as driver and type will already be constants in Devices.json
+	# 	for dev in ["Name", "Driver", "Type"]:
+	# 		if dev not in device.keys():
+	# 			problems.append("Requires-Devices-"+dev+" : does not exist in configuration file")
 	for experiment in experiments:
 		for exp in ["Type", "Source", "Order"]:
 			if exp not in experiment.keys():
@@ -229,24 +240,25 @@ def main():
 		config = json.load(f)
 
 	# Configuration file check. Ensures the configuration files are formatted properly
-	# check = check_config_file(config)
-	# if len(check) is not 0:
-	# 	print "Configuration file not formatted correctly."
-	#    for problem in check:
-	# 		print problem
+	check = check_config_file(config)
+	if len(check) is not 0:
+		print "ABORTING! Configuration file not formatted correctly."
+		for problem in check:
+			print problem
 
-	print("Running Experiment: " + config['Name'] + "\n\n")
+	else:
+		print("Running Experiment: " + config['Name'] + "\n\n")
 
-	scripts = extract_scripts(config)
+		scripts = extract_scripts(config)
 
-	data_map = {'Data': {}, 'Config': config}
+		data_map = {'Data': {}, 'Config': config}
 
-	with contextlib2.ExitStack() as stack:
-		data_map['Devices'] = connect_devices(config, stack)
-		initialize_data(data_map, config)
-		spawn_scripts(scripts, data_map, config)
+		with contextlib2.ExitStack() as stack:
+			data_map['Devices'] = connect_devices(config, stack)
+			initialize_data(data_map, config)
+			spawn_scripts(scripts, data_map, config)
 
-	print 'Experiment complete, goodbye!'
+		print 'Experiment complete, goodbye!'
 
 
 if __name__ == '__main__':
