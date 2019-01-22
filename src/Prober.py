@@ -197,10 +197,23 @@ def check_config_file(config):
 
 
 def parse_command_line_definitions(data_dict, args):
+	"""
+	Parses experiment parameters provided at the command line and adds them to the data dictionary.
+	:param data_dict:
+		The initialized data dictionary
+	:param args:
+		The argument list, not including the program name (sys.argv[0]) or JSON config file (sys.argv[1]).
+		It is recommended to call this using python list slicing (sys.argv[2:]).
+	:return:
+		None
+	"""
 	for var in args:
 		variable = re.split("=", var)
+		# Match numbers and convert them into floats, otherwise leave the input alone
+		# (No, we don't yet handle lists or objects, even though they're both valid JSON types)
 		if re.match('^[0-9]*\.?[0-9]*$', variable[1]):
 			variable[1] = float(variable[1])
+		# The config data is stored in two places in the data map
 		data_dict['Config']['Data'][variable[0]] = variable[1]
 		data_dict['Data']['Initial'][variable[0]] = variable[1]
 
