@@ -250,8 +250,7 @@ def main():
 		data_map = {'Data': {}, 'Config': config}
 
 		with contextlib2.ExitStack() as stack:
-			#data_map['Devices'] = connect_devices(config, stack)
-			data_map['Devices'] = {}
+			data_map['Devices'] = connect_devices(config, stack)
 			initialize_data(data_map, config)
 			# There are config definitions in the command line
 			# we need to update these here since the data_map is not initialized until near above here
