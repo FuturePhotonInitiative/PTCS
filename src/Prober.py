@@ -119,25 +119,6 @@ def connect_devices(json_file, exit_stack):
 				sys.exit("Driver file for \'" + driver + "\' not found in Driver Root: \'" + driver_root)
 	return devices
 
-	# This is the code that works with the last revision of SPAE. Above code involves hardware manager
-	# for device in json_file['Requires']['Devices']:
-	# 	connection = None
-	# 	if str(device['Type']) == "VISA":
-	# 		connection = attach_VISA(manager, str(device['Name']), device.get('Default', None))
-	# 	else:
-	# 		connection = raw_input(
-	# 			"\'" + str(device['Name']) + "\' cannot be used with VISA, Please enter connection info (eg. IP address): ")
-#
-	# 	driver = str(device['Driver'])
-	# 	if driver in drivers:
-	# 		if driver not in [i[0] for i in globals().items() if isinstance(i[1], types.ModuleType)]:
-	# 			globals()[driver] = imp.load_source(driver, driver_root + '\\' + driver + '.py')
-	# 		devices[str(device['Name'])] = exit_stack.enter_context(inspect.getmembers(globals()[driver],
-#                                                                   inspect.isclass)[0][1](connection))
-	# 	else:
-	# 		sys.exit("Driver file for \'" + driver + "\' not found in Driver Root: \'" + driver_root)
-	# return devices
-
 
 def spawn_scripts(scripts, data_map, json_file):
 	"""
@@ -200,7 +181,6 @@ def check_config_file(config):
 		else:
 			if not os.path.exists(files[fil]):
 				problems.append("Requires-Files-"+fil+" : path does not exist")
-	# this portion of the check works for when there is a hardware manager
 	for device in devices:
 		if device not in hardware_manager.keys():
 			problems.append("Requires-Devices-"+device+" : device not found in hardware manager. Check spelling.")
@@ -208,13 +188,6 @@ def check_config_file(config):
 			for key in hardware_manager[device].keys():
 				if key not in ["Driver", "Type", "Default"]:
 					problems.append(device+"-"+key+" : improper structure of json hardware manager file.")
-	# this portion of the check works for when there is no hardware manager.
-	# for device in devices:  # this will change when the hardware manager is implemented
-	# 						# at that point, only the name of the device will need to be verified
-	# 						# as driver and type will already be constants in Devices.json
-	# 	for dev in ["Name", "Driver", "Type"]:
-	# 		if dev not in device.keys():
-	# 			problems.append("Requires-Devices-"+dev+" : does not exist in configuration file")
 	for experiment in experiments:
 		for exp in ["Type", "Source", "Order"]:
 			if exp not in experiment.keys():
@@ -233,6 +206,12 @@ def main():
 		if len(file_name) == 0:
 			print('Goodbye')
 			exit(1)
+	# Alex: This is condition exists when there are variable inputs. Work from here.
+	elif len(sys.argv) > 2:
+		file_name = sys.argv[1]
+		print "Variable inputs provided."
+		for var in sys.argv:
+			print var
 	else:
 		file_name = sys.argv[1]
 
