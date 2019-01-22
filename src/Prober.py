@@ -1,5 +1,6 @@
 import inspect
 import json
+import re
 import sys
 import types
 
@@ -195,6 +196,15 @@ def check_config_file(config):
 	return problems
 
 
+def parse_command_line_definitions(data_dict, args):
+	for var in args:
+		variable = re.split("=", var)
+		if re.match('^[0-9]*\.?[0-9]*$', variable[1]):
+			variable[1] = float(variable[1])
+		data_dict['Config']['Data'][variable[0]] = variable[1]
+		data_dict['Data']['Initial'][variable[0]] = variable[1]
+
+
 def main():
 	"""
 	Entry point of SPAE, loads config file
@@ -206,12 +216,6 @@ def main():
 		if len(file_name) == 0:
 			print('Goodbye')
 			exit(1)
-	# Alex: This is condition exists when there are variable inputs. Work from here.
-	elif len(sys.argv) > 2:
-		file_name = sys.argv[1]
-		print "Variable inputs provided."
-		for var in sys.argv:
-			print var
 	else:
 		file_name = sys.argv[1]
 
@@ -233,8 +237,14 @@ def main():
 		data_map = {'Data': {}, 'Config': config}
 
 		with contextlib2.ExitStack() as stack:
-			data_map['Devices'] = connect_devices(config, stack)
+			#data_map['Devices'] = connect_devices(config, stack)
+			data_map['Devices'] = {}
 			initialize_data(data_map, config)
+			# There are config definitions in the command line
+			# we need to update these here since the data_map is not initialized until near above here
+			if len(sys.argv) > 2:
+				print "Variable inputs provided."
+				parse_command_line_definitions(data_map, sys.argv[2:])
 			spawn_scripts(scripts, data_map, config)
 
 		print 'Experiment complete, goodbye!'
