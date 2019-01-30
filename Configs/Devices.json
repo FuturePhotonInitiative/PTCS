@@ -1,17 +1,12 @@
 {
-  "Voltage Source 1" : {
+  "Voltage_Source" : {
     "Driver" : "AgilentE3643A",
     "Type" : "VISA",
     "Default" : "COM6"
   },
-  "Voltage Source 2" : {
-    "Driver" : "AgilentE3643A",
-    "Type" : "VISA",
-    "Default" : "COM4"
-  },
-  "Logic Analyzer" : {
+  "Logic_Analyzer" : {
     "Driver" : "Agilent16802A",
     "Type" : "DIRECT",
-    "Default" : "0.0.0.0"
+    "Default" : "129.21.172.198"
   }
 }

@@ -24,7 +24,7 @@ def main(data_map):
 	for i in levels:
 		voltage_source.run_set_voltage(i)
 		# time.sleep(0.25)
-		if 0 <= (1 - divmod(i, 1)[1]) <= step_voltage:
+		if i % 1 == 0:
 			print "Applying " + str(i) + " volts"
 		logic_analyzer.run_start_capture(False)
 
