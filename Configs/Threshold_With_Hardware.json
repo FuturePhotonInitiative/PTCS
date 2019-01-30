@@ -11,9 +11,8 @@
                       },
               "Devices":
                       [
-                          "Voltage Source 1",
-                          "Voltage Source 2",
-                          "Logic Analyzer"
+                          "Voltage_Source",
+                          "Logic_Analyzer"
                       ]
             },
   "Experiment" :
@@ -36,8 +35,8 @@
               ],
   "Data" :
           {
-            "Start_Voltage": 2.45,
-            "Final_Voltage": 2.55,
-            "Step_Voltage": 0.001
+            "Start_Voltage": 0.00,
+            "Final_Voltage": 2.5,
+            "Step_Voltage": 0.25
           }
 }
