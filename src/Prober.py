@@ -15,12 +15,12 @@ import argparse
 # optionally a parameter definition file or list of parameters for the experiments.
 parser = argparse.ArgumentParser(description="Run experiments")
 parser.add_argument("configFile")
-parser.add_argument("-p", "--param", action="store")
+parser.add_argument("-p", "--param", type=argparse.FileType('r'))
 # TODO test this
 # TODO find @ALEX tags and do what they say
 # I think this provides the correct behavior, but it may be the one below
-parser.add_argument("additionalParams", nargs=argparse.REMAINDER)
-# parser.add_argument("additionalParams", nargs='*')
+#parser.add_argument("additionalParams", nargs=argparse.REMAINDER)
+parser.add_argument("additionalParams", nargs='*')
 
 instruments = None
 
@@ -237,6 +237,10 @@ def main():
 	Entry point of SPAE, loads config file
 	:return: None
 	"""
+	temp = parser.parse_known_args()
+	parsed = temp[0]
+	unparsed = temp[1]
+	print parser.parse_known_args()
 	# @ALEX replace with argparse
 	print('Starting SPAE...')
 	if len(sys.argv) == 1:
@@ -270,9 +274,17 @@ def main():
 			# There are config definitions in the command line
 			# we need to update these here since the data_map is not initialized until near above here
 			# @ALEX replace with argparse
-			if len(sys.argv) > 2:
-				print "Variable inputs provided."
-				parse_command_line_definitions(data_map, sys.argv[2:])
+			""" 
+			TODO strip quotes from args (The ones from a parameter file maintain their quotes)
+			But only strip them if they're around the whole argument (i.e. are the first and last characters
+			Or if they're around the argument name strip them
+			"""
+			parse_command_line_definitions(data_map, vars(parsed)['param'].read().split())
+			parse_command_line_definitions(data_map, vars(parsed)['additionalParams'])
+			parse_command_line_definitions(data_map, unparsed)
+			# if len(sys.argv) > 2:
+			# 	print "Variable inputs provided."
+			# 	parse_command_line_definitions(data_map, sys.argv[2:])
 			spawn_scripts(scripts, data_map, config)
 
 		print 'Experiment complete, goodbye!'
