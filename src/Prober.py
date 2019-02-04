@@ -218,9 +218,19 @@ def parse_command_line_definitions(data_dict, args):
 		None
 	"""
 	for var in args:
+		# If the user quoted the entire option string
+		if re.match("^\".*\"$", var) and (re.match("^\"[^\"]*\"=\"[^\"]*\"$", var) is None):
+			# Strip the outermost quotes
+			var = var[1:-1]
 		variable = re.split("=", var)
+		# If the user quoted the variable name
+		if re.match('^\".*\"$', variable[0]):
+			# Strip the quotes around the variable name
+			variable[0] = variable[0].strip('"')
 		# Match numbers and convert them into floats, otherwise leave the input alone
 		# (No, we don't yet handle lists or objects, even though they're both valid JSON types)
+		# Note: if the user quoted the variable value, it will always be treated as a string, even if it only consists
+		# of numerical characters
 		if re.match('^[0-9]*\.?[0-9]*$', variable[1]):
 			variable[1] = float(variable[1])
 		# The config data is stored in two places in the data map
