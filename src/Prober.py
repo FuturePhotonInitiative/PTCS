@@ -44,14 +44,15 @@ def attach_VISA(manager, name, default):
 	return manager.open_resource(instr)
 
 
-def extract_scripts(json_file):
+def extract_scripts(json_file, json_locations):
 	"""
 	Extracts the scripts from the JSON config and stages them for execution. This will put the scripts in an ordered
 		list where each element is a list of tasks to be spawned in parallel
 	:param json_file: The JSON config object
+	:param json_locations: The JSON Files object with standard file directories
 	:return: The list of staged task lists
 	"""
-	scripts_root = str(json_file['Requires']['Files'].get('Script_Root', './Scripts'))
+	scripts_root = str(json_locations['Files'].get('Script_Root', './Scripts'))
 	if scripts_root[0] is '.':
 		scripts_root = os.path.join(os.path.dirname(__file__), scripts_root)
 	available_scripts = os.listdir(scripts_root)
@@ -73,16 +74,17 @@ def extract_scripts(json_file):
 	return sorted_scripts
 
 
-def connect_devices(json_file, exit_stack):
+def connect_devices(json_file, json_locations, exit_stack):
 	"""
 	Initializes all devices specified in the JSON config, this will also dynamically import the drivers specified if one
 		hasn't been imported already
 	:param json_file: Ths JSON config object
+	:param json_locations: The JSON Files object with standard file directories
 	:param exit_stack: A Exit Stack that will close all devices when the program exits
 	:return: A dict of device names mapping to their objects
 	"""
 	manager = pyvisa.ResourceManager()
-	driver_root = str(json_file['Requires']['Files'].get('Driver_Root', './Instruments'))
+	driver_root = str(json_locations['Files'].get('Driver_Root', './Instruments'))
 	if driver_root[0] is '.':
 		driver_root = os.path.join(os.path.dirname(__file__), driver_root)
 	drivers = os.listdir(driver_root)
@@ -92,10 +94,10 @@ def connect_devices(json_file, exit_stack):
 	print "Finding Devices...."
 
 	# this will need to be edited with using Devices.json as a hardware manager
-	with open(json_file["Requires"]["Files"]["Hardware_Config"]) as d:
+	with open(json_locations["Files"]["Hardware_Config"]) as d:
 		hardware_manager = json.load(d)
 	# this one is updated for the hardware manager
-	for dev in json_file['Requires']['Devices']:
+	for dev in json_file['Devices']:
 		if dev not in hardware_manager.keys():
 			print "Device not found in Devices.json: "+dev
 		else:
@@ -121,16 +123,16 @@ def connect_devices(json_file, exit_stack):
 	return devices
 
 
-def spawn_scripts(scripts, data_map, json_file):
+def spawn_scripts(scripts, data_map, json_locations):
 	"""
 	Runs the scripts defined in the JSON config. The tasks are called based on the order specified in the config,
 		two different tasks can have the same order, meaning they should be spawned at the same time.
 	:param scripts: The scripts pulled from the config
 	:param data_map: The dictionary to store data between tasks
-	:param json_file: The JSON config object
+	:param json_locations: The JSON Files object with standard file directories
 	:return: None
 	"""
-	script_root = str(json_file['Requires']['Files'].get('Script_Root', './Scripts'))
+	script_root = str(json_locations['Files'].get('Script_Root', './Scripts'))
 	if script_root[0] is '.':
 		script_root = os.path.join(os.path.dirname(__file__), script_root)
 
@@ -169,8 +171,9 @@ def check_config_file(config):
 	:return: problems, array of things wrong with the configuration file
 	"""
 	problems = []
-	files = config["Requires"]["Files"]
-	devices = config["Requires"]["Devices"]
+	with open("../Configs/Files.json") as f:
+		files = json.load(f)
+	devices = config["Devices"]
 	experiments = config["Experiment"]
 	with open(files["Hardware_Config"]) as d:
 		hardware_manager = json.load(d)
@@ -178,13 +181,13 @@ def check_config_file(config):
 		problems.append("Name : does not exist in configuration file")
 	for fil in ["Script_Root", "Driver_Root"]:
 		if fil not in files.keys():
-			problems.append("Requires-Files-"+fil+" : does not exist in configuration file")
+			problems.append("Files-"+fil+" : does not exist in configuration file")
 		else:
 			if not os.path.exists(files[fil]):
-				problems.append("Requires-Files-"+fil+" : path does not exist")
+				problems.append("Files-"+fil+" : path does not exist")
 	for device in devices:
 		if device not in hardware_manager.keys():
-			problems.append("Requires-Devices-"+device+" : device not found in hardware manager. Check spelling.")
+			problems.append("Devices-"+device+" : device not found in hardware manager. Check spelling.")
 		else:
 			for key in hardware_manager[device].keys():
 				if key not in ["Driver", "Type", "Default"]:
@@ -235,6 +238,9 @@ def main():
 	with open(file_name) as f:
 		config = json.load(f)
 
+	with open("../Configs/Files.json") as f:
+		files_config = json.load(f)
+
 	# Configuration file check. Ensures the configuration files are formatted properly
 	check = check_config_file(config)
 	if len(check) is not 0:
@@ -245,19 +251,19 @@ def main():
 	else:
 		print("Running Experiment: " + config['Name'] + "\n\n")
 
-		scripts = extract_scripts(config)
+		scripts = extract_scripts(config, files_config)
 
 		data_map = {'Data': {}, 'Config': config}
 
 		with contextlib2.ExitStack() as stack:
-			data_map['Devices'] = connect_devices(config, stack)
+			data_map['Devices'] = connect_devices(config, files_config, stack)
 			initialize_data(data_map, config)
 			# There are config definitions in the command line
 			# we need to update these here since the data_map is not initialized until near above here
 			if len(sys.argv) > 2:
 				print "Variable inputs provided."
 				parse_command_line_definitions(data_map, sys.argv[2:])
-			spawn_scripts(scripts, data_map, config)
+			spawn_scripts(scripts, data_map, files_config)
 
 		print 'Experiment complete, goodbye!'
 
