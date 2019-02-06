@@ -250,13 +250,11 @@ def main(args):
 			print('Goodbye')
 			exit(1)
 	else:
-		# TODO next 3 lines moved from before above if statement, test to confirm it still works
 		# Parsing is done after we check for command line arguments to allow the user to input an experiment JSON
 		# interactively
 		temp = parser.parse_known_args()
 		parsed = temp[0]
 		unparsed = temp[1]
-		# TODO test to make sure this both grabs the correct config file name and allows later code to open it
 		file_name = parsed.configFile
 
 	with open(file_name) as f:
@@ -283,8 +281,16 @@ def main(args):
 			if len(args) > 1:
 				# There are config definitions in the command line
 				# we need to update these here since the data_map is not initialized until near above here
-				parse_command_line_definitions(data_map, vars(parsed)['param'].read().split())
-				parse_command_line_definitions(data_map, vars(parsed)['additionalParams'])
+				"""
+				Argument location precedence:
+				First the arguments are read from the data section of the experiment json file
+				Then, if one is provided, arguments are read from the parameter file if one is provided
+				Finally, arguments explicitly defined on the command line override everything else.
+				"""
+				if vars(parsed)['param']:
+					parse_command_line_definitions(data_map, vars(parsed)['param'].read().split())
+				if vars(parsed)['additionalParams']:
+					parse_command_line_definitions(data_map, vars(parsed)['additionalParams'])
 				parse_command_line_definitions(data_map, unparsed)
 			spawn_scripts(scripts, data_map, config)
 
