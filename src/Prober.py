@@ -238,13 +238,13 @@ def parse_command_line_definitions(data_dict, args):
 		data_dict['Data']['Initial'][variable[0]] = variable[1]
 
 
-def main():
+def main(args):
 	"""
 	Entry point of SPAE, loads config file
 	:return: None
 	"""
 	print('Starting SPAE...')
-	if len(sys.argv) == 1:
+	if len(args) == 1:
 		file_name = raw_input("Enter config file name or nothing to exit: ")
 		if len(file_name) == 0:
 			print('Goodbye')
@@ -280,14 +280,9 @@ def main():
 			data_map['Devices'] = connect_devices(config, stack)
 			initialize_data(data_map, config)
 			# Only parse the additional command line arguments if there were any
-			if len(sys.argv) > 1:
+			if len(args) > 1:
 				# There are config definitions in the command line
 				# we need to update these here since the data_map is not initialized until near above here
-				""" 
-				TODO strip quotes from args (The ones from a parameter file maintain their quotes)
-				But only strip them if they're around the whole argument (i.e. are the first and last characters
-				Or if they're around the argument name strip them
-				"""
 				parse_command_line_definitions(data_map, vars(parsed)['param'].read().split())
 				parse_command_line_definitions(data_map, vars(parsed)['additionalParams'])
 				parse_command_line_definitions(data_map, unparsed)
@@ -297,4 +292,4 @@ def main():
 
 
 if __name__ == '__main__':
-	main()
+	main(sys.argv)
