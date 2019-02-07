@@ -241,6 +241,7 @@ def parse_command_line_definitions(data_dict, args):
 def main(args):
 	"""
 	Entry point of SPAE, loads config file
+	:param args: test configuration file
 	:return: None
 	"""
 	print('Starting SPAE...')
