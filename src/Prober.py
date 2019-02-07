@@ -8,6 +8,16 @@ import pyvisa
 import os
 import contextlib2
 import imp
+
+import argparse
+
+# Create the argument parser for Prober.py and tell it what arguments to look for (i.e. the config json file, and
+# optionally a parameter definition file or list of parameters for the experiments.)
+parser = argparse.ArgumentParser(description="Run experiments")
+parser.add_argument("configFile")
+parser.add_argument("-p", "--param", type=argparse.FileType('r'))
+parser.add_argument("additionalParams", nargs='*')
+
 instruments = None
 
 
@@ -208,9 +218,19 @@ def parse_command_line_definitions(data_dict, args):
 		None
 	"""
 	for var in args:
+		# If the user quoted the entire option string
+		if re.match("^\".*\"$", var) and (re.match("^\"[^\"]*\"=\"[^\"]*\"$", var) is None):
+			# Strip the outermost quotes
+			var = var[1:-1]
 		variable = re.split("=", var)
+		# If the user quoted the variable name
+		if re.match('^\".*\"$', variable[0]):
+			# Strip the quotes around the variable name
+			variable[0] = variable[0].strip('"')
 		# Match numbers and convert them into floats, otherwise leave the input alone
 		# (No, we don't yet handle lists or objects, even though they're both valid JSON types)
+		# Note: if the user quoted the variable value, it will always be treated as a string, even if it only consists
+		# of numerical characters
 		if re.match('^[0-9]*\.?[0-9]*$', variable[1]):
 			variable[1] = float(variable[1])
 		# The config data is stored in two places in the data map
@@ -218,19 +238,24 @@ def parse_command_line_definitions(data_dict, args):
 		data_dict['Data']['Initial'][variable[0]] = variable[1]
 
 
-def main():
+def main(args):
 	"""
 	Entry point of SPAE, loads config file
 	:return: None
 	"""
 	print('Starting SPAE...')
-	if len(sys.argv) == 1:
+	if len(args) == 1:
 		file_name = raw_input("Enter config file name or nothing to exit: ")
 		if len(file_name) == 0:
 			print('Goodbye')
 			exit(1)
 	else:
-		file_name = sys.argv[1]
+		# Parsing is done after we check for command line arguments to allow the user to input an experiment JSON
+		# interactively
+		temp = parser.parse_known_args()
+		parsed = temp[0]
+		unparsed = temp[1]
+		file_name = parsed.configFile
 
 	with open(file_name) as f:
 		config = json.load(f)
@@ -252,15 +277,25 @@ def main():
 		with contextlib2.ExitStack() as stack:
 			data_map['Devices'] = connect_devices(config, stack)
 			initialize_data(data_map, config)
-			# There are config definitions in the command line
-			# we need to update these here since the data_map is not initialized until near above here
-			if len(sys.argv) > 2:
-				print "Variable inputs provided."
-				parse_command_line_definitions(data_map, sys.argv[2:])
+			# Only parse the additional command line arguments if there were any
+			if len(args) > 1:
+				# There are config definitions in the command line
+				# we need to update these here since the data_map is not initialized until near above here
+				"""
+				Argument location precedence:
+				First the arguments are read from the data section of the experiment json file
+				Then, if one is provided, arguments are read from the parameter file if one is provided
+				Finally, arguments explicitly defined on the command line override everything else.
+				"""
+				if vars(parsed)['param']:
+					parse_command_line_definitions(data_map, vars(parsed)['param'].read().split())
+				if vars(parsed)['additionalParams']:
+					parse_command_line_definitions(data_map, vars(parsed)['additionalParams'])
+				parse_command_line_definitions(data_map, unparsed)
 			spawn_scripts(scripts, data_map, config)
 
 		print 'Experiment complete, goodbye!'
 
 
 if __name__ == '__main__':
-	main()
+	main(sys.argv)
