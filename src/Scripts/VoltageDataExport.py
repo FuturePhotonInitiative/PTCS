@@ -1,4 +1,5 @@
 import matplotlib.pyplot as plt
+import json
 import os
 import time
 
@@ -29,7 +30,8 @@ def main(data_map):
 
 	# Writing the config file in json format for future use
 	with open("config.json", "w+") as config_file:
-		config_file.write(str(config).replace('}, ', '}, \n').replace('], ', '], \n').replace("\'", "\""))
+		# config_file.write(str(config).replace('}, ', '}, \n').replace('], ', '], \n').replace("\'", "\""))
+		config_file.write(json.dumps(config, separators=(',', ": "), indent=4))
 
 	# arrays for plotting x and y axis
 	x_axis = []
