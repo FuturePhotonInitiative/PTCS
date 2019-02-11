@@ -10,9 +10,9 @@ def main(data_map):
 	logic_analyzer = data_map['Devices']['Logic_Analyzer']
 	voltage_source = data_map['Devices']['Voltage_Source']
 	data_map['Data']['Collect'] = {}
-	start_voltage = data_map['Data']['Initial']["Start_Voltage"]
-	final_voltage = data_map['Data']['Initial']["Final_Voltage"]
-	step_voltage = data_map['Data']['Initial']["Step_Voltage"]
+	start_voltage = float(data_map['Data']['Initial']["Start_Voltage"])
+	final_voltage = float(data_map['Data']['Initial']["Final_Voltage"])
+	step_voltage = float(data_map['Data']['Initial']["Step_Voltage"])
 	levels = dec_range(start_voltage, final_voltage, step_voltage)
 
 	voltage_source.run_set_voltage(0)
