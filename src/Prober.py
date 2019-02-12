@@ -256,7 +256,6 @@ def main(args):
 		# Parsing is done after we check for command line arguments to allow the user to input an experiment JSON
 		# interactively
 		temp = parser.parse_known_args(args=args[1:])
-		print temp
 		parsed = temp[0]
 		unparsed = temp[1]
 		file_name = parsed.configFile

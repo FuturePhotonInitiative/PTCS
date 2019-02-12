@@ -65,8 +65,6 @@ class MainFrame(wx.Frame):
 		with open("../Configs/"+self.Choose_Test.GetStringSelection()) as selection:
 			self.Config = json.load(selection)
 
-		print str(self.Config)
-
 		# Set name of test from Default to the default test name
 		try:
 			self.Test_Name.SetLabelText(self.Config["Name"])
