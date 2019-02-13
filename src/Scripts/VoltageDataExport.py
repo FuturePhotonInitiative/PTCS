@@ -59,5 +59,6 @@ def main(data_map):
 	plt.autoscale()
 	plt.xlabel('Voltage')
 	plt.ylabel('Percentage of 1\'s')
+	plt.text(0, 0, str(os.path+"Voltage_vs_Percentage.png"))
 	plt.savefig("Voltage_vs_Percentage")
 	plt.show()
