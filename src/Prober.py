@@ -238,6 +238,37 @@ def parse_command_line_definitions(data_dict, args):
 		data_dict['Data']['Initial'][variable[0]] = variable[1]
 
 
+def generate_arg_list_from_parameter_arg_file(arg_file):
+	"""
+	Creates a list of arguments to be parsed in the same way as command line arguments from a parameter file
+	:param arg_file:
+		file object representing the parameter file
+	:return:
+		A list of arguments from the parameter file in the format defined for command line variable definition
+	"""
+	arglist = []
+	contents = arg_file.read()
+	# One variable per line in this format
+	for line in contents.split("\n"):
+		# The variable name immediately follows a java comment
+		tmp = line.split("//")
+		args = tmp[0].split(" ")
+		for i in range(len(args)):
+			args[i] = args[i].strip()
+		# Ada comments define actual comments
+		name = tmp[1].split("--")[0].strip()
+		# TODO be able to parse lists in the parse command line arg method, otherwise this line will break
+		# Remove things that weren't really arguments from the list (generally caused by whitespace)
+		args = filter(lambda arg: len(arg) > 0, args)
+		# Only return the to string of the list if there's more than one element
+		if len(args) >= 2:
+			arglist.append(name + "=" + str(args))
+		else:
+			arglist.append(name + "=" + str(args[0]))
+	return arglist
+
+
+
 def main(args):
 	"""
 	Entry point of SPAE, loads config file
@@ -288,7 +319,7 @@ def main(args):
 				Finally, arguments explicitly defined on the command line override everything else.
 				"""
 				if vars(parsed)['param']:
-					parse_command_line_definitions(data_map, vars(parsed)['param'].read().split())
+					parse_command_line_definitions(data_map, generate_arg_list_from_parameter_file(vars(parsed)['param']))
 				if vars(parsed)['additionalParams']:
 					parse_command_line_definitions(data_map, vars(parsed)['additionalParams'])
 				parse_command_line_definitions(data_map, unparsed)
