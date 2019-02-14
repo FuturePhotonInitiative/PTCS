@@ -227,18 +227,32 @@ def parse_command_line_definitions(data_dict, args):
 		if re.match('^\".*\"$', variable[0]):
 			# Strip the quotes around the variable name
 			variable[0] = variable[0].strip('"')
+		# Handle list parsing
+		if re.match('^\[.*\]$', variable[1]):
+			variable[1] = variable[1].strip("\[\]")
+			variable[1] = variable[1].split(',')
 		# Match numbers and convert them into floats, otherwise leave the input alone
 		# (No, we don't yet handle lists or objects, even though they're both valid JSON types)
 		# Note: if the user quoted the variable value, it will always be treated as a string, even if it only consists
 		# of numerical characters
-		if re.match('^[0-9]*\.?[0-9]*$', variable[1]):
-			variable[1] = float(variable[1])
+		if type(variable[1]) is list:
+			for i in range(len(variable[1])):
+				# This allows numbers to be quoted because that's how python represents strings in a list when it
+				# stringifies the list, and that only happens when we read from the parameters.txt file
+				# Python also adds spaces in the strinigification of lists, so we need to allow those through and then
+				# strip them as well
+				if re.match('^\s*["\']?[0-9]*\.?[0-9]*["\']?\s*$', variable[1][i]):
+					variable[1][i] = variable[1][i].strip(" \t\'\"")
+					variable[1][i] = float(variable[1][i])
+		else:
+			if re.match('^[0-9]*\.?[0-9]*$', variable[1]):
+				variable[1] = float(variable[1])
 		# The config data is stored in two places in the data map
 		data_dict['Config']['Data'][variable[0]] = variable[1]
 		data_dict['Data']['Initial'][variable[0]] = variable[1]
 
 
-def generate_arg_list_from_parameter_arg_file(arg_file):
+def generate_arg_list_from_parameter_file(arg_file):
 	"""
 	Creates a list of arguments to be parsed in the same way as command line arguments from a parameter file
 	:param arg_file:
@@ -252,12 +266,14 @@ def generate_arg_list_from_parameter_arg_file(arg_file):
 	for line in contents.split("\n"):
 		# The variable name immediately follows a java comment
 		tmp = line.split("//")
-		args = tmp[0].split(" ")
+		if re.match("^\".*\"$", tmp[0]) is None:
+			args = tmp[0].split(" ")
+		else:
+			args = [tmp[0]]
 		for i in range(len(args)):
 			args[i] = args[i].strip()
 		# Ada comments define actual comments
 		name = tmp[1].split("--")[0].strip()
-		# TODO be able to parse lists in the parse command line arg method, otherwise this line will break
 		# Remove things that weren't really arguments from the list (generally caused by whitespace)
 		args = filter(lambda arg: len(arg) > 0, args)
 		# Only return the to string of the list if there's more than one element
