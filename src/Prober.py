@@ -288,9 +288,12 @@ def generate_arg_list_from_parameter_file(arg_file):
 def main(args):
 	"""
 	Entry point of SPAE, loads config file
+	:param args: test configuration file
 	:return: None
 	"""
+
 	print('Starting SPAE...')
+
 	if len(args) == 1:
 		file_name = raw_input("Enter config file name or nothing to exit: ")
 		if len(file_name) == 0:
@@ -299,7 +302,7 @@ def main(args):
 	else:
 		# Parsing is done after we check for command line arguments to allow the user to input an experiment JSON
 		# interactively
-		temp = parser.parse_known_args()
+		temp = parser.parse_known_args(args=args[1:])
 		parsed = temp[0]
 		unparsed = temp[1]
 		file_name = parsed.configFile

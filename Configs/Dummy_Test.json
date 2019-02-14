@@ -1,5 +1,5 @@
 {
-  "Name": "Determine Voltage Threshold",
+  "Name": "Dummy Test",
   "Requires":
             {
               "Files":
@@ -35,8 +35,10 @@
               ],
   "Data" :
           {
-            "Start_Voltage": 0.00,
-            "Final_Voltage": 2.5,
-            "Step_Voltage": 0.25
+            "Variable_1": 0.00,
+            "Variable_2": 1.00,
+            "Variable_3": 3.00,
+            "Variable_4": 5.57,
+            "Variable_5": 1.00
           }
 }
