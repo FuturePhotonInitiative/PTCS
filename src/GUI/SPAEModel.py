@@ -19,9 +19,20 @@ class SPAEModel:
         pass
 
     def add_to_queue(self, experiment):
+        """
+        Adds an experiment to the queue to run
+        :param experiment:
+            An Experiment object
+        :return:
+            None
+        """
         self.queue.append(experiment)
 
     def get_next_experiment(self):
+        """
+        :return:
+            The next experiment in the queue and remove it from the queue
+        """
         return self.queue.pop(0)
 
     def schedule_experiments(self):
@@ -30,5 +41,5 @@ class SPAEModel:
         :return:
             None
         """
-        # Method stub to be implemented if and when we decide to thread experiments
+        # Method stub to be implemented if and when we decide to parallelize experiments
         pass
