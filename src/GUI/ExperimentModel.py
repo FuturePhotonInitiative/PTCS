@@ -21,42 +21,9 @@ class Experiment:
         self.scripts = []
         for s in self.config_dict['Experiment']:
             self.scripts.append(ExperimentScript(s))
-        self.sort_scripts(0, len(self.scripts)-1)
+        self.scripts = sorted(self.scripts, key=lambda elem: elem.order)
         self.dependencies = dependencies
         self.priority = priority
-
-    def sort_scripts(self, left_idx, right_idx):
-        """
-        Quicksorts the experiments in the list according to their 'Order' attribute in the experiment's json file.
-        (A bubble sort probably would have sufficed, but I really wanted to flex my algorithm muscles)
-        This function is called when the experiment object is constructed, so there's no need to call it again
-        :param left_idx:
-            The left index of the sublist to sort
-        :param right_idx:
-            The right index of the sublist to sort
-        :return:
-            None
-        """
-        if left_idx == right_idx:
-            return
-        pivot = self.scripts[left_idx]
-        pivots = []
-        tmp_list = self.scripts[:]
-        left_insert = left_idx
-        right_insert = right_idx
-        for i in range(left_idx, right_idx + 1):
-            if self.scripts[i].order < pivot.order:
-                tmp_list[left_insert] = self.scripts[i]
-                left_insert = left_insert + 1
-            elif self.scripts[i].order > pivot.order:
-                tmp_list[right_insert] = self.scripts[i]
-                right_insert = right_insert - 1
-            else:
-                pivots.append(self.scripts[i])
-        tmp_list[left_insert:right_insert+1] = pivots
-        self.scripts = tmp_list
-        self.sort_scripts(left_idx, left_insert - 1)
-        self.sort_scripts(right_insert + 1, right_idx)
 
     def get_data_value(self, data_key):
         """
