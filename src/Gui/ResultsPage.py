@@ -1,5 +1,6 @@
 import wx
 
+
 class ResultsPage(wx.Panel):
     def __init__(self, parent):
         wx.Panel.__init__(self, parent)
@@ -9,7 +10,6 @@ class ResultsPage(wx.Panel):
         sizer = wx.BoxSizer(wx.HORIZONTAL)
         sizer.Add(self.controlBox, 1, wx.EXPAND)
         sizer.Add(self.queueBox, 1, wx.EXPAND)
-
 
         self.SetSizer(sizer)
         sizer.Layout()
