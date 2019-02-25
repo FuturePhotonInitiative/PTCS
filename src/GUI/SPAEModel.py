@@ -1,5 +1,7 @@
 import json
 
+from src.GUI.ExperimentModel import Experiment
+
 
 class SPAEModel:
 
@@ -35,6 +37,30 @@ class SPAEModel:
         """
         return self.queue.pop(0)
 
+    def move_ith_experiment_up(self, i):
+        """
+        Safely moves the experiment currently in the ith position to the i-1th position.
+        (0 i the highest position)
+        :param i:
+            The position in the queue of the experiment to sift up
+        :return:
+            None
+        """
+        if i > 0:
+            self.queue[i], self.queue[i-1] = self.queue[i-1], self.queue[i]
+
+    def move_ith_experiment_down(self, i):
+        """
+        Safely moves the experiment currently in the ith position to the i+1th position.
+        (0 is the highest position)
+        :param i:
+            The position in the queue of the experiment to sift down
+        :return:
+            None
+        """
+        if i < len(self.queue)-1:
+            self.queue[i], self.queue[i+1] = self.queue[i+1], self.queue[i]
+
     def schedule_experiments(self):
         """
         Re-order the experiment queue according to the dependencies and priorities of the Experiments in the queue.
@@ -43,3 +69,55 @@ class SPAEModel:
         """
         # Method stub to be implemented if and when we decide to parallelize experiments
         pass
+
+
+if __name__ == '__main__':
+    model = SPAEModel(['../../System/Devices.json'])
+    # Add five experiments and make sure they are added to the queue in order
+    print "Testing experiment add order"
+    model.add_to_queue(Experiment('../../Configs/Dummy_Test1.json'))
+    model.add_to_queue(Experiment('../../Configs/Dummy_Test2.json'))
+    model.add_to_queue(Experiment('../../Configs/Dummy_Test3.json'))
+    model.add_to_queue(Experiment('../../Configs/Dummy_Test4.json'))
+    model.add_to_queue(Experiment('../../Configs/Dummy_Test5.json'))
+    print("Experiment 1: " + model.queue[0].get_name())
+    print("Experiment 2: " + model.queue[1].get_name())
+    print("Experiment 3: " + model.queue[2].get_name())
+    print("Experiment 4: " + model.queue[3].get_name())
+    print("Experiment 5: " + model.queue[4].get_name())
+    print ""
+
+    print "Testing experiment reorder (sift up)"
+    model.move_ith_experiment_up(4)
+    model.move_ith_experiment_up(3)
+    model.move_ith_experiment_up(2)
+    model.move_ith_experiment_up(1)
+    model.move_ith_experiment_up(0)
+    model.move_ith_experiment_up(-1)
+    print "Experiment 5: " + model.queue[0].get_name()
+    print "Experiment 1: " + model.queue[1].get_name()
+    print "Experiment 2: " + model.queue[2].get_name()
+    print "Experiment 3: " + model.queue[3].get_name()
+    print "Experiment 4: " + model.queue[4].get_name()
+    print ""
+
+    print "Testing experiment reorder (sift down)"
+    model.move_ith_experiment_down(0)
+    model.move_ith_experiment_down(1)
+    model.move_ith_experiment_down(2)
+    model.move_ith_experiment_down(3)
+    model.move_ith_experiment_down(4)
+    model.move_ith_experiment_down(5)
+    print("Experiment 1: " + model.queue[0].get_name())
+    print("Experiment 2: " + model.queue[1].get_name())
+    print("Experiment 3: " + model.queue[2].get_name())
+    print("Experiment 4: " + model.queue[3].get_name())
+    print("Experiment 5: " + model.queue[4].get_name())
+    print ''
+
+    print "Testing experiment remove order"
+    print("Experiment 1: " + model.get_next_experiment().get_name())
+    print("Experiment 2: " + model.get_next_experiment().get_name())
+    print("Experiment 3: " + model.get_next_experiment().get_name())
+    print("Experiment 4: " + model.get_next_experiment().get_name())
+    print("Experiment 5: " + model.get_next_experiment().get_name())

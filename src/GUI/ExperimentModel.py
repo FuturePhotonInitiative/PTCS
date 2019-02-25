@@ -4,7 +4,7 @@ from ExperimentScriptModel import ExperimentScript
 
 class Experiment:
 
-    def __init__(self, config_file, dependencies, priority):
+    def __init__(self, config_file, dependencies=None, priority=1):
         """
         Construct a new Experiment object.
         :param config_file:
