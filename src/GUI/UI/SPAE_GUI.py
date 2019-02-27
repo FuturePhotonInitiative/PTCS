@@ -152,5 +152,9 @@ class SPAE_GUI(wx.App):
 		self.frame.Show()
 		return True
 
+if __name__ == '__main__':
+    app = SPAE_GUI()
+    app.MainLoop()
+
 
 # end of class SPAE_GUI

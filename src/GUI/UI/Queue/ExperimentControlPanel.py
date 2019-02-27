@@ -12,7 +12,8 @@ class ExperimentControlPanel(wx.StaticBox):
         self.Bind(wx.EVT_KEY_DOWN, self.returnToMainControl)
         self.Bind(wx.EVT_LISTBOX_DCLICK, self.returnToMainControl)
 
-    def returnToMainControl(self, event):
-        if (not isinstance(event, wx.KeyEvent)) or event.GetKeyCode() == wx.WXK_ESCAPE:
-            for selected in self.GetSelections():
-                self.Deselect(selected)
+    def render_without_experiment(self):
+        pass
+
+    def render_with_experiment(self, experiment):
+        pass

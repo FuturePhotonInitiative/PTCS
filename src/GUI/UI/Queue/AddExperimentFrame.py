@@ -7,7 +7,7 @@
 import json
 import os
 import wx
-import Prober
+import src.Prober
 
 
 class MainFrame(wx.Frame):
@@ -95,7 +95,7 @@ class MainFrame(wx.Frame):
 
         # Prober.main takes in sys.argv when running from the command line
         # This string is intended to maintain the same format as running from the command line
-        Prober.main(["Prober.py", "temp.json"])
+        src.Prober.main(["Prober.py", "temp.json"])
     # Close the window after running the experiment?
     # self.Close()
     # end run_prober
