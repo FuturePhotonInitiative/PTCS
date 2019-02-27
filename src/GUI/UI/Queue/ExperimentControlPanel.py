@@ -44,7 +44,7 @@ class ExperimentControlPanel(wx.StaticBox):
             self.variables_boxes = []
             for variable in self.experiment.get_data_keys():
                 hbox = wx.BoxSizer(wx.HORIZONTAL)
-                text_feild = wx.TextCtrl(self, value=self.experiment.get_data_value(variable))
+                text_feild = wx.TextCtrl(self, value=str(self.experiment.get_data_value(variable)))
                 label = wx.StaticText(self,label=variable)
 
                 hbox.Add(label, 1, wx.EXPAND | wx.ALL)

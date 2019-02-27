@@ -1,5 +1,6 @@
 import wx
 from src.GUI.Util import GUI_CONSTANTS
+import src.GUI.UI.Globals as Globals
 
 
 class QueuePanel(wx.ListBox):
@@ -9,17 +10,19 @@ class QueuePanel(wx.ListBox):
         self.SetBackgroundColour(GUI_CONSTANTS.LIST_PANEL_COLOR)
         self.SetForegroundColour(GUI_CONSTANTS.LIST_PANEL_FOREGROUND_COLOR)
         # self.AppendColumn(QUEUE_PANEL_NAME)
-        self.Append("Test 1")
-        self.Append("Test 2")
-        self.Append("Test 3")
-        self.Append("Test 4")
-        self.Append("Test 5")
-        self.Append("Test 6")
+        for experiment in Globals.SPAE.queue:
+            self.Append(experiment.get_name())
 
-        self.Bind(wx.EVT_KEY_DOWN, self.returnToMainControl)
-        self.Bind(wx.EVT_LISTBOX_DCLICK, self.returnToMainControl)
+        self.Bind(wx.EVT_KEY_DOWN, self.return_to_main_control)
+        self.Bind(wx.EVT_LISTBOX_DCLICK, self.return_to_main_control)
+        self.Bind(wx.EVT_LISTBOX, self.on_experiment_select)
 
-    def returnToMainControl(self, event):
+    def return_to_main_control(self, event):
         if (not isinstance(event, wx.KeyEvent)) or event.GetKeyCode() == wx.WXK_ESCAPE:
             for selected in self.GetSelections():
                 self.Deselect(selected)
+
+    def on_experiment_select(self, event):
+        selected_experiment = Globals.SPAE.get_ith_experiment(self.GetSelection())
+        self.GetParent().render_control_box_with_experiment(selected_experiment)
+        pass

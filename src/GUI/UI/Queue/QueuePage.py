@@ -20,6 +20,10 @@ class QueuePage(wx.Panel):
         self.SetSizer(sizer)
         sizer.Layout()
 
+    # TODO Add method to render the controlBox with the correct experiment that the QueuePanel can call
+    def render_control_box_with_experiment(self, experiment):
+        self.controlBox.render_with_experiment(experiment)
+
     def get_experiments(self):
         # print os.listdir(CONSTANTS.CONFIG_PATH)
         return os.listdir(CONSTANTS.CONFIG_PATH)
