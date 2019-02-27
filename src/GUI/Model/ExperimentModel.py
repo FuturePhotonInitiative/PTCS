@@ -1,5 +1,5 @@
 import json
-from ExperimentScriptModel import ExperimentScript
+from src.Gui.Model.ExperimentScriptModel import ExperimentScript
 
 
 class Experiment:

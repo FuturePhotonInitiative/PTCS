@@ -1,4 +1,4 @@
-from MainFrame import MainFrame
+from src.Gui.UI.MainFrame_old import MainFrame
 
 
 class MainFrameImpl (MainFrame):
