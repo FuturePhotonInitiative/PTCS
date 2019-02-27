@@ -32,7 +32,7 @@ class ExperimentControlPanel(wx.StaticBox):
 
         self.choicebox = wx.Choice(self, choices=self.get_experiments())
         self.add_button = wx.Button(self, label="Add")
-        self.sizer.Add(self.choicebox, 1, wx.EXPAND | wx.ALL)
+        self.sizer.Add(self.choicebox, 1, wx.SHAPED | wx.ALL | wx.ALIGN_CENTRE)
         self.sizer.Add(self.add_button, 1, wx.EXPAND | wx.ALL)
 
     def render_with_experiment(self, experiment):
