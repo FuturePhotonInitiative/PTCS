@@ -1,5 +1,5 @@
 import wx
-from src.Gui.Util import GUI_CONSTANTS
+from src.GUI.Util import GUI_CONSTANTS
 
 
 class HardwarePage(wx.Panel):

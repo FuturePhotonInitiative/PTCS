@@ -1,5 +1,5 @@
 import wx
-from src.Gui.UI.Queue.QueuePanel import QueuePanel
+from src.GUI.UI.Queue.QueuePanel import QueuePanel
 
 
 class QueuePage(wx.Panel):
