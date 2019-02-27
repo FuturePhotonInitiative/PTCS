@@ -37,6 +37,15 @@ class SPAEModel:
         """
         return self.queue.pop(0)
 
+    def get_ith_experiment(self, i):
+        """
+        :param i:
+            The 0-based position of the experiment in the list
+        :return:
+            The ith experiment (Aren't I good at naming methods?)
+        """
+        return self.queue[i]
+
     def move_ith_experiment_up(self, i):
         """
         Safely moves the experiment currently in the ith position to the i-1th position.
