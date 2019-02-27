@@ -1,5 +1,5 @@
 import wx
-from src.GUI.UI.Results.ResultsPage import ResultsPage
+from src.GUI.UI.ExperimentResults.ResultsPage import ResultsPage
 from src.GUI.UI.Hardware.HardwarePage import HardwarePage
 from src.GUI.UI.BuildExperiment.BuildExperimentPage import BuildExperimentsPage
 from src.GUI.UI.Queue.QueuePage import QueuePage
