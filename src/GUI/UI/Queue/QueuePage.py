@@ -1,3 +1,5 @@
+import os
+import src.GUI.Util.GUI_CONSTANTS as CONSTANTS
 import wx
 from src.GUI.UI.Queue.QueuePanel import QueuePanel
 from src.GUI.UI.Queue.ExperimentControlPanel import ExperimentControlPanel
@@ -19,4 +21,5 @@ class QueuePage(wx.Panel):
         sizer.Layout()
 
     def get_experiments(self):
-        return []
+        # print os.listdir(CONSTANTS.CONFIG_PATH)
+        return os.listdir(CONSTANTS.CONFIG_PATH)

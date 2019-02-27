@@ -29,7 +29,11 @@ class ExperimentControlPanel(wx.StaticBox):
         self.variables_text_fields = []
         self.variables_labels = []
         self.variables_boxes = []
+
         self.choicebox = wx.Choice(self, choices=self.get_experiments())
+        self.add_button = wx.Button(self, label="Add")
+        self.sizer.Add(self.choicebox, 1, wx.EXPAND | wx.ALL)
+        self.sizer.Add(self.add_button, 1, wx.EXPAND | wx.ALL)
 
     def render_with_experiment(self, experiment):
         if experiment is not None and experiment != self.experiment:
@@ -51,8 +55,9 @@ class ExperimentControlPanel(wx.StaticBox):
                 self.variables_text_fields.append(text_feild)
                 self.variables_boxes.append(hbox)
 
-        elif experiment != self.experiment:
+        elif experiment is None:
             self.render_without_experiment()
 
     def get_experiments(self):
+        # print "run"
         return self.GetParent().get_experiments()
