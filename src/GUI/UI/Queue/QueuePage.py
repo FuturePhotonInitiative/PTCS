@@ -1,12 +1,15 @@
+import os
+import src.GUI.Util.GUI_CONSTANTS as CONSTANTS
 import wx
 from src.GUI.UI.Queue.QueuePanel import QueuePanel
+from src.GUI.UI.Queue.ExperimentControlPanel import ExperimentControlPanel
 
 
 class QueuePage(wx.Panel):
     def __init__(self, parent):
         wx.Panel.__init__(self, parent)
         self.queueBox = QueuePanel(self)
-        self.controlBox = wx.StaticBox(self)
+        self.controlBox = ExperimentControlPanel(self, None)
 
         # self.queueBox.SetForegroundColour(wx.WHITE)
 
@@ -20,3 +23,7 @@ class QueuePage(wx.Panel):
     # TODO Add method to render the controlBox with the correct experiment that the QueuePanel can call
     def render_control_box_with_experiment(self, experiment):
         self.controlBox.render_with_experiment(experiment)
+
+    def get_experiments(self):
+        # print os.listdir(CONSTANTS.CONFIG_PATH)
+        return os.listdir(CONSTANTS.CONFIG_PATH)

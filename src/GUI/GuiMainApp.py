@@ -15,7 +15,7 @@ if __name__ == '__main__':
     Globals.SPAE.add_to_queue(Experiment("../../Configs/Dummy_Test3.json"))
     Globals.SPAE.add_to_queue(Experiment("../../Configs/Dummy_Test4.json"))
     Globals.SPAE.add_to_queue(Experiment("../../Configs/Dummy_Test5.json"))
-    app=wx.App()
+    app = wx.App()
     frame = MainFrame(None, -1)
     frame.Show()
     app.MainLoop()
