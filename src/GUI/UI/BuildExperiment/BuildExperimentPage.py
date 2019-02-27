@@ -1,9 +1,10 @@
 import wx
 
 
-class ResultsPage(wx.Panel):
+class BuildExperimentsPage(wx.Panel):
     def __init__(self, parent):
         wx.Panel.__init__(self, parent)
+
         self.queueBox = wx.StaticBox(self)
         self.controlBox = wx.StaticBox(self)
 
