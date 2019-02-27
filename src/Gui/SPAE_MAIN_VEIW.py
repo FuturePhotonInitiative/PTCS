@@ -4,13 +4,6 @@ from HardwarePage import HardwarePage
 from BuildExperimentPage import BuildExperimentsPage
 from QueuePage import QueuePage
 
-MAIN_PAGE_TITLE = "Prober Control"
-PAGE_SIZE = (900, 500)
-QUEUE_PAGE_NAME = "Queue"
-HARDWARE_PAGE_NAME = "Hardware"
-BUILD_EXPERIMENTS_PAGE_NAME = "Build"
-RESULTS_PAGE_NAME = "Results"
-SPACE_SIZE = 4
 
 
 def addSpaces(string, count):

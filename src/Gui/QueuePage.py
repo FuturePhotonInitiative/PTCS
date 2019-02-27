@@ -1,8 +1,6 @@
 import wx
-
-QUEUE_PANEL_NAME = "Experiments"
-QUEUE_PANEL_COLOR = wx.BLACK#wx.Colour(100, 100, 100)
-
+import Constants
+from QueuePanel import QueuePanel
 
 class QueuePage(wx.Panel):
     def __init__(self, parent):
