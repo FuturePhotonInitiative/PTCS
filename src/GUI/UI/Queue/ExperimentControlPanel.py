@@ -35,6 +35,8 @@ class ExperimentControlPanel(wx.StaticBox):
         self.sizer.Add(self.choicebox, 1, wx.SHAPED | wx.ALL | wx.ALIGN_CENTRE)
         self.sizer.Add(self.add_button, 1, wx.EXPAND | wx.ALL)
 
+        self.sizer.Layout()
+
     def render_with_experiment(self, experiment):
         if experiment is not None and experiment != self.experiment:
             self.experiment = experiment
@@ -43,6 +45,7 @@ class ExperimentControlPanel(wx.StaticBox):
             self.variables_labels = []
             self.variables_boxes = []
             for variable in self.experiment.get_data_keys():
+                print variable
                 hbox = wx.BoxSizer(wx.HORIZONTAL)
                 text_feild = wx.TextCtrl(self, value=str(self.experiment.get_data_value(variable)))
                 label = wx.StaticText(self,label=variable)
@@ -54,6 +57,7 @@ class ExperimentControlPanel(wx.StaticBox):
                 self.variables_labels.append(label)
                 self.variables_text_fields.append(text_feild)
                 self.variables_boxes.append(hbox)
+            self.sizer.Layout()
 
         elif experiment is None:
             self.render_without_experiment()

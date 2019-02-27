@@ -1,6 +1,6 @@
 import json
 
-from src.GUI.ExperimentModel import Experiment
+from src.GUI.Model.ExperimentModel import Experiment
 
 
 class SPAEModel:

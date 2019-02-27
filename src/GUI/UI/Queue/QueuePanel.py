@@ -18,6 +18,7 @@ class QueuePanel(wx.ListBox):
         self.Bind(wx.EVT_LISTBOX, self.on_experiment_select)
 
     def return_to_main_control(self, event):
+        self.GetParent().render_control_box_with_experiment(None)
         if (not isinstance(event, wx.KeyEvent)) or event.GetKeyCode() == wx.WXK_ESCAPE:
             for selected in self.GetSelections():
                 self.Deselect(selected)
