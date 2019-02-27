@@ -1,5 +1,5 @@
 import wx
-import Constants
+import GUI_CONSTANTS
 from QueuePanel import QueuePanel
 
 class QueuePage(wx.Panel):

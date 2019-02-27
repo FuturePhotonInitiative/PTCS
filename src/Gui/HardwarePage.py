@@ -1,5 +1,5 @@
 import wx
-import Constants
+import GUI_CONSTANTS
 
 class HardwarePage(wx.Panel):
     def __init__(self, parent):
@@ -8,8 +8,8 @@ class HardwarePage(wx.Panel):
         self.hardwareBox = wx.StaticBox(self)
         self.controlBox = wx.StaticBox(self)
 
-        self.hardwareBox.SetBackgroundColour(Constants.HARDWARE_PANEL_COLOR)
-        self.hardwareBox.SetLabelText(Constants.HARDWARE_PANEL_NAME)
+        self.hardwareBox.SetBackgroundColour(GUI_CONSTANTS.HARDWARE_PANEL_COLOR)
+        self.hardwareBox.SetLabelText(GUI_CONSTANTS.HARDWARE_PANEL_NAME)
         self.hardwareBox.SetForegroundColour(wx.WHITE)
 
         sizer = wx.BoxSizer(wx.HORIZONTAL)
