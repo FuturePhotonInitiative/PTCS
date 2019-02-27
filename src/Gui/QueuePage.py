@@ -2,6 +2,7 @@ import wx
 import GUI_CONSTANTS
 from QueuePanel import QueuePanel
 
+
 class QueuePage(wx.Panel):
     def __init__(self, parent):
         wx.Panel.__init__(self, parent)
@@ -16,5 +17,3 @@ class QueuePage(wx.Panel):
 
         self.SetSizer(sizer)
         sizer.Layout()
-
-

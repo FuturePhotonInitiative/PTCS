@@ -8,9 +8,9 @@ class HardwarePage(wx.Panel):
         self.hardwareBox = wx.StaticBox(self)
         self.controlBox = wx.StaticBox(self)
 
-        self.hardwareBox.SetBackgroundColour(GUI_CONSTANTS.HARDWARE_PANEL_COLOR)
+        self.hardwareBox.SetBackgroundColour(GUI_CONSTANTS.LIST_PANEL_COLOR)
         self.hardwareBox.SetLabelText(GUI_CONSTANTS.HARDWARE_PANEL_NAME)
-        self.hardwareBox.SetForegroundColour(wx.WHITE)
+        self.hardwareBox.SetForegroundColour(GUI_CONSTANTS.LIST_PANEL_FOREGROUND_COLOR)
 
         sizer = wx.BoxSizer(wx.HORIZONTAL)
         sizer.Add(self.controlBox, 1, wx.EXPAND)

@@ -1,12 +1,13 @@
 import wx
 import GUI_CONSTANTS
 
+
 class QueuePanel(wx.ListBox):
     def __init__(self, parent):
         wx.ListBox.__init__(self, parent)
 
-        self.SetBackgroundColour(GUI_CONSTANTS.QUEUE_PANEL_COLOR)
-        self.SetForegroundColour(wx.GREEN)
+        self.SetBackgroundColour(GUI_CONSTANTS.LIST_PANEL_COLOR)
+        self.SetForegroundColour(GUI_CONSTANTS.LIST_PANEL_FOREGROUND_COLOR)
         # self.AppendColumn(QUEUE_PANEL_NAME)
         self.Append("Test 1")
         self.Append("Test 2")
