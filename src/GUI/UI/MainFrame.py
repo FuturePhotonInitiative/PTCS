@@ -1,9 +1,9 @@
 import wx
-from src.Gui.UI.Results.ResultsPage import ResultsPage
-from src.Gui.UI.Hardware.HardwarePage import HardwarePage
-from src.Gui.UI.BuildExperiment.BuildExperimentPage import BuildExperimentsPage
-from src.Gui.UI.Queue.QueuePage import QueuePage
-import src.Gui.Util.GUI_CONSTANTS as CONSTANTS
+from src.GUI.UI.Results.ResultsPage import ResultsPage
+from src.GUI.UI.Hardware.HardwarePage import HardwarePage
+from src.GUI.UI.BuildExperiment.BuildExperimentPage import BuildExperimentsPage
+from src.GUI.UI.Queue.QueuePage import QueuePage
+import src.GUI.Util.GUI_CONSTANTS as CONSTANTS
 
 class MainFrame(wx.Frame):
     def __init__(self, parent, id):
