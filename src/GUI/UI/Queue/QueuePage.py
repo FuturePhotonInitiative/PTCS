@@ -1,12 +1,13 @@
 import wx
 from src.GUI.UI.Queue.QueuePanel import QueuePanel
+from src.GUI.UI.Queue.ExperimentControlPanel import ExperimentControlPanel
 
 
 class QueuePage(wx.Panel):
     def __init__(self, parent):
         wx.Panel.__init__(self, parent)
         self.queueBox = QueuePanel(self)
-        self.controlBox = wx.StaticBox(self)
+        self.controlBox = ExperimentControlPanel(self, None)
 
         # self.queueBox.SetForegroundColour(wx.WHITE)
 
@@ -16,3 +17,6 @@ class QueuePage(wx.Panel):
 
         self.SetSizer(sizer)
         sizer.Layout()
+
+    def get_experiments(self):
+        return []
