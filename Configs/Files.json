@@ -1,0 +1,8 @@
+{
+  "Files": {
+    "Script_Root": "./Scripts",
+    "Driver_Root": "./Instruments",
+    "Results_Root": "../Results",
+    "Hardware_Config": "../Configs/Devices.json"
+  }
+}
