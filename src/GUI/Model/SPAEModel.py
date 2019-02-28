@@ -17,7 +17,7 @@ class SPAEModel:
         self.system_config = {}
         for sysfile in self.system_config_files:
             with open(sysfile) as f:
-                self.system_config[sysfile] = json.load(f)
+                self.system_config[sysfile.strip('.json')] = json.load(f)
         pass
 
     def add_to_queue(self, experiment):
@@ -69,6 +69,16 @@ class SPAEModel:
         """
         if i < len(self.queue)-1:
             self.queue[i], self.queue[i+1] = self.queue[i+1], self.queue[i]
+
+    def get_driver_directory(self):
+        return self.system_config['Files']['Driver_Root']
+
+    def get_configured_hardware(self):
+        # TODO
+        pass
+
+    def get_default_experiment_root(self):
+        return self.system_config['Files']['Default_Experiment_Root']
 
     def schedule_experiments(self):
         """

@@ -8,7 +8,7 @@ import src.GUI.UI.Globals as Globals
 
 if __name__ == '__main__':
     # TODO hardcoded config paths are bad and we can do better.
-    Globals.SPAE = SPAEModel(['../../System/Devices.json'])
+    Globals.SPAE = SPAEModel(['../../System/Devices.json', '../../System/Files.json'])
     # TODO temp testing code to make sure queue displays properly
     Globals.SPAE.add_to_queue(Experiment("../../Configs/Dummy_Test1.json"))
     Globals.SPAE.add_to_queue(Experiment("../../Configs/Dummy_Test2.json"))
