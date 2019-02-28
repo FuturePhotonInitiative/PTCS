@@ -314,7 +314,7 @@ def main(args):
         config = json.load(f)
 
     # TODO hardcoded path
-    with open("../Configs/Files.json") as f:
+    with open("../System/Files.json") as f:
         files_config = json.load(f)
 
     # Configuration file check. Ensures the configuration files are formatted properly
