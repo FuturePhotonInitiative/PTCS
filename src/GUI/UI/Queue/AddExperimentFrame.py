@@ -63,7 +63,7 @@ class MainFrame(wx.Frame):
             count += 1
 
         # Go to test configuration and pull variables for test
-        with open("../Configs/"+self.Choose_Test.GetStringSelection()) as selection:
+        with open(Globals.SPAE.get_default_experiment_root()+self.Choose_Test.GetStringSelection()) as selection:
             self.Config = json.load(selection)
 
         # Set name of test from Default to the default test name
@@ -86,11 +86,13 @@ class MainFrame(wx.Frame):
 
     # end on_select
 
+    # @WILL Propose moving this responsibility to the SPAEModel class
     def run_prober(self, event):
         # begin run_prober
         print "Running \""+self.Test_Name.GetLabelText()+"\"..."
 
         # Create new json file based on updated variables called temp.json
+        # @WILL TODO you can use the Experiment.export_to_json fro this
         with open("temp.json", "w+") as temp:
             temp.write(json.dumps(self.Config, separators=(',', ": "), indent=4))
 
