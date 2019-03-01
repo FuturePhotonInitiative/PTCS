@@ -36,6 +36,16 @@ class SPAEModel:
         """
         self.queue.append(experiment)
 
+    def remove_from_queue(self, experiment):
+        """
+        Removes an exact experiment object from the queue
+        :param experiment:
+            The experiment to remove
+        :return:
+            None
+        """
+        self.queue.remove(experiment)
+
     def get_next_experiment(self):
         """
         :return:
