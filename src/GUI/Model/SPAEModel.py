@@ -106,8 +106,9 @@ class SPAEModel:
             # TODO this probably doesn't recursively search
             files.extend(os.listdir(exp_dir))
         for exp_file in files:
-            if os.basename(exp_file) == name:
-                return Experiment(exp_file)
+            print exp_file
+            if os.path.basename(exp_file) == name:
+                return Experiment(exp_dir+"/"+exp_file)
         return None
 
 if __name__ == '__main__':
