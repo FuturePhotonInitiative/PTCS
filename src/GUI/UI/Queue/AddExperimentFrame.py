@@ -8,7 +8,7 @@ import json
 import os
 import wx
 import src.Prober
-import src.GUI.UI.Globals as Globals
+import src.GUI.Util.Globals as Globals
 
 
 class MainFrame(wx.Frame):
@@ -63,7 +63,7 @@ class MainFrame(wx.Frame):
             count += 1
 
         # Go to test configuration and pull variables for test
-        with open(Globals.SPAE.get_default_experiment_root()+self.Choose_Test.GetStringSelection()) as selection:
+        with open(Globals.SPAE.get_default_experiment_root() + self.Choose_Test.GetStringSelection()) as selection:
             self.Config = json.load(selection)
 
         # Set name of test from Default to the default test name

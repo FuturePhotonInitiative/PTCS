@@ -1,6 +1,6 @@
 import wx
 from src.GUI.Util import GUI_CONSTANTS
-import src.GUI.UI.Globals as Globals
+import src.GUI.Util.Globals as Globals
 
 
 class QueuePanel(wx.ListBox):

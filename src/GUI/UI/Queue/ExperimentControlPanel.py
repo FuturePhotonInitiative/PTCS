@@ -1,7 +1,7 @@
 import wx
 import src.GUI.Util.GUI_CONSTANTS
 import src.GUI.Model.ExperimentModel
-import toStringTest
+import src.GUI.Util.Globals
 
 
 class ExperimentControlPanel(wx.StaticBox):
