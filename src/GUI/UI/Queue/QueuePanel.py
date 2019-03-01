@@ -27,3 +27,8 @@ class QueuePanel(wx.ListBox):
         selected_experiment = Globals.SPAE.get_ith_experiment(self.GetSelection())
         self.GetParent().render_control_box_with_experiment(selected_experiment)
         pass
+
+    def reload_panel(self):
+        self.Clear()
+        for experiment in Globals.SPAE.queue:
+            self.Append(experiment.get_name())

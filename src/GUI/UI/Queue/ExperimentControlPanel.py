@@ -36,6 +36,7 @@ class ExperimentControlPanel(wx.StaticBox):
         self.sizer.Add(self.choicebox, 1, wx.SHAPED | wx.ALL | wx.ALIGN_CENTRE)
         self.sizer.Add(self.add_button, 1, wx.EXPAND | wx.ALL)
 
+        self.add_button.Bind(wx.EVT_BUTTON, self.add_experiment)
         self.sizer.Layout()
 
     def render_with_experiment(self, experiment):
@@ -66,7 +67,9 @@ class ExperimentControlPanel(wx.StaticBox):
     def get_experiments(self):
         return self.GetParent().get_experiments()
 
-    def add_experiment(self):
-        experiment = self.choicebox.GetString()
+    def add_experiment(self, evt):
+        experiment = self.choicebox.GetString(self.choicebox.GetSelection())
         experiment = Globals.SPAE.get_experiment_from_name(experiment)
-        return experiment
+        if experiment:
+            Globals.SPAE.add_to_queue(experiment)
+            self.GetParent().reload()

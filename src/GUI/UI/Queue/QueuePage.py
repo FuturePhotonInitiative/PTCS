@@ -27,3 +27,6 @@ class QueuePage(wx.Panel):
         # print os.listdir(CONSTANTS.CONFIG_PATH)
         print type(os.listdir(Globals.SPAE.get_default_experiment_root()))
         return os.listdir(Globals.SPAE.get_default_experiment_root())
+
+    def reload(self):
+        self.queueBox.reload_panel()
