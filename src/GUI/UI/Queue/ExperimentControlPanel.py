@@ -45,10 +45,10 @@ class ExperimentControlPanel(wx.StaticBox):
             self.variables_labels = []
             self.variables_boxes = []
             for variable in self.experiment.get_data_keys():
-                print variable
+                # print variable
                 hbox = wx.BoxSizer(wx.HORIZONTAL)
                 text_feild = wx.TextCtrl(self, value=str(self.experiment.get_data_value(variable)))
-                label = wx.StaticText(self,label=variable)
+                label = wx.StaticText(self, label=variable)
 
                 hbox.Add(label, 1, wx.EXPAND | wx.ALL)
                 hbox.Add(text_feild, 1, wx.EXPAND | wx.ALL)
@@ -65,3 +65,6 @@ class ExperimentControlPanel(wx.StaticBox):
     def get_experiments(self):
         # print "run"
         return self.GetParent().get_experiments()
+
+    def add_experements(self):
+        self.choicebox.GetString()
