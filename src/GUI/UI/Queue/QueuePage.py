@@ -26,4 +26,5 @@ class QueuePage(wx.Panel):
 
     def get_experiments(self):
         # print os.listdir(CONSTANTS.CONFIG_PATH)
+        print type(os.listdir(Globals.SPAE.get_default_experiment_root()))
         return os.listdir(Globals.SPAE.get_default_experiment_root())
