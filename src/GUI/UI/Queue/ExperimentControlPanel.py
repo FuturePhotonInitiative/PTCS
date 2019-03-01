@@ -1,7 +1,7 @@
 import wx
 import src.GUI.Util.GUI_CONSTANTS
 import src.GUI.Model.ExperimentModel
-import src.GUI.Util.Globals
+import src.GUI.Util.Globals as Globals
 
 
 class ExperimentControlPanel(wx.StaticBox):
@@ -66,5 +66,7 @@ class ExperimentControlPanel(wx.StaticBox):
     def get_experiments(self):
         return self.GetParent().get_experiments()
 
-    def add_experements(self):
-        self.choicebox.GetString()
+    def add_experiment(self):
+        experiment = self.choicebox.GetString()
+        experiment = Globals.SPAE.get_experiment_from_name(experiment)
+        return experiment
