@@ -25,6 +25,9 @@ class Experiment:
         self.dependencies = dependencies
         self.priority = priority
 
+    def __str__(self):
+        return self.get_name()
+
     def get_data_value(self, data_key):
         """
         Get a value from the "Data" section of the Experiment's configuration JSON
