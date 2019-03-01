@@ -79,7 +79,10 @@ class SPAEModel:
         pass
 
     def get_default_experiment_root(self):
-        return self.system_config['Files']['Files']['Default_Experiment_Root']
+        return self.system_config['Files']['Experiment_Roots'][0]
+
+    def get_experiment_roots(self):
+        return self.system_config['Files']['Experiment_Roots']
 
     def schedule_experiments(self):
         """
