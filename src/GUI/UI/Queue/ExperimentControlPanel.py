@@ -90,4 +90,7 @@ class ExperimentControlPanel(wx.StaticBox):
             self.GetParent().reload()
 
     def remove_experiment(self, evt):
-        pass
+        if self.experiment:
+            Globals.SPAE.remove_from_queue(self.experiment)
+            self.render_without_experiment()
+            self.GetParent().reload()
