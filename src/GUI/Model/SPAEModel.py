@@ -19,6 +19,11 @@ class SPAEModel:
         for sysfile in self.system_config_files:
             with open(sysfile) as f:
                 self.system_config[os.path.basename(sysfile).replace('.json', "")] = json.load(f)
+
+        self.experiment_cache = {}
+        self.cache_is_valid = False
+        self.rebuild_experiment_cache()
+
         pass
 
     def add_to_queue(self, experiment):
@@ -84,6 +89,10 @@ class SPAEModel:
     def get_experiment_roots(self):
         return self.system_config['Files']['Experiment_Roots']
 
+    def add_experiment_root(self, path_to_root):
+        self.system_config['Files']['Experiment_Roots'].append(path_to_root)
+        self.cache_is_valid = False
+
     def schedule_experiments(self):
         """
         Re-order the experiment queue according to the dependencies and priorities of the Experiments in the queue.
@@ -101,14 +110,20 @@ class SPAEModel:
         :return:
             The experiment if it exists, None if it does not
         """
-        files = []
-        for exp_dir in self.system_config['Files']['Experiment_Roots']:
-            # TODO this probably doesn't recursively search
-            files.extend(os.listdir(exp_dir))
-        for exp_file in files:
-            if os.basename(exp_file) == name:
-                return Experiment(exp_file)
+        if not self.cache_is_valid:
+            self.rebuild_experiment_cache()
+        if name in self.experiment_cache:
+            return Experiment(self.experiment_cache[name])
         return None
+
+    def rebuild_experiment_cache(self):
+        self.experiment_cache = {}
+        # TODO recursively search
+        for exp_dir in self.system_config['Files']['Experiment_Roots']:
+            for exp_file in os.listdir(exp_dir):
+                self.experiment_cache[os.path.basename(exp_file)] = exp_dir + "/" + os.path.basename(exp_file)
+        self.cache_is_valid = True
+
 
 if __name__ == '__main__':
     model = SPAEModel(['../../System/Devices.json'])
