@@ -3,7 +3,7 @@ import src.GUI.Util.GUI_CONSTANTS as CONSTANTS
 import wx
 from src.GUI.UI.Queue.QueuePanel import QueuePanel
 from src.GUI.UI.Queue.ExperimentControlPanel import ExperimentControlPanel
-
+import src.GUI.UI.Globals as Globals
 
 class QueuePage(wx.Panel):
     def __init__(self, parent):
@@ -26,4 +26,4 @@ class QueuePage(wx.Panel):
 
     def get_experiments(self):
         # print os.listdir(CONSTANTS.CONFIG_PATH)
-        return os.listdir(CONSTANTS.CONFIG_PATH)
+        return os.listdir(Globals.SPAE.get_default_experiment_root())

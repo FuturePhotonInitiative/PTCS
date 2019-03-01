@@ -1,4 +1,5 @@
 import json
+import os
 
 from src.GUI.Model.ExperimentModel import Experiment
 
@@ -17,7 +18,7 @@ class SPAEModel:
         self.system_config = {}
         for sysfile in self.system_config_files:
             with open(sysfile) as f:
-                self.system_config[sysfile.strip('.json')] = json.load(f)
+                self.system_config[os.path.basename(sysfile).replace('.json', "")] = json.load(f)
         pass
 
     def add_to_queue(self, experiment):
@@ -78,7 +79,7 @@ class SPAEModel:
         pass
 
     def get_default_experiment_root(self):
-        return self.system_config['Files']['Default_Experiment_Root']
+        return self.system_config['Files']['Files']['Default_Experiment_Root']
 
     def schedule_experiments(self):
         """

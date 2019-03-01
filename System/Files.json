@@ -4,6 +4,6 @@
     "Driver_Root": "./Instruments",
     "Results_Root": "../Results",
     "Hardware_Config": "./Devices.json",
-    "Default_Experiment_Root": "../Configs"
+    "Default_Experiment_Root": "../../Configs"
   }
 }
