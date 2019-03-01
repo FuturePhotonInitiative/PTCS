@@ -1,6 +1,7 @@
 import wx
 import src.GUI.Util.GUI_CONSTANTS
 import src.GUI.Model.ExperimentModel
+import src.GUI.Util.Globals
 
 
 class ExperimentControlPanel(wx.StaticBox):
@@ -63,7 +64,6 @@ class ExperimentControlPanel(wx.StaticBox):
             self.render_without_experiment()
 
     def get_experiments(self):
-        # print "run"
         return self.GetParent().get_experiments()
 
     def add_experements(self):

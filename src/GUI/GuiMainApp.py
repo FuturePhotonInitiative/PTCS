@@ -3,7 +3,7 @@ import wx
 from src.GUI.Model.ExperimentModel import Experiment
 from src.GUI.Model.SPAEModel import SPAEModel
 from src.GUI.UI.MainFrame import MainFrame
-import src.GUI.UI.Globals as Globals
+import src.GUI.Util.Globals as Globals
 
 
 if __name__ == '__main__':

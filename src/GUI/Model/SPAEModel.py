@@ -92,7 +92,8 @@ class SPAEModel:
         """
         # Method stub to be implemented if and when we decide to parallelize experiments
         pass
-
+    def get_experiment_from_name(self, name):
+        return None
 
 if __name__ == '__main__':
     model = SPAEModel(['../../System/Devices.json'])
