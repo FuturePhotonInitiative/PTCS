@@ -79,7 +79,10 @@ class SPAEModel:
         pass
 
     def get_default_experiment_root(self):
-        return self.system_config['Files']['Files']['Default_Experiment_Root']
+        return self.system_config['Files']['Experiment_Roots'][0]
+
+    def get_experiment_roots(self):
+        return self.system_config['Files']['Experiment_Roots']
 
     def schedule_experiments(self):
         """
@@ -89,7 +92,22 @@ class SPAEModel:
         """
         # Method stub to be implemented if and when we decide to parallelize experiments
         pass
+
     def get_experiment_from_name(self, name):
+        """
+        Get an Experiment object as described by the filename <name> in any of the experiment roots
+        :param name:
+            The filename of the experiment to search for
+        :return:
+            The experiment if it exists, None if it does not
+        """
+        files = []
+        for exp_dir in self.system_config['Files']['Experiment_Roots']:
+            # TODO this probably doesn't recursively search
+            files.extend(os.listdir(exp_dir))
+        for exp_file in files:
+            if os.basename(exp_file) == name:
+                return Experiment(exp_file)
         return None
 
 if __name__ == '__main__':

@@ -1,9 +1,7 @@
 {
-  "Files": {
-    "Script_Root": "./Scripts",
-    "Driver_Root": "./Instruments",
-    "Results_Root": "../Results",
-    "Hardware_Config": "./Devices.json",
-    "Default_Experiment_Root": "../../Configs"
-  }
+  "Script_Root": "./Scripts",
+  "Driver_Root": "./Instruments",
+  "Results_Root": "../Results",
+  "Hardware_Config": "./Devices.json",
+  "Experiment_Roots": ["../../Configs"]
 }
