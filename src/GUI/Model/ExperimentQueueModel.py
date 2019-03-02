@@ -4,7 +4,7 @@ import os
 from src.GUI.Model.ExperimentModel import Experiment
 
 
-class SPAEModel:
+class ExperimentQueueModel:
 
     def __init__(self, system_config):
         """
@@ -86,13 +86,6 @@ class SPAEModel:
         if i < len(self.queue)-1:
             self.queue[i], self.queue[i+1] = self.queue[i+1], self.queue[i]
 
-    def get_driver_directory(self):
-        return self.system_config['Files']['Driver_Root']
-
-    def get_configured_hardware(self):
-        # TODO
-        pass
-
     def get_default_experiment_root(self):
         return self.system_config['Files']['Experiment_Roots'][0]
 
@@ -136,7 +129,7 @@ class SPAEModel:
 
 
 if __name__ == '__main__':
-    model = SPAEModel(['../../System/Devices.json'])
+    model = ExperimentQueueModel(['../../System/Devices.json'])
     # Add five experiments and make sure they are added to the queue in order
     print "Testing experiment add order"
     model.add_to_queue(Experiment('../../Configs/Dummy_Test1.json'))

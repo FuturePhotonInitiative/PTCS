@@ -84,13 +84,13 @@ class ExperimentControlPanel(wx.StaticBox):
 
     def add_experiment(self, evt):
         experiment = self.choice_box.GetString(self.choice_box.GetSelection())
-        experiment = Globals.SPAE.get_experiment_from_name(experiment)
+        experiment = Globals.ExperimentQueue.get_experiment_from_name(experiment)
         if experiment:
-            Globals.SPAE.add_to_queue(experiment)
+            Globals.ExperimentQueue.add_to_queue(experiment)
             self.GetParent().reload()
 
     def remove_experiment(self, evt):
         if self.experiment:
-            Globals.SPAE.remove_from_queue(self.experiment)
+            Globals.ExperimentQueue.remove_from_queue(self.experiment)
             self.render_without_experiment()
             self.GetParent().reload()

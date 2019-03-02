@@ -10,7 +10,7 @@ class QueuePanel(wx.ListBox):
         self.SetBackgroundColour(GUI_CONSTANTS.LIST_PANEL_COLOR)
         self.SetForegroundColour(GUI_CONSTANTS.LIST_PANEL_FOREGROUND_COLOR)
         # self.AppendColumn(QUEUE_PANEL_NAME)
-        for experiment in Globals.SPAE.queue:
+        for experiment in Globals.ExperimentQueue.queue:
             self.Append(experiment.get_name())
 
         self.Bind(wx.EVT_KEY_DOWN, self.return_to_main_control)
@@ -24,11 +24,11 @@ class QueuePanel(wx.ListBox):
                 self.Deselect(selected)
 
     def on_experiment_select(self, event):
-        selected_experiment = Globals.SPAE.get_ith_experiment(self.GetSelection())
+        selected_experiment = Globals.ExperimentQueue.get_ith_experiment(self.GetSelection())
         self.GetParent().render_control_box_with_experiment(selected_experiment)
         pass
 
     def reload_panel(self):
         self.Clear()
-        for experiment in Globals.SPAE.queue:
+        for experiment in Globals.ExperimentQueue.queue:
             self.Append(experiment.get_name())
