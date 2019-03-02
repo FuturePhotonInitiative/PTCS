@@ -127,6 +127,11 @@ class ExperimentQueueModel:
                 self.experiment_cache[os.path.basename(exp_file)] = exp_dir + "/" + os.path.basename(exp_file)
         self.cache_is_valid = True
 
+    def get_experiment_names(self):
+        name_list = []
+        for experiment in self.queue:
+            name_list.append(experiment.get_name())
+        return name_list
 
 if __name__ == '__main__':
     model = ExperimentQueueModel(['../../System/Devices.json'])

@@ -1,12 +1,13 @@
 import wx
 from src.GUI.Util import GUI_CONSTANTS
+from HardwareListPanel import HardwareListPanel
 
 
 class HardwarePage(wx.Panel):
     def __init__(self, parent):
         wx.Panel.__init__(self, parent)
 
-        self.hardwareBox = wx.StaticBox(self)
+        self.hardwareBox = HardwareListPanel(self)
         self.controlBox = wx.StaticBox(self)
 
         self.hardwareBox.SetBackgroundColour(GUI_CONSTANTS.LIST_PANEL_COLOR)
