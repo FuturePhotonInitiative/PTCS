@@ -3,6 +3,7 @@ import wx
 from src.GUI.UI.Queue.QueuePanel import QueuePanel
 from src.GUI.UI.Queue.ExperimentControlPanel import ExperimentControlPanel
 import src.GUI.Util.Globals as Globals
+import src.GUI.Util.GUI_CONSTANTS as CONSTANTS
 
 class QueuePage(wx.Panel):
     def __init__(self, parent):
@@ -13,8 +14,8 @@ class QueuePage(wx.Panel):
         # self.queueBox.SetForegroundColour(wx.WHITE)
 
         sizer = wx.BoxSizer(wx.HORIZONTAL)
-        sizer.Add(self.controlBox, 1, wx.EXPAND | wx.ALL)
-        sizer.Add(self.queueBox, 1, wx.EXPAND | wx.ALL, 5)
+        sizer.Add(self.controlBox, CONSTANTS.QUEUE_CONTROL_PANEL_PROPORTION, wx.EXPAND | wx.ALL)
+        sizer.Add(self.queueBox, CONSTANTS.QUEUE_PANEL_PROPORTION, wx.EXPAND | wx.ALL, CONSTANTS.LIST_PANEL_MARGIN)
 
         self.SetSizer(sizer)
         sizer.Layout()
