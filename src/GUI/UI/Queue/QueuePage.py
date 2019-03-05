@@ -14,8 +14,11 @@ class QueuePage(wx.Panel):
         # self.queueBox.SetForegroundColour(wx.WHITE)
 
         sizer = wx.BoxSizer(wx.HORIZONTAL)
+        right_side = wx.BoxSizer(wx.VERTICAL)
+        right_side.Add(wx.StaticText(self, label="Experiment Queue"), CONSTANTS.QUEUE_LABEL_PROPORTION, wx.TOP)
+        right_side.Add(self.queueBox, 1, wx.EXPAND | wx.ALL)
         sizer.Add(self.controlBox, CONSTANTS.QUEUE_CONTROL_PANEL_PROPORTION, wx.EXPAND | wx.ALL)
-        sizer.Add(self.queueBox, CONSTANTS.QUEUE_PANEL_PROPORTION, wx.EXPAND | wx.ALL, CONSTANTS.LIST_PANEL_MARGIN)
+        sizer.Add(right_side, CONSTANTS.QUEUE_PANEL_PROPORTION, wx.EXPAND | wx.ALL, CONSTANTS.LIST_PANEL_MARGIN)
 
         self.SetSizer(sizer)
         sizer.Layout()
