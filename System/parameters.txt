@@ -1,5 +1,5 @@
 1 //test--Testing a file with Dr. Figer's specs
-"magic man"//Start_Voltage--This is a cool format
+"magic man"//Start_Voltage
 2.0         //Stop_Voltage
 .2     //Step_Voltage -- Comments with spaces
 1 2 3 4 //Test_List -- to make sure it doesn't die
