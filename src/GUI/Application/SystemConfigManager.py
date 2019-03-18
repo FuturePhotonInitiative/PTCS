@@ -16,6 +16,8 @@ class SystemConfigManager:
         self.file_locations = {}
         with open(files_path) as config_file:
             self.file_locations = json.load(config_file)
+        for config in self.file_locations:
+            self.file_locations[config] = files_path + "/" + self.file_locations[config]
         self.experiments_manager = None
         self.results_manager = None
         self.queue_manager = None
