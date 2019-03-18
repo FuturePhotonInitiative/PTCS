@@ -9,6 +9,10 @@ class HardwareListPanel(wx.ListBox):
     """
 
     def __init__(self, parent):
+        """
+        Sets up the Hardware List Panel
+        :param parent: The parent to display the panel on
+        """
         wx.ListBox.__init__(self, parent)
 
         # Setting up display for the Hardware list panel
