@@ -80,7 +80,7 @@ class ExperimentControlPanel(wx.StaticBox):
             self.experiment.set_data_value(variable, self.variables_text_fields[variable].GetValue())
 
     def get_experiments(self):
-        return self.GetParent().get_experiments()
+        return self.GetParent().get_experiment_classes()
 
     def add_experiment(self, evt):
         experiment = self.choice_box.GetString(self.choice_box.GetSelection())

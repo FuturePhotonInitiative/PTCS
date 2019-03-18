@@ -7,8 +7,11 @@ class HardwareListPanel(wx.ListBox):
     def __init__(self, parent):
         wx.ListBox.__init__(self, parent)
 
+        # Setting up display for the Hardware list panel
+        # Display constants can be found in Util.CONSTANTS
         self.SetBackgroundColour(GUI_CONSTANTS.LIST_PANEL_COLOR)
         self.SetForegroundColour(GUI_CONSTANTS.LIST_PANEL_FOREGROUND_COLOR)
+
         # self.AppendColumn(QUEUE_PANEL_NAME)
         for hardware in Globals.Hardware.get_hardware_names():
             self.Append(hardware)
@@ -18,14 +21,14 @@ class HardwareListPanel(wx.ListBox):
         self.Bind(wx.EVT_LISTBOX, self.on_hardware_select)
 
     def return_to_main_control(self, event):
-        # self.GetParent().render_control_box_with_experiment(None)
+        # self.GetParent().render_control_panel_with_experiment(None)
         if (not isinstance(event, wx.KeyEvent)) or event.GetKeyCode() == wx.WXK_ESCAPE:
             for selected in self.GetSelections():
                 self.Deselect(selected)
 
     def on_hardware_select(self, event):
         # selected_experiment = Globals.ExperimentQueue.get_ith_experiment(self.GetSelection())
-        # self.GetParent().render_control_box_with_experiment(selected_experiment)
+        # self.GetParent().render_control_panel_with_experiment(selected_experiment)
         pass
 
     def reload_panel(self):

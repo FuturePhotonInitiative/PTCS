@@ -5,27 +5,34 @@ import src.GUI.Util.Globals as Globals
 
 class ResultsFileListPanel(wx.ListBox):
     def __init__(self, parent):
+        """
+        Sets up the Results File List Panel
+        :param parent: The parent to display the panel on
+        """
         wx.ListBox.__init__(self, parent)
 
         self.experiment = None
 
-        self.SetBackgroundColour(GUI_CONSTANTS.LIST_PANEL_COLOR)
-        self.SetForegroundColour(GUI_CONSTANTS.LIST_PANEL_FOREGROUND_COLOR)
-        # self.AppendColumn(QUEUE_PANEL_NAME)
+        # Runs the file selection handler when a file is selected
+        self.Bind(wx.EVT_LISTBOX, self.on_file_select)
 
-        self.Bind(wx.EVT_KEY_DOWN, self.return_to_main_control)
-        self.Bind(wx.EVT_LISTBOX_DCLICK, self.return_to_main_control)
-        self.Bind(wx.EVT_LISTBOX, self.on_hardware_select)
+    def on_file_select(self, event):
+        """
+        Opens the file selected using the operating system, then deselects the selection
+        :param event: The event that caused the call
+        """
 
-    def return_to_main_control(self, event):
-        # self.GetParent().render_control_box_with_experiment(None)
-        pass
+        # Todo open the file selected
 
-    def on_hardware_select(self, event):
-        # selected_experiment = Globals.ExperimentQueue.get_ith_experiment(self.GetSelection())
-        # self.GetParent().render_control_box_with_experiment(selected_experiment)
-        pass
+        for selected in self.GetSelections():
+                self.Deselect(selected)
 
     def render_panel(self, experiment):
+        """
+        Renders the panel with an experiment, adds all of the experiments results files to the display
+        :param experiment: The experiment who's results will be displayed
+        """
         self.Clear()
         self.experiment = experiment
+
+        # Todo add all of the experiments results files to the display
