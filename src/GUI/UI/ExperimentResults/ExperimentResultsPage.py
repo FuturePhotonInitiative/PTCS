@@ -10,15 +10,12 @@ class ExperimentResultsPage(wx.Panel):
     and the files that they created as results
     """
 
-
     def __init__(self, parent):
         """
         Sets up the Experiment Results Page
         The page has two halves
-        The first half is the ExperimentListPanel which lists all
-            experiments that have been run in their Queues
-        The second half is the ResultsFileListPanel which shows all
-            the files for the selected experiment or Queue
+        The first half is the ExperimentListPanel which lists all experiments that have been run in their Queues
+        The second half is the ResultsFileListPanel which shows all the files for the selected experiment or Queue
         :param parent: The wxframe that the Experiment Results Page will be shown on
         """
         wx.Panel.__init__(self, parent)
