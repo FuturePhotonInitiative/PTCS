@@ -10,6 +10,8 @@ import wx
 import src.Prober
 import src.GUI.Util.Globals as Globals
 
+"""
+This is deprecated however we are keeping it around for now in case we need to reference it
 
 class MainFrame(wx.Frame):
     def __init__(self, *args, **kwds):
@@ -162,3 +164,4 @@ class SPAE_GUI(wx.App):
 if __name__ == "__main__":
     SPAE_GUI = SPAE_GUI(0)
     SPAE_GUI.MainLoop()
+"""

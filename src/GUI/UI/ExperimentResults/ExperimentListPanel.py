@@ -23,16 +23,16 @@ class ExperimentListPanel(wx.ListBox):
         for experiment in Globals.ExperimentQueue.get_experiment_names():
             self.Append(experiment)
 
-        # Runs return_to_main_control on a double click or when escape is pressed
-        self.Bind(wx.EVT_KEY_DOWN, self.return_to_main_control)
-        self.Bind(wx.EVT_LISTBOX_DCLICK, self.return_to_main_control)
+        # Runs deselect_and_return_control_to_default on a double click or when escape is pressed
+        self.Bind(wx.EVT_KEY_DOWN, self.deselect_and_return_control_to_default)
+        self.Bind(wx.EVT_LISTBOX_DCLICK, self.deselect_and_return_control_to_default)
 
         # Runs the on_experiment_select function when an experiment is selected
         self.Bind(wx.EVT_LISTBOX, self.on_experiment_select)
 
-    def return_to_main_control(self, event):
+    def deselect_and_return_control_to_default(self, event):
         """
-        Deselects the selected experiment, and tells the parent to render the default results file list page
+        Deselects the selected experiment, and tells the parent to render the default results file list panel
         :param event: The event that cause the call
         """
 
