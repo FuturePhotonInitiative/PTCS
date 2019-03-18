@@ -1,5 +1,5 @@
 import wx
-from src.GUI.UI.ExperimentResults.ResultsPage import ResultsPage
+from src.GUI.UI.ExperimentResults.ExperimentResultsPage import ExperimentResultsPage
 from src.GUI.UI.Hardware.HardwarePage import HardwarePage
 from src.GUI.UI.BuildExperiment.BuildExperimentPage import BuildExperimentsPage
 from src.GUI.UI.Queue.QueuePage import QueuePage
@@ -14,7 +14,7 @@ class MainFrame(wx.Frame):
         self.notebook.AddPage(QueuePage(self.notebook), CONSTANTS.QUEUE_PAGE_NAME)
         self.notebook.AddPage(HardwarePage(self.notebook), CONSTANTS.HARDWARE_PAGE_NAME)
         self.notebook.AddPage(BuildExperimentsPage(self.notebook), CONSTANTS.BUILD_EXPERIMENTS_PAGE_NAME)
-        self.notebook.AddPage(ResultsPage(self.notebook), CONSTANTS.RESULTS_PAGE_NAME)
+        self.notebook.AddPage(ExperimentResultsPage(self.notebook), CONSTANTS.RESULTS_PAGE_NAME)
         sizer = wx.BoxSizer()
         sizer.Add(self.notebook, 1, wx.EXPAND)
         self.panel.SetSizer(sizer)
