@@ -7,8 +7,11 @@ class HardwareListPanel(wx.ListBox):
     def __init__(self, parent):
         wx.ListBox.__init__(self, parent)
 
+        # Setting up display for the Hardware list panel
+        # Display constants can be found in Util.CONSTANTS
         self.SetBackgroundColour(GUI_CONSTANTS.LIST_PANEL_COLOR)
         self.SetForegroundColour(GUI_CONSTANTS.LIST_PANEL_FOREGROUND_COLOR)
+
         # self.AppendColumn(QUEUE_PANEL_NAME)
         for hardware in Globals.Hardware.get_hardware_names():
             self.Append(hardware)

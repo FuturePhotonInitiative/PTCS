@@ -26,10 +26,6 @@ class HardwarePage(wx.Panel):
         self.hardwareConfigurationListPanel = HardwareListPanel(self)
         self.controlPanel = wx.StaticBox(self)
 
-        # Setting up display for the Hardware list panel
-        # Display constants can be found in Util.CONSTANTS
-        self.hardwareConfigurationListPanel.SetBackgroundColour(GUI_CONSTANTS.LIST_PANEL_COLOR)
-        self.hardwareConfigurationListPanel.SetForegroundColour(GUI_CONSTANTS.LIST_PANEL_FOREGROUND_COLOR)
 
         # Adds the sub-panels to the page and sizes them appropriately, adds labels if necessary
         sizer = wx.BoxSizer(wx.HORIZONTAL)

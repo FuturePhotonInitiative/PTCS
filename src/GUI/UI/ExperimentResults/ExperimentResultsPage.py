@@ -21,13 +21,13 @@ class ExperimentResultsPage(wx.Panel):
         wx.Panel.__init__(self, parent)
 
         # Sets up both the halves of the page
-        self.ExperimentListPanel = ExperimentListPanel(self)
-        self.ResultsFileListPanel = ResultsFileListPanel(self)
+        self.experiment_list_panel = ExperimentListPanel(self)
+        self.results_file_list_panel = ResultsFileListPanel(self)
 
         # Sets up the displays so both halves are displayed properly
         # Display constants are in Util.CONSTANTS
         sizer = wx.BoxSizer(wx.HORIZONTAL)
-        sizer.Add(self.ExperimentListPanel, CONSTANTS.RESULTS_EXPERIMENT_PANEL_PROPORTION, wx.EXPAND)
-        sizer.Add(self.ResultsFileListPanel, CONSTANTS.RESULTS_FILE_PANEL_PROPORTION, wx.EXPAND)
+        sizer.Add(self.experiment_list_panel, CONSTANTS.RESULTS_EXPERIMENT_PANEL_PROPORTION, wx.EXPAND)
+        sizer.Add(self.results_file_list_panel, CONSTANTS.RESULTS_FILE_PANEL_PROPORTION, wx.EXPAND)
         self.SetSizer(sizer)
         sizer.Layout()
