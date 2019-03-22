@@ -6,7 +6,7 @@ from src.GUI.Model.ExperimentModel import Experiment
 
 class ExperimentQueue:
 
-    def __init__(self, system_config):
+    def __init__(self):
         """
         Create a new SPAEModel for the SPAE GUI
         :param system_config:
@@ -14,15 +14,15 @@ class ExperimentQueue:
             and stored in the order they are provided in in the list.
         """
         self.queue = []
-        self.system_config_files = system_config
-        self.system_config = {}
-        for sysfile in self.system_config_files:
-            with open(sysfile) as f:
-                self.system_config[os.path.basename(sysfile).replace('.json', "")] = json.load(f)
-
-        self.experiment_cache = {}
-        self.cache_is_valid = False
-        self.rebuild_experiment_cache()
+        # self.system_config_files = system_config
+        # self.system_config = {}
+        # for sysfile in self.system_config_files:
+        #     with open(sysfile) as f:
+        #         self.system_config[os.path.basename(sysfile).replace('.json', "")] = json.load(f)
+        #
+        # self.experiment_cache = {}
+        # self.cache_is_valid = False
+        # self.rebuild_experiment_cache()
 
         pass
 
@@ -89,16 +89,6 @@ class ExperimentQueue:
         if i < len(self.queue)-1:
             self.queue[i], self.queue[i+1] = self.queue[i+1], self.queue[i]
 
-    def get_default_experiment_root(self):
-        return self.system_config['Files']['Experiment_Roots'][0]
-
-    def get_experiment_roots(self):
-        return self.system_config['Files']['Experiment_Roots']
-
-    def add_experiment_root(self, path_to_root):
-        self.system_config['Files']['Experiment_Roots'].append(path_to_root)
-        self.cache_is_valid = False
-
     def schedule_experiments(self):
         """
         Re-order the experiment queue according to the dependencies and priorities of the Experiments in the queue.
@@ -108,27 +98,7 @@ class ExperimentQueue:
         # Method stub to be implemented if and when we decide to parallelize experiments
         pass
 
-    def get_experiment_from_name(self, name):
-        """
-        Get an Experiment object as described by the filename <name> in any of the experiment roots
-        :param name:
-            The filename of the experiment to search for
-        :return:
-            The experiment if it exists, None if it does not
-        """
-        if not self.cache_is_valid:
-            self.rebuild_experiment_cache()
-        if name in self.experiment_cache:
-            return Experiment(self.experiment_cache[name])
-        return None
 
-    def rebuild_experiment_cache(self):
-        self.experiment_cache = {}
-        # TODO recursively search
-        for exp_dir in self.system_config['Files']['Experiment_Roots']:
-            for exp_file in os.listdir(exp_dir):
-                self.experiment_cache[os.path.basename(exp_file)] = exp_dir + "/" + os.path.basename(exp_file)
-        self.cache_is_valid = True
 
     def get_experiment_names(self):
         name_list = []

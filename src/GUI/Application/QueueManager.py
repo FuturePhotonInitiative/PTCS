@@ -2,6 +2,8 @@ from threading import Thread
 import os
 
 from src import Prober
+from src.GUI.Model.ExperimentModel import Experiment
+from src.GUI.Model.ExperimentQueue import ExperimentQueue
 
 
 class QueueManager:
@@ -9,6 +11,7 @@ class QueueManager:
     def __init__(self, tmp_dir):
         self.tmp_dir = tmp_dir
         self.runner = None
+        self.experiment_queue = ExperimentQueue()
 
     def run_queue(self, to_run):
         """
@@ -125,3 +128,5 @@ class QueueManager:
             """
             return self.experiment_status[experiment]
 
+    def get_experiment_names(self):
+        self.experiment_queue.get_experiment_names()

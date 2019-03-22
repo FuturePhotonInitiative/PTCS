@@ -19,8 +19,7 @@ class QueuePanel(wx.ListBox):
         self.SetForegroundColour(GUI_CONSTANTS.LIST_PANEL_FOREGROUND_COLOR)
 
         # Adds all the experiments in the application queue to the display list
-        for experiment in Globals.ExperimentQueue.get_experiment_names():
-            self.Append(experiment)
+        self.reload_panel()
 
         # Runs deselect_and_return_control_to_default on a double click or when escape is pressed
         self.Bind(wx.EVT_KEY_DOWN, self.deselect_and_return_control_to_default)
@@ -44,14 +43,16 @@ class QueuePanel(wx.ListBox):
         Tells the parent to render the control panel with the selected experiment
         :param event: The event that caused the call
         """
-        selected_experiment = Globals.systemConfigManager.get_experiments_manager()
+        experiment_manager = Globals.systemConfigManager.get_experiments_manager()
+        selected_experiment = experiment_manager.get_ith_experiment(self.GetSelection())
         self.GetParent().render_control_panel_with_experiment(selected_experiment)
         pass
+
 
     def reload_panel(self):
         """
         Reloads the display list with the current Queue contents
         """
         self.Clear()
-        for experiment in Globals.ExperimentQueue.get_experiment_names():
+        for experiment in Globals.systemConfigManager.get_queue_manager().get_experiment_names():
             self.Append(experiment)

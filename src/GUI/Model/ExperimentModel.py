@@ -25,6 +25,9 @@ class Experiment:
         self.dependencies = dependencies
         self.priority = priority
 
+    def copy(self):
+        return Experiment(self.config_file_name, dependencies=self.dependencies, priority=self.priority)
+
     def __str__(self):
         return self.get_name()
 

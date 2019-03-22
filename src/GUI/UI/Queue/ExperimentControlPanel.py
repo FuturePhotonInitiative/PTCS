@@ -135,9 +135,9 @@ class ExperimentControlPanel(wx.StaticBox):
         :param evt: The causing event
         """
         experiment = self.choice_box.GetString(self.choice_box.GetSelection())
-        experiment = Globals.ExperimentQueue.get_experiment_from_name(experiment)
+        experiment = Globals.systemConfigManager.get_experiments_manager().get_experiment_from_name(experiment)
         if experiment:
-            Globals.ExperimentQueue.add_to_queue(experiment)
+            Globals.systemConfigManager.get_queue_manager().add_to_queue(experiment)
             self.GetParent().reload()
 
     def remove_experiment(self, evt):
@@ -146,6 +146,7 @@ class ExperimentControlPanel(wx.StaticBox):
         :param evt: The causing event
         """
         if self.experiment:
-            Globals.ExperimentQueue.remove_from_queue(self.experiment)
+            Globals.systemConfigManager.get_queue_manager().remove_from_queue(self.experiment)
             self.render_without_experiment()
             self.GetParent().reload()
+
