@@ -80,23 +80,32 @@ class ExperimentControlPanel(wx.StaticBox):
 
             # Add components (A Label and Textbox) for each of the experiments variables
             for variable in self.experiment.get_data_keys():
-                # print variable
+
+                # Set up label and text field
                 hbox = wx.BoxSizer(wx.HORIZONTAL)
                 text_feild = wx.TextCtrl(self, value=str(self.experiment.get_data_value(variable)))
                 label = wx.StaticText(self, label=variable)
 
+                # Add the components to the sizers
                 hbox.Add(label, 1, wx.EXPAND | wx.ALL)
                 hbox.Add(text_feild, 1, wx.EXPAND | wx.ALL)
                 self.sizer.Add(hbox, 1, wx.EXPAND | wx.ALL)
 
+                # Add the components to their dictionaries
                 self.variables_labels[variable] = label
                 self.variables_text_fields[variable] = text_feild
                 self.variables_boxes[variable] = hbox
 
+                # Bind the update variable function for when a variable is edited
                 text_feild.Bind(wx.EVT_TEXT, self.update_variable, text_feild)
 
+            # Set up remove button
             self.remove_button = wx.Button(self, label="Remove")
+
+            # Bind the remove button to a remove function
             self.remove_button.Bind(wx.EVT_BUTTON, self.remove_experiment)
+
+            # Add a remove button at the bottom of the page
             self.sizer.Add(self.remove_button, 1, wx.EXPAND | wx.ALL)
 
             self.sizer.Layout()
@@ -106,13 +115,25 @@ class ExperimentControlPanel(wx.StaticBox):
             self.render_without_experiment()
 
     def update_variable(self, evt):
+        """
+        Handles editing variables
+        :param evt: The causing event
+        """
         for variable in self.experiment.get_data_keys():
             self.experiment.set_data_value(variable, self.variables_text_fields[variable].GetValue())
 
     def get_experiments(self):
+        """
+        Gets a list of available experiment classes
+        :return: a list of available experiment classes
+        """
         return self.GetParent().get_experiment_classes()
 
     def add_experiment(self, evt):
+        """
+        Adds an experiment to the queue
+        :param evt: The causing event
+        """
         experiment = self.choice_box.GetString(self.choice_box.GetSelection())
         experiment = Globals.ExperimentQueue.get_experiment_from_name(experiment)
         if experiment:
@@ -120,6 +141,10 @@ class ExperimentControlPanel(wx.StaticBox):
             self.GetParent().reload()
 
     def remove_experiment(self, evt):
+        """
+        Removes an experiment from the queue
+        :param evt: The causing event
+        """
         if self.experiment:
             Globals.ExperimentQueue.remove_from_queue(self.experiment)
             self.render_without_experiment()
