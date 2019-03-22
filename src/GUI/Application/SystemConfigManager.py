@@ -17,7 +17,10 @@ class SystemConfigManager:
         with open(files_path) as config_file:
             self.file_locations = json.load(config_file)
         for config in self.file_locations:
-            self.file_locations[config] = files_path + "/" + self.file_locations[config]
+            # TODO only relative paths should be relative to the Files.json file: fix this
+            # TODO test this
+            if self.file_locations[config][0] != '/':
+                self.file_locations[config] = files_path + "/" + self.file_locations[config]
         self.experiments_manager = None
         self.results_manager = None
         self.queue_manager = None
@@ -67,3 +70,30 @@ class SystemConfigManager:
         if self.results_manager is None:
             self.results_manager = ResultsManager(self.file_locations["Results_Root"])
         return self.results_manager
+
+    def set_script_root(self, new_root):
+        self.file_locations['Script_Root'] = new_root
+
+    def set_driver_root(self, new_root):
+        self.file_locations['Driver_Root'] = new_root
+
+    def set_results_root(self, new_root):
+        self.file_locations['Results_Root'] = new_root
+
+    def set_hardware_config_location(self, new_location):
+        self.file_locations['Hardware_Config'] = new_location
+
+    def add_experiment_root(self, new_root):
+        self.file_locations["Experiment_Roots"].append(new_root)
+
+    def remove_experiment_root(self, root_to_remove):
+        # TODO this causes an error if the root is not already present
+        self.file_locations['Experiment_Roots'].remove(root_to_remove)
+
+    # TODO commit to json function
+    """
+    Requirements:
+        -Must make paths relative to the Files.json file or otherwise absolute
+        -Must write the current system configuration to a json file
+        -Must provide an option to write to a different location (Default argument)
+    """

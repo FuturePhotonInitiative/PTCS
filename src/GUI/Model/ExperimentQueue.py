@@ -4,7 +4,7 @@ import os
 from src.GUI.Model.ExperimentModel import Experiment
 
 
-class ExperimentQueueModel:
+class ExperimentQueue:
 
     def __init__(self, system_config):
         """
@@ -25,6 +25,9 @@ class ExperimentQueueModel:
         self.rebuild_experiment_cache()
 
         pass
+
+    def __len__(self):
+        return len(self.queue)
 
     def add_to_queue(self, experiment):
         """
@@ -134,7 +137,7 @@ class ExperimentQueueModel:
         return name_list
 
 if __name__ == '__main__':
-    model = ExperimentQueueModel(['../../System/Devices.json'])
+    model = ExperimentQueue(['../../System/Devices.json'])
     # Add five experiments and make sure they are added to the queue in order
     print "Testing experiment add order"
     model.add_to_queue(Experiment('../../Configs/Dummy_Test1.json'))
