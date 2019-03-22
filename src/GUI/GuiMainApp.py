@@ -1,9 +1,6 @@
 import wx
 
 from src.GUI.Application.SystemConfigManager import SystemConfigManager
-from src.GUI.Model.ExperimentModel import Experiment
-from src.GUI.Model.ExperimentQueueModel import ExperimentQueueModel
-from src.GUI.Model.HardwareModel import HardwareModel
 from src.GUI.UI.MainFrame import MainFrame
 import src.GUI.Util.Globals as Globals
 
