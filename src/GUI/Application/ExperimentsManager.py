@@ -13,3 +13,6 @@ class ExperimentsManager:
                 self.available_experiments[str(tmp)] = tmp
         for script in script_root:
             self.available_scripts.append(script)
+
+    def get_available_experiments_names(self):
+        return self.available_experiments.keys()
