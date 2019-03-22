@@ -19,7 +19,11 @@ class SystemConfigManager:
         for config in self.file_locations:
             # TODO only relative paths should be relative to the Files.json file: fix this
             # TODO test this
-            if self.file_locations[config][0] != '/':
+            if type(self.file_locations[config]) == list:
+                for i in range(len(self.file_locations[config])):
+                    if self.file_locations[config][i][0] != '/':
+                        self.file_locations[config][i] = files_path + "/" + self.file_locations[config][i]
+            elif self.file_locations[config][0] != '/':
                 self.file_locations[config] = files_path + "/" + self.file_locations[config]
         self.experiments_manager = None
         self.results_manager = None
