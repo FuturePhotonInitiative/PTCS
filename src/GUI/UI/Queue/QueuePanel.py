@@ -44,7 +44,7 @@ class QueuePanel(wx.ListBox):
         Tells the parent to render the control panel with the selected experiment
         :param event: The event that caused the call
         """
-        selected_experiment = Globals.ExperimentQueue.get_ith_experiment(self.GetSelection())
+        selected_experiment = Globals.systemConfigManager.get_experiments_manager()
         self.GetParent().render_control_panel_with_experiment(selected_experiment)
         pass
 
