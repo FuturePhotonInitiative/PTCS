@@ -48,7 +48,8 @@ class QueuePage(wx.Panel):
         Gets all the names of experiments classes for selection when adding a new experiment to the queue
         :return: A list of available experiments names
         """
-        return os.listdir(Globals.ExperimentQueue.get_default_experiment_root())
+        experiment_manager = Globals.systemConfigManager.get_experiments_manager()
+        return experiment_manager.get_available_experiments_names()
 
     def reload(self):
         """
