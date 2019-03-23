@@ -14,6 +14,9 @@ class SystemConfigManager:
             The path to the Files.json file which describes the location of all of the other required configuration
             files.
         """
+
+        self.files_path = files_path
+
         self.file_locations = {}
         with open(files_path) as config_file:
             self.file_locations = json.load(config_file)

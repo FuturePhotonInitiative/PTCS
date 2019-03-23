@@ -13,6 +13,8 @@ import argparse
 
 # Create the argument parser for Prober.py and tell it what arguments to look for (i.e. the config json file, and
 # optionally a parameter definition file or list of parameters for the experiments.)
+from src.GUI.Util import Globals
+
 parser = argparse.ArgumentParser(description="Run experiments")
 parser.add_argument("configFile")
 parser.add_argument("-p", "--param", type=argparse.FileType('r'))
@@ -181,12 +183,12 @@ def check_config_file(config):
     :return: problems, array of things wrong with the configuration file
     """
     problems = []
-    with open("../Configs/Files.json") as f:
+    with open(Globals.systemConfigManager.files_path) as f:
         files = json.load(f)
-    devices = config["Devices"]
-    experiments = config["Experiment"]
-    with open(files["Hardware_Config"]) as d:
-        hardware_manager = json.load(d)
+    devices = Globals.systemConfigManager.get_hardware_manager().get_hardware_dictionary()
+    experiments = Globals.systemConfigManager.get_experiments_manager().get_available_experiments()
+    # with open(files["Hardware_Config"]) as d:
+    #     hardware_manager = json.load(d)
     if "Name" not in config.keys():
         problems.append("Name : does not exist in configuration file")
     for fil in ["Script_Root", "Driver_Root"]:
@@ -296,7 +298,6 @@ def main(args):
     """
 
     print('Starting SPAE...')
-
     if len(args) == 1:
         file_name = raw_input("Enter config file name or nothing to exit: ")
         if len(file_name) == 0:
@@ -309,12 +310,11 @@ def main(args):
         parsed = temp[0]
         unparsed = temp[1]
         file_name = parsed.configFile
-
     with open(file_name) as f:
         config = json.load(f)
 
     # TODO hardcoded path
-    with open("../System/Files.json") as f:
+    with open(Globals.systemConfigManager.files_path) as f:
         files_config = json.load(f)
 
     # Configuration file check. Ensures the configuration files are formatted properly

@@ -60,3 +60,6 @@ class ExperimentsManager:
         if name in self.available_experiments:
             return self.available_experiments[name].copy()
         return None
+
+    def get_available_experiments(self):
+        return self.available_experiments

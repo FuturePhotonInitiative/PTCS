@@ -81,3 +81,9 @@ class HardwareManager:
         with open(self.hardware_config, "w") as config_file:
             json.dump(self.hardware_dict, config_file)
 
+    def get_hardware(self):
+        return self.hardware_objects
+
+
+    def get_hardware_dictionary(self):
+        return self.hardware_dict
