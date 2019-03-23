@@ -3,7 +3,7 @@ from src.GUI.Util import GUI_CONSTANTS
 import src.GUI.Util.Globals as Globals
 
 
-class QueuePanel(wx.ListBox):
+class QueuePanel(wx.StaticBox):
     """
     Panel for rendering a queue of experiments
     """
@@ -12,11 +12,19 @@ class QueuePanel(wx.ListBox):
         Sets up the Queue Panel
         :param parent: The parent to display the panel on
         """
-        wx.ListBox.__init__(self, parent)
+        wx.StaticBox.__init__(self, parent)
+
+        self.list_box = wx.ListBox()
+        self.run_button = wx.Button()
+
+        self.sizer = wx.BoxSizer(wx.VERTICAL)
+        self.SetSizer(self.sizer)
+        self.sizer.Add(self.list_box, 5)
+        self.sizer.Add(self.run_button, 1)
 
         # Sets up the colors display Constants are in Util.CONSTANTS
-        self.SetBackgroundColour(GUI_CONSTANTS.LIST_PANEL_COLOR)
-        self.SetForegroundColour(GUI_CONSTANTS.LIST_PANEL_FOREGROUND_COLOR)
+        self.list_box.SetBackgroundColour(GUI_CONSTANTS.LIST_PANEL_COLOR)
+        self.list_box.SetForegroundColour(GUI_CONSTANTS.LIST_PANEL_FOREGROUND_COLOR)
 
         # Adds all the experiments in the application queue to the display list
         self.reload_panel()
