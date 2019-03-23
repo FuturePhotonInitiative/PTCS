@@ -14,13 +14,18 @@ class QueuePanel(wx.StaticBox):
         """
         wx.StaticBox.__init__(self, parent)
 
-        self.list_box = wx.ListBox()
-        self.run_button = wx.Button()
+        self.list_box = wx.ListBox(self)
+        # self.list_box_sizer = wx.BoxSizer(wx.HORIZONTAL)
+        # self.list_box_sizer.Add(self.list_box, 5)
+        self.run_button = wx.Button(self)
+        self.run_button.SetLabelText("Run Queue")
+        # self.run_button_sizer = wx.BoxSizer(wx.HORIZONTAL)
+        # self.sizer.Add(self.list_box_sizer, 5)
 
         self.sizer = wx.BoxSizer(wx.VERTICAL)
         self.SetSizer(self.sizer)
-        self.sizer.Add(self.list_box, 5)
-        self.sizer.Add(self.run_button, 1)
+        self.sizer.Add(self.list_box, 5, wx.EXPAND | wx.ALL)
+        self.sizer.Add(self.run_button, 1, wx.EXPAND | wx.ALL)
 
         # Sets up the colors display Constants are in Util.CONSTANTS
         self.list_box.SetBackgroundColour(GUI_CONSTANTS.LIST_PANEL_COLOR)
@@ -35,6 +40,10 @@ class QueuePanel(wx.StaticBox):
 
         # Runs the on_experiment_select function when an experiment is selected
         self.Bind(wx.EVT_LISTBOX, self.on_experiment_select)
+
+
+        # Runs the queue when the run button is pressed
+        self.Bind(wx.EVT_BUTTON, self.run_the_queue)
 
     def deselect_and_return_control_to_default(self, event):
         """
@@ -61,6 +70,9 @@ class QueuePanel(wx.StaticBox):
         """
         Reloads the display list with the current Queue contents
         """
-        self.Clear()
+        self.list_box.Clear()
         for experiment in Globals.systemConfigManager.get_queue_manager().get_experiment_names():
-            self.Append(experiment)
+            self.list_box.Append(experiment)
+
+    def run_the_queue(self, event):
+        Globals.systemConfigManager.get_queue_manager().run()

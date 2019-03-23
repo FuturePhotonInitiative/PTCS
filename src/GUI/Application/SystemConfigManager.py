@@ -3,6 +3,7 @@ from HardwareManager import HardwareManager
 from QueueManager import QueueManager
 from ExperimentsManager import ExperimentsManager
 from ResultsManager import ResultsManager
+from src.GUI.Util import GUI_CONSTANTS
 
 
 class SystemConfigManager:
@@ -16,12 +17,22 @@ class SystemConfigManager:
         self.file_locations = {}
         with open(files_path) as config_file:
             self.file_locations = json.load(config_file)
+
+        files_path = files_path[0:files_path.rfind("/")]
         for config in self.file_locations:
             # TODO only relative paths should be relative to the Files.json file: fix this
             # TODO test this
-            if self.file_locations[config][0] != '/':
-                print files_path,  self.file_locations[config]
-                self.file_locations[config] = files_path + "/" + self.file_locations[config]
+
+            #+++++++++++++++ keep your fix +++++++++++++++++++
+            if type(self.file_locations[config]) == list:
+                for index in range(len(self.file_locations[config])):
+                    if self.file_locations[config][index][0] != '/':
+                        self.file_locations[config][index] = files_path + "/" + self.file_locations[config][index]
+            else:
+                if self.file_locations[config][0] != '/':
+                    self.file_locations[config] = files_path + "/" + self.file_locations[config]
+            # +++++++++++++++ keep your fix +++++++++++++++++++
+
         self.experiments_manager = None
         self.results_manager = None
         self.queue_manager = None
@@ -58,7 +69,7 @@ class SystemConfigManager:
             A new QueueManager object if one has not already been created by this class, an existing on otherwise.
         """
         if self.queue_manager is None:
-            self.queue_manager = QueueManager()
+            self.queue_manager = QueueManager(GUI_CONSTANTS.WORKING_DIRECTORY)
         return self.queue_manager
 
     def get_results_manager(self):

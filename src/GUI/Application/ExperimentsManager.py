@@ -12,17 +12,19 @@ class ExperimentsManager:
         self.available_scripts = []
         for root in experiment_roots:
             for experiment_file in os.listdir(root):
-                tmp = Experiment(experiment_file)
+                tmp = Experiment(root + "/" + experiment_file)
                 self.available_experiments[str(tmp)] = tmp
         for script in script_root:
             self.available_scripts.append(script)
         self.cache_is_valid = True
 
     def get_available_experiments_names(self):
-        return self.available_experiments.keys()
+        names = self.available_experiments.keys()
+        names.sort()
+        return names
 
     def get_ith_experiment(self, index):
-        return self.available_experiments[self.available_experiments.keys()[index]]
+        return self.available_experiments[self.get_available_experiments_names()[index]]
     
     # def get_default_experiment_root(self):
     #     return self.system_config['Files']['Experiment_Roots'][0]

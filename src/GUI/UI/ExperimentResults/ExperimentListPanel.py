@@ -20,7 +20,7 @@ class ExperimentListPanel(wx.ListBox):
         self.SetForegroundColour(GUI_CONSTANTS.LIST_PANEL_FOREGROUND_COLOR)
 
         # Adds all the experiments in the application queue to the display list
-        for experiment in Globals.ExperimentQueue.get_experiment_names():
+        for experiment in Globals.systemConfigManager.get_experiments_manager().get_available_experiments_names():
             self.Append(experiment)
 
         # Runs deselect_and_return_control_to_default on a double click or when escape is pressed

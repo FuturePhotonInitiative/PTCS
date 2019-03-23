@@ -8,8 +8,8 @@ from src.GUI.Model.ExperimentQueue import ExperimentQueue
 
 class QueueManager:
     # TODO temp dir needs to be in config
-    def __init__(self, tmp_dir):
-        self.tmp_dir = tmp_dir
+    def __init__(self, working_directory):
+        self.working_directory = working_directory
         self.runner = None
         self.experiment_queue = ExperimentQueue()
 
@@ -22,7 +22,7 @@ class QueueManager:
             None, immediately
         """
         if self.runner is not None:
-            runner = QueueManager.QueueRunner(to_run, self.tmp_dir)
+            runner = QueueManager.QueueRunner(to_run, self.working_directory)
             runner.start()
 
     def queue_is_running(self):
@@ -74,17 +74,17 @@ class QueueManager:
         """
         Thread class to run a provided queue
         """
-        def __init__(self, queue, tmp_dir):
+        def __init__(self, queue, working_directory):
             """
             Create a new QueueRunner that will run the provided queue using the provided temporary directory
             :param queue:
                 The queue to run with Prober
-            :param tmp_dir:
+            :param working_directory:
                 The directory to store the temporary json file for the experiment on which we will call Prober
             """
             Thread.__init__(self)
             self.queue = queue
-            self.tmp_dir = tmp_dir
+            self.tmp_dir = working_directory
             # Initialize the status of all of the experiments in the queue to "not yet run"
             self.experiment_status = {}
             for i in range(len(queue)):
@@ -129,4 +129,10 @@ class QueueManager:
             return self.experiment_status[experiment]
 
     def get_experiment_names(self):
-        self.experiment_queue.get_experiment_names()
+        return self.experiment_queue.get_experiment_names()
+
+    def add_to_queue(self, experiment):
+        self.experiment_queue.add_to_queue(experiment)
+
+    def run(self):
+        self.run_queue(self.experiment_queue)
