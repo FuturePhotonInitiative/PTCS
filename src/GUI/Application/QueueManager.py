@@ -1,3 +1,5 @@
+import os
+
 from src.GUI.Application.QueueRunner import QueueRunner
 from src.GUI.Model.ExperimentQueue import ExperimentQueue
 
@@ -6,6 +8,8 @@ class QueueManager:
     # TODO temp dir needs to be in config
     def __init__(self, working_directory):
         self.working_directory = working_directory + "/temp"
+        if not os.path.exists(self.working_directory):
+            os.makedirs(self.working_directory)
         self.runner = None
         self.experiment_queue = ExperimentQueue()
 
