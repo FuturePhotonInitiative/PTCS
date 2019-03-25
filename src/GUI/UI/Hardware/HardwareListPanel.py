@@ -21,7 +21,7 @@ class HardwareListPanel(wx.ListBox):
         self.SetForegroundColour(GUI_CONSTANTS.LIST_PANEL_FOREGROUND_COLOR)
 
         # Adds all the hardware to the display
-        for hardware in Globals.Hardware.get_hardware_names():
+        for hardware in Globals.systemConfigManager.get_hardware_manager().get_all_hardware_names():
             self.Append(hardware)
 
         # Runs the deselect and default function when hardware is deselected

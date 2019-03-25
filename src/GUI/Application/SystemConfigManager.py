@@ -3,6 +3,7 @@ from HardwareManager import HardwareManager
 from QueueManager import QueueManager
 from ExperimentsManager import ExperimentsManager
 from ResultsManager import ResultsManager
+from src.GUI.Util import GUI_CONSTANTS
 
 
 class SystemConfigManager:
@@ -13,9 +14,14 @@ class SystemConfigManager:
             The path to the Files.json file which describes the location of all of the other required configuration
             files.
         """
+
+        self.files_path = files_path
+
         self.file_locations = {}
         with open(files_path) as config_file:
             self.file_locations = json.load(config_file)
+
+        files_path = files_path[0:files_path.rfind("/")]
         for config in self.file_locations:
             # TODO only relative paths should be relative to the Files.json file: fix this
             # TODO test this
@@ -61,7 +67,7 @@ class SystemConfigManager:
             A new QueueManager object if one has not already been created by this class, an existing on otherwise.
         """
         if self.queue_manager is None:
-            self.queue_manager = QueueManager()
+            self.queue_manager = QueueManager(GUI_CONSTANTS.WORKING_DIRECTORY)
         return self.queue_manager
 
     def get_results_manager(self):

@@ -1,7 +1,8 @@
 import json
 import os
 
-from src.GUI.Util.Globals import Hardware
+# from src.GUI.Util.Globals import Hardware
+from src.GUI.Model.HardwareModel import HardwareModel
 
 
 class HardwareManager:
@@ -19,7 +20,7 @@ class HardwareManager:
         with open(hardware_config) as config_file:
             self.hardware_dict = json.load(config_file)
             for hardware_item in self.hardware_dict.keys():
-                obj = Hardware(hardware_item,
+                obj = HardwareModel(hardware_item,
                                self.hardware_dict[hardware_item]['Driver'],
                                self.hardware_dict[hardware_item]['Type'],
                                self.hardware_dict[hardware_item]['Default'])
@@ -80,3 +81,9 @@ class HardwareManager:
         with open(self.hardware_config, "w") as config_file:
             json.dump(self.hardware_dict, config_file)
 
+    def get_hardware(self):
+        return self.hardware_objects
+
+
+    def get_hardware_dictionary(self):
+        return self.hardware_dict
