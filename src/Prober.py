@@ -318,8 +318,6 @@ def main(args):
         config = json.load(f)
 
     # # TODO hardcoded path
-    with open(config_manager.files_path) as f:
-        files_config = json.load(f)
 
     # Configuration file check. Ensures the configuration files are formatted properly
     check = check_config_file(config, config_manager)

@@ -5,7 +5,7 @@ from src.GUI.Model.ExperimentQueue import ExperimentQueue
 class QueueManager:
     # TODO temp dir needs to be in config
     def __init__(self, working_directory):
-        self.working_directory = working_directory
+        self.working_directory = working_directory + "/temp"
         self.runner = None
         self.experiment_queue = ExperimentQueue()
 
