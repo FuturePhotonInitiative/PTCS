@@ -13,7 +13,6 @@ import argparse
 
 # Create the argument parser for Prober.py and tell it what arguments to look for (i.e. the config json file, and
 # optionally a parameter definition file or list of parameters for the experiments.)
-from src.GUI.Util import Globals
 
 parser = argparse.ArgumentParser(description="Run experiments")
 parser.add_argument("configFile")
@@ -64,9 +63,12 @@ def extract_scripts(json_file, json_locations):
     :param json_locations: The JSON Files object with standard file directories
     :return: The list of staged task lists
     """
-    scripts_root = str(json_locations['Files'].get('Script_Root', './Scripts'))
-    if scripts_root[0] is '.':
-        scripts_root = os.path.join(os.path.dirname(__file__), scripts_root)
+    scripts_root = str(json_locations['Script_Root'])
+    # print scripts_root
+    # # if scripts_root[0] is '.':
+    # #     scripts_root = os.path.join(os.path.dirname(__file__), scripts_root)
+    # print "-------------"
+    # print scripts_root
     available_scripts = os.listdir(scripts_root)
     available_scripts = [i for i in available_scripts if not (i == '__init__.py' or i[-3:] != '.py')]
 
@@ -96,9 +98,9 @@ def connect_devices(json_file, json_locations, exit_stack):
     :return: A dict of device names mapping to their objects
     """
     manager = pyvisa.ResourceManager()
-    driver_root = str(json_locations['Files'].get('Driver_Root', './Instruments'))
-    if driver_root[0] is '.':
-        driver_root = os.path.join(os.path.dirname(__file__), driver_root)
+    driver_root = str(json_locations['Driver_Root'])
+    # if driver_root[0] is '.':
+    #     driver_root = os.path.join(os.path.dirname(__file__), driver_root)
     drivers = os.listdir(driver_root)
     drivers = [i[:-3] for i in drivers if not (i == '__init__.py' or i[-3:] != '.py')]
     devices = {}
@@ -106,10 +108,10 @@ def connect_devices(json_file, json_locations, exit_stack):
     print "Finding Devices...."
 
     # this will need to be edited with using Devices.json as a hardware manager
-    with open(json_locations["Files"]["Hardware_Config"]) as d:
+    with open(json_locations["Hardware_Config"]) as d:
         hardware_manager = json.load(d)
     # this one is updated for the hardware manager
-    for dev in json_file['Devices']:
+    for dev in json_file["Requires"]['Devices']:
         if dev not in hardware_manager.keys():
             print "Device not found in Devices.json: "+dev
         else:
@@ -175,7 +177,7 @@ def initialize_data(data_map, json_file):
     return
 
 
-def check_config_file(config):
+def check_config_file(config, config_manager):
     """
     Checks the config file to ensure that information is properly input in json configuration
     This is specific to the current configuration file and will need to change when the file changes
@@ -183,19 +185,19 @@ def check_config_file(config):
     :return: problems, array of things wrong with the configuration file
     """
     problems = []
-    with open(Globals.systemConfigManager.files_path) as f:
-        files = json.load(f)
-    devices = Globals.systemConfigManager.get_hardware_manager().get_hardware_dictionary()
-    experiments = Globals.systemConfigManager.get_experiments_manager().get_available_experiments()
-    # with open(files["Hardware_Config"]) as d:
-    #     hardware_manager = json.load(d)
+    # with open(config_manager.files_path) as f:
+    #     files = json.load(f)
+    devices = config["Requires"]["Devices"]
+    experiments = config["Experiment"]
+    with open(config_manager.file_locations["Hardware_Config"]) as d:
+        hardware_manager = json.load(d)
     if "Name" not in config.keys():
         problems.append("Name : does not exist in configuration file")
     for fil in ["Script_Root", "Driver_Root"]:
-        if fil not in files.keys():
+        if fil not in config_manager.file_locations.keys():
             problems.append("Files-"+fil+" : does not exist in configuration file")
         else:
-            if not os.path.exists(files[fil]):
+            if not os.path.exists(config_manager.file_locations[fil]):
                 problems.append("Files-"+fil+" : path does not exist")
     for device in devices:
         if device not in hardware_manager.keys():
@@ -296,6 +298,8 @@ def main(args):
     :param args: test configuration file
     :return: None
     """
+    from GUI.Application.SystemConfigManager import  SystemConfigManager
+    config_manager = SystemConfigManager('../../System/Files.json')
 
     print('Starting SPAE...')
     if len(args) == 1:
@@ -313,12 +317,12 @@ def main(args):
     with open(file_name) as f:
         config = json.load(f)
 
-    # TODO hardcoded path
-    with open(Globals.systemConfigManager.files_path) as f:
+    # # TODO hardcoded path
+    with open(config_manager.files_path) as f:
         files_config = json.load(f)
 
     # Configuration file check. Ensures the configuration files are formatted properly
-    check = check_config_file(config)
+    check = check_config_file(config, config_manager)
     if len(check) is not 0:
         print "ABORTING! Configuration file not formatted correctly."
         for problem in check:
@@ -327,12 +331,12 @@ def main(args):
     else:
         print("Running Experiment: " + config['Name'] + "\n\n")
 
-        scripts = extract_scripts(config, files_config)
+        scripts = extract_scripts(config, config_manager.file_locations)
 
         data_map = {'Data': {}, 'Config': config}
 
         with contextlib2.ExitStack() as stack:
-            data_map['Devices'] = connect_devices(config, files_config, stack)
+            data_map['Devices'] = connect_devices(config, config_manager.file_locations, stack)
             initialize_data(data_map, config)
             # Only parse the additional command line arguments if there were any
             if len(args) > 1:
