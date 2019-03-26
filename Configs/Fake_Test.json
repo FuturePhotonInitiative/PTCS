@@ -1,0 +1,37 @@
+{
+  "Name": "Fake Test",
+  "Requires":
+            {
+              "Files":
+                      {
+                        "Script_Root": "./Scripts",
+                        "Driver_Root": "./Instruments",
+                        "Results_Root": "../Results",
+                        "Hardware_Config": "../System/Devices.json"
+                      },
+              "Devices":
+                      []
+            },
+  "Experiment" :
+              [
+                {
+                  "Type":"PY_SCRIPT",
+                  "Source": "DummyDataCollect.py",
+                  "Order":  1
+                },
+                {
+                  "Type":"PY_SCRIPT",
+                  "Source": "DummyDataReduce.py",
+                  "Order":  2
+                },
+                {
+                  "Type":"PY_SCRIPT",
+                  "Source": "DummyDataExport.py",
+                  "Order":  3
+                }
+              ],
+  "Data" :
+          {
+            "Levels": 10
+          }
+}

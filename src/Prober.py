@@ -146,15 +146,16 @@ def spawn_scripts(scripts, data_map, json_locations):
     :param json_locations: The JSON Files object with standard file directories
     :return: None
     """
-    script_root = str(json_locations['Files'].get('Script_Root', './Scripts'))
-    if script_root[0] is '.':
-        script_root = os.path.join(os.path.dirname(__file__), script_root)
+    script_root = str(json_locations['Script_Root'])
+    # if script_root[0] is '.':
+    #     script_root = os.path.join(os.path.dirname(__file__), script_root)
 
     for frame in scripts:
         threads = []
         for task in frame:  # Add Multi-Threading support here
             module = str(task)[:-3]
             if module not in [i[0] for i in globals().items() if isinstance(i[1], types.ModuleType)]:
+                print script_root + '\\' + module + '.py'
                 globals()[module] = imp.load_source(module, script_root + '\\' + module + '.py')
             [i[1] for i in inspect.getmembers(globals()[module], inspect.isfunction) if i[0] is 'main'][0](data_map)
     print "Scripts Completed"
@@ -351,7 +352,7 @@ def main(args):
                 if vars(parsed)['additionalParams']:
                     parse_command_line_definitions(data_map, vars(parsed)['additionalParams'])
                 parse_command_line_definitions(data_map, unparsed)
-            spawn_scripts(scripts, data_map, config)
+            spawn_scripts(scripts, data_map, config_manager.file_locations)
 
         print 'Experiment complete, goodbye!'
 

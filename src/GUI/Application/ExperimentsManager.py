@@ -23,9 +23,6 @@ class ExperimentsManager:
         names.sort()
         return names
 
-    def get_ith_experiment(self, index):
-        return self.available_experiments[self.get_available_experiments_names()[index]]
-    
     # def get_default_experiment_root(self):
     #     return self.system_config['Files']['Experiment_Roots'][0]
     #

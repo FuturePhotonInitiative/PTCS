@@ -13,6 +13,12 @@ class QueueManager:
         self.runner = None
         self.experiment_queue = ExperimentQueue()
 
+    def remove_from_queue(self, experiment):
+        self.experiment_queue.remove_from_queue(experiment)
+
+    def get_ith_experiment(self, index):
+        return self.experiment_queue.get_ith_experiment(index)
+
     def run_queue(self, to_run):
         """
             Starts the thread that runs the queue.
