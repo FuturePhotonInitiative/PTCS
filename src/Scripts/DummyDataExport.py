@@ -19,6 +19,7 @@ def main(data_map):
 	print identifier
 
 	# create path for results if not existent
+	return_path = os.getcwd()
 	if not os.path.exists("Results"):
 		os.mkdir("Results")
 	os.chdir("Results")
@@ -62,3 +63,5 @@ def main(data_map):
 	plt.text(0, 0, str(os.path)+"Fake_Voltage_vs_Percentage.png")
 	plt.savefig("Fake_Voltage_vs_Percentage")
 	plt.show()
+
+	os.chdir(return_path)
