@@ -45,6 +45,25 @@ class VCU108(object):
 					VCU108.methods.append(method)
 		return VCU108.methods
 
+	def run_eye_scan(self, scale_factor=0, horizontal_boundary=4, vertical_boundary=1, points=0, drp=0):
+		data = []
+		if not self.check_connected():
+			return False
+		else:
+			self.device.write("G")
+			self.device.write(str(scale_factor))
+			self.device.write(str(horizontal_boundary))
+			self.device.write(str(vertical_boundary))
+			self.device.write(str(points))
+			self.device.write(str(drp))
+			while "END" not in line:
+				try:
+					line = self.device.read()
+					data.append(line)
+				except pyvisa.errors.VisaIOError:
+					continue
+			# read
+
 	def run_raw_command(self, command):
 		if not self.check_connected():
 			return False
@@ -64,7 +83,7 @@ class VCU108(object):
 			return False
 		else:
 			self.reset_menu()
-			self.device.write("2")
+
 			self.device.clear()
 			return "Complete"
 
