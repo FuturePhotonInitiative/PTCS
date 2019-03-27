@@ -19,9 +19,9 @@ def main(data_map):
     return_path = os.getcwd()
 
     # create path for results if not existent
-    if not os.path.exists("Results"):
-        os.mkdir("Results")
-    os.chdir("Results")
+    if not os.path.exists("../Results"):
+        os.mkdir("../Results")
+    os.chdir("../Results")
 
     # create path for unique identifier for experiment
     if not os.path.exists(identifier):
@@ -56,8 +56,9 @@ def main(data_map):
     # Plot out Reduced Results
     plt.scatter(x_axis, y_axis)
     plt.autoscale()
-    plt.xlabel("Voltage\n" + str(os.path) + "Voltage_vs_PercentError.png")
-    plt.text(0, 0, str(os.path) + "Voltage_vs_PercentError.png")
+    plt.title("Percent Error vs. Voltage Applies")
+    plt.xlabel("Voltage\n"+str(os.getcwd()) + "Voltage_vs_PercentError.png")
+    plt.text(0, 0, str(os.getcwd()) + "Voltage_vs_PercentError.png")
     plt.ylabel('Percent Error')
     plt.savefig("Voltage_vs_PercentError")
     plt.show()

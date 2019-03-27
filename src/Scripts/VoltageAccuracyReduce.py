@@ -8,5 +8,5 @@ def main(data_map):
     data_map['Data']['Reduce'] = {}
 
     for voltage in samples.keys():
-        data_map['Data']['Reduce'][voltage] = 100.0 * (abs(voltage - samples[voltage])/voltage)
+        data_map['Data']['Reduce'][voltage] = 100.0 * (abs(float(voltage) - float(samples[voltage]))/float(voltage))
     return
