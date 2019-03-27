@@ -1,20 +1,9 @@
 {
   "Name": "Dummy Test 1",
-  "Requires":
-            {
-              "Files":
-                      {
-                        "Script_Root": "./Scripts",
-                        "Driver_Root": "./Instruments",
-                        "Results_Root": "../Results",
-                        "Hardware_Config": "../System/Devices.json"
-                      },
-              "Devices":
-                      [
-                          "Voltage_Source",
-                          "Logic_Analyzer"
-                      ]
-            },
+  "Devices": [
+    "Voltage_Source",
+    "Logic_Analyzer"
+  ],
   "Experiment" :
               [
                 {

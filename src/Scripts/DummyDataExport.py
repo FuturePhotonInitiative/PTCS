@@ -19,6 +19,7 @@ def main(data_map):
 	print identifier
 
 	# create path for results if not existent
+	return_path = os.getcwd()
 	if not os.path.exists("Results"):
 		os.mkdir("Results")
 	os.chdir("Results")
@@ -47,7 +48,7 @@ def main(data_map):
 
 	# Writing out and plotting reduce results to csv
 	with open("reduce_results.csv", "w+") as reduce_csv:
-		reduce_csv.write('Fake_Voltage,Percentage\n')
+		reduce_csv.write('Fake_Voltage,Fake_Current\n')
 		for voltage in sorted(results_reduce.keys()):
 			# print str(voltage)+' : '+str(results_reduce[voltage])
 			reduce_csv.write(str(voltage)+','+str(results_reduce[voltage])+'\n')
@@ -55,10 +56,24 @@ def main(data_map):
 			y_axis.append(results_reduce[voltage])
 
 	# Plot out Reduced Results
-	plt.scatter(x_axis, y_axis)
-	plt.autoscale()
-	plt.xlabel('Fake_Voltage')
-	plt.ylabel('Percentage of 1\'s')
-	plt.text(0, 0, str(os.path)+"Fake_Voltage_vs_Percentage.png")
-	plt.savefig("Fake_Voltage_vs_Percentage")
+	figure = plt.figure()
+	axes = figure.add_axes((0.1, 0.2, 0.8, 0.7))
+
+	axes.set_title("Fake Voltage vs Current")
+	axes.set_xlabel('Fake Voltage')
+	axes.set_ylabel('Fake Current')
+
+	axes.scatter(x_axis, y_axis)
+
+	text = os.getcwd()+"Fake_Voltage_vs_Current.png"
+	figure.text(0.0, 0.06, text[:len(text)/2], ha='left')
+	figure.text(0.0, 0.02, text[len(text)/2:], ha='left')
+
+	axes.set_xlim((0, 10))
+	axes.set_ylim((0, 8))
+	# plt.autoscale()
+
+	plt.savefig("Fake_Voltage_vs_Current")
 	plt.show()
+
+	os.chdir(return_path)

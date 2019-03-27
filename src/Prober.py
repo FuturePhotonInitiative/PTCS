@@ -111,7 +111,7 @@ def connect_devices(json_file, json_locations, exit_stack):
     with open(json_locations["Hardware_Config"]) as d:
         hardware_manager = json.load(d)
     # this one is updated for the hardware manager
-    for dev in json_file["Requires"]['Devices']:
+    for dev in json_file['Devices']:
         if dev not in hardware_manager.keys():
             print "Device not found in Devices.json: "+dev
         else:
@@ -188,7 +188,7 @@ def check_config_file(config, config_manager):
     problems = []
     # with open(config_manager.files_path) as f:
     #     files = json.load(f)
-    devices = config["Requires"]["Devices"]
+    devices = config["Devices"]
     experiments = config["Experiment"]
     with open(config_manager.file_locations["Hardware_Config"]) as d:
         hardware_manager = json.load(d)
@@ -291,16 +291,16 @@ def generate_arg_list_from_parameter_file(arg_file):
             arglist.append(name + "=" + str(args[0]))
     return arglist
 
-
-
-def main(args):
+def main(args, config_manager=None):
     """
     Entry point of SPAE, loads config file
     :param args: test configuration file
     :return: None
     """
+
     from GUI.Application.SystemConfigManager import  SystemConfigManager
-    config_manager = SystemConfigManager('../../System/Files.json')
+    if config_manager is None:
+        config_manager = SystemConfigManager('../../System/Files.json')
 
     print('Starting SPAE...')
     if len(args) == 1:
