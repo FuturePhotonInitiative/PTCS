@@ -7,7 +7,7 @@
 import json
 import os
 import wx
-import Prober
+import src.Prober
 
 
 class MainFrame(wx.Frame):
@@ -17,7 +17,7 @@ class MainFrame(wx.Frame):
 		wx.Frame.__init__(self, *args, **kwds)
 		self.SetSize((1290, 530))
 		self.Choose_Test = wx.ComboBox(self, wx.ID_ANY, choices=os.listdir("../Configs"),
-		                               style=wx.CB_DROPDOWN | wx.CB_SORT)
+									   style=wx.CB_DROPDOWN | wx.CB_SORT)
 		self.Test_Name = wx.TextCtrl(self, wx.ID_ANY, "Default")
 		self.Test_Name.Bind(wx.EVT_TEXT, self.on_key_typed_header)
 		self.Run_Button = wx.Button(self, wx.ID_ANY, "RUN")
@@ -37,19 +37,19 @@ class MainFrame(wx.Frame):
 
 		self.__set_properties()
 		self.__do_layout()
-		# end wxGlade
+	# end wxGlade
 
 	def on_key_typed_variables(self, event):
 		# begin on_key_typed_variables
 		self.Config["Data"][self.Variable_Names[event.GetId()].GetLabelText()] = event.GetString()
 
-		# end on_key_typed_variables
+	# end on_key_typed_variables
 
 	def on_key_typed_header(self, event):
 		# begin on_key_typed_header
 		self.Config["Name"] = event.GetString()
 
-		# end on_key_typed_header
+	# end on_key_typed_header
 
 	def on_select(self, event):
 		# begin on_select
@@ -83,7 +83,7 @@ class MainFrame(wx.Frame):
 		except KeyError:
 			print "There is no data necessary for this test."
 
-		# end on_select
+	# end on_select
 
 	def run_prober(self, event):
 		# begin run_prober
@@ -95,10 +95,10 @@ class MainFrame(wx.Frame):
 
 		# Prober.main takes in sys.argv when running from the command line
 		# This string is intended to maintain the same format as running from the command line
-		Prober.main(["Prober.py", "temp.json"])
-		# Close the window after running the experiment?
-		# self.Close()
-		# end run_prober
+		src.Prober.main(["Prober.py", "temp.json"])
+	# Close the window after running the experiment?
+	# self.Close()
+	# end run_prober
 
 	def __set_properties(self):
 		# begin wxGlade: MainFrame.__set_properties
@@ -114,7 +114,7 @@ class MainFrame(wx.Frame):
 			variable.SetFont(wx.Font(14, wx.DEFAULT, wx.NORMAL, wx.BOLD, 0, "Segoe UI"))
 			variable.Hide()
 
-		# end wxGlade
+	# end wxGlade
 
 	def __do_layout(self):
 		# begin wxGlade: MainFrame.__do_layout
@@ -140,7 +140,7 @@ class MainFrame(wx.Frame):
 
 		self.SetSizer(sizer_1)
 		self.Layout()
-		# end wxGlade
+	# end wxGlade
 
 # end of class MainFrame
 
@@ -152,10 +152,9 @@ class SPAE_GUI(wx.App):
 		self.frame.Show()
 		return True
 
+if __name__ == '__main__':
+    app = SPAE_GUI()
+    app.MainLoop()
+
 
 # end of class SPAE_GUI
-
-
-if __name__ == "__main__":
-	SPAE_GUI = SPAE_GUI(0)
-	SPAE_GUI.MainLoop()
