@@ -78,7 +78,8 @@ class SystemConfigManager:
             A new ResultsManager object if one has not already been created by this class, an existing on otherwise.
         """
         if self.results_manager is None:
-            self.results_manager = ResultsManager(self.file_locations["Results_Root"])
+            self.results_manager = ResultsManager(self.file_locations["Results_Root"],
+                                                  self.file_locations["Results_Config_Root"])
         return self.results_manager
 
     def set_script_root(self, new_root):
