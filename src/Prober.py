@@ -13,6 +13,7 @@ import argparse
 
 # Create the argument parser for Prober.py and tell it what arguments to look for (i.e. the config json file, and
 # optionally a parameter definition file or list of parameters for the experiments.)
+from src.GUI.Model.ExperimentResultModel import ExperimentResultsModel
 
 parser = argparse.ArgumentParser(description="Run experiments")
 parser.add_argument("configFile")
@@ -137,7 +138,7 @@ def connect_devices(json_file, json_locations, exit_stack):
     return devices
 
 
-def spawn_scripts(scripts, data_map, json_locations):
+def spawn_scripts(scripts, data_map, json_locations, experiment_result):
     """
     Runs the scripts defined in the JSON config. The tasks are called based on the order specified in the config,
         two different tasks can have the same order, meaning they should be spawned at the same time.
@@ -152,12 +153,12 @@ def spawn_scripts(scripts, data_map, json_locations):
 
     for frame in scripts:
         threads = []
-        for task in frame:  # Add Multi-Threading support here
+        for task in frame:  # todo # dd Multi-Threading support here
             module = str(task)[:-3]
             if module not in [i[0] for i in globals().items() if isinstance(i[1], types.ModuleType)]:
                 print script_root + '\\' + module + '.py'
                 globals()[module] = imp.load_source(module, script_root + '\\' + module + '.py')
-            [i[1] for i in inspect.getmembers(globals()[module], inspect.isfunction) if i[0] is 'main'][0](data_map)
+            [i[1] for i in inspect.getmembers(globals()[module], inspect.isfunction) if i[0] is 'main'][0](data_map, experiment_result)
     print "Scripts Completed"
     return
 
@@ -330,6 +331,8 @@ def main(args, config_manager=None):
     else:
         print("Running Experiment: " + config['Name'] + "\n\n")
 
+        experiment_result, experiment_result_name = config_manager.get_results_manager().make_new_experiment_result(file_name)
+
         scripts = extract_scripts(config, config_manager.file_locations)
 
         data_map = {'Data': {}, 'Config': config}
@@ -354,6 +357,8 @@ def main(args, config_manager=None):
                 parse_command_line_definitions(data_map, unparsed)
             spawn_scripts(scripts, data_map, config_manager.file_locations)
 
+        experiment_result.end_experiment()
+        experiment_result.export_to_json(experiment_result_name)
         print 'Experiment complete, goodbye!'
 
 

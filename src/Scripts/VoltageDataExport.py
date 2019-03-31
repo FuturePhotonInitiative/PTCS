@@ -4,7 +4,7 @@ import os
 import time
 
 
-def main(data_map):
+def main(data_map, experiment_result):
 	"""
 	This stage saves results into 2 separate CSV files for both collect and reduce
 	Also displays and saves a plot of the reduce data

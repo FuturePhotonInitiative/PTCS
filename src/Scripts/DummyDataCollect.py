@@ -3,7 +3,7 @@ import random
 import time
 
 
-def main(data_map):
+def main(data_map, experiment_result):
     """
 	This stage varies an applied voltage to a logic analyzer and collects the resulting samples
 	:param data_map: The dictionary to store data between tasks

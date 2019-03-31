@@ -1,4 +1,4 @@
-def main(data_map):
+def main(data_map, experiment_result):
 	"""
 	This stage calculates the detection percentage for a given applied voltage
 	:param data_map: The dictionary to store data between tasks
