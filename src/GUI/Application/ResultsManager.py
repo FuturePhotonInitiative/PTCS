@@ -25,17 +25,23 @@ class ResultsManager:
         self.results_root = results_root
         self.results_config_root = results_config_root
         self.queue_result_list = []
-        self.experiment_result_list = {}
+        self.experiment_result_dict = {}
         for config in os.listdir(results_config_root):
             if QUEUE_FILE_TITLE in config:
                 self.queue_result_list.append(QueueResultModel.QueueResultsModel(queue_result_config=config))
             else:
-                self.experiment_result_list[config] = (ExperimentResultsModel(results_root,
+                self.experiment_result_dict[config] = (ExperimentResultsModel(results_root,
                                                                               experiment_result_config=results_config_root + "/" + config))
 
 
     def get_list_of_queue_results(self):
         pass
+
+    def get_list_of_experiment_result(self, key):
+        return self.experiment_result_dict[key]
+
+    def get_list_of_experiment_result_names(self):
+        return self.experiment_result_dict.keys()
 
     def make_new_experiment_result(self, exeriment_config_location):
         now = datetime.datetime.today()
@@ -51,7 +57,7 @@ class ResultsManager:
 
         result = ExperimentResultsModel(self.results_root + "/" + name, exeriment_config_location)
         result.set_start(now)
-        self.experiment_result_list[name] = result
+        self.experiment_result_dict[name] = result
         return [result, name]
 
     def save_experiment_result(self, name, experiment_result):
