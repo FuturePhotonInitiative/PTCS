@@ -27,9 +27,9 @@ class QueueResultsModel:
         :return:
         None
         """
-        config_dict = json.load(filename)
-        self.start_datetime = config_dict["start_datetime"]
-        self.end_datetime = config_dict["end_datetime"]
+        config_dict = json.load(open(filename))
+        self.start_datetime = datetime.datetime.strptime(config_dict["start_datetime"], '%Y-%m-%d %H:%M:%S.%f')
+        self.end_datetime = datetime.datetime.strptime(config_dict["end_datetime"], '%Y-%m-%d %H:%M:%S.%f')
         self.experiments_results_locations = config_dict["experiments_results_locations"]
 
     def export_to_json(self, filename, pretty_print=True):
@@ -47,7 +47,7 @@ class QueueResultsModel:
         config_dict["start_datetime"] = self.start_datetime
         config_dict["experiments_results_locations"] = self.experiments_results_locations
         with open(filename, 'w') as config_file:
-            json.dump(config_dict, config_file, indent=4 if pretty_print else None)
+            json.dump(config_dict, config_file, indent=4 if pretty_print else None, default=str)
 
 
     def add_experiment_result(self,

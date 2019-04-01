@@ -355,10 +355,10 @@ def main(args, config_manager=None):
                 if vars(parsed)['additionalParams']:
                     parse_command_line_definitions(data_map, vars(parsed)['additionalParams'])
                 parse_command_line_definitions(data_map, unparsed)
-            spawn_scripts(scripts, data_map, config_manager.file_locations)
+            spawn_scripts(scripts, data_map, config_manager.file_locations, experiment_result)
 
         experiment_result.end_experiment()
-        experiment_result.export_to_json(experiment_result_name)
+        config_manager.get_results_manager().save_experiment_result(experiment_result_name, experiment_result)
         print 'Experiment complete, goodbye!'
 
 

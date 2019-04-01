@@ -5,7 +5,7 @@ def main(data_map, experiment_result):
 	:return: None
 	"""
 	samples = data_map['Data']['Collect']
-	print samples
+	# print samples
 	data_map['Data']['Reduce'] = {}
 
 	for voltage in samples.keys():

@@ -18,15 +18,15 @@ def main(data_map, experiment_result):
 	identifier = time.strftime("%m%d%Y_%H%M%S", time.gmtime())+"_"+str(data_map['Config']['Name'].replace(' ', '_'))
 	print identifier
 
-	# create path for results if not existent
-	if not os.path.exists("Results"):
-		os.mkdir("Results")
-	os.chdir("Results")
-
-	# create path for unique identifier for experiment
-	if not os.path.exists(identifier):
-		os.mkdir(identifier)
-	os.chdir(identifier)
+	# # create path for results if not existent
+	# if not os.path.exists("Results"):
+	# 	os.mkdir("Results")
+	# os.chdir("Results")
+	#
+	# # create path for unique identifier for experiment
+	# if not os.path.exists(identifier):
+	# 	os.mkdir(identifier)
+	# os.chdir(identifier)
 
 	# Writing the config file in json format for future use
 	with open("config.json", "w+") as config_file:
