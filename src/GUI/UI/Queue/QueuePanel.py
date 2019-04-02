@@ -1,4 +1,6 @@
 import wx
+from wx import Font
+
 from src.GUI.Util import GUI_CONSTANTS
 import src.GUI.Util.Globals as Globals
 
@@ -56,10 +58,12 @@ class QueuePanel(wx.StaticBox):
                 self.Deselect(selected)
 
     def on_experiment_select(self, event):
+
         """
         Tells the parent to render the control panel with the selected experiment
         :param event: The event that caused the call
         """
+
         queue_manager = Globals.systemConfigManager.get_queue_manager()
         selected_experiment = queue_manager.get_ith_experiment(self.list_box.GetSelection())
         self.GetParent().render_control_panel_with_experiment(selected_experiment)
@@ -75,4 +79,10 @@ class QueuePanel(wx.StaticBox):
             self.list_box.Append(experiment)
 
     def run_the_queue(self, event):
+        font = self.run_button.GetFont()
+        print font
+        size = wx.Size(self.run_button.GetSize().Get()[1] / 2, self.run_button.GetSize().Get()[1] / 2)
+        print size
+        Font.SetPixelSize(font, size)
+        self.run_button.SetFont(font)
         Globals.systemConfigManager.get_queue_manager().run()
