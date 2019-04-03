@@ -292,14 +292,14 @@ def generate_arg_list_from_parameter_file(arg_file):
             arglist.append(name + "=" + str(args[0]))
     return arglist
 
-def main(args, config_manager=None):
+def main(args, config_manager=None, queue_result=None):
     """
     Entry point of SPAE, loads config file
     :param args: test configuration file
     :return: None
     """
 
-    from GUI.Application.SystemConfigManager import  SystemConfigManager
+    from GUI.Application.SystemConfigManager import SystemConfigManager
     if config_manager is None:
         config_manager = SystemConfigManager('../../System/Files.json')
 
@@ -331,7 +331,7 @@ def main(args, config_manager=None):
     else:
         print("Running Experiment: " + config['Name'] + "\n\n")
 
-        experiment_result, experiment_result_name = config_manager.get_results_manager().make_new_experiment_result(file_name)
+        experiment_result, experiment_result_name = config_manager.get_results_manager().make_new_experiment_result(file_name, queue_result)
 
         scripts = extract_scripts(config, config_manager.file_locations)
 

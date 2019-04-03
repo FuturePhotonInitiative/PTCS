@@ -6,7 +6,8 @@ from src.GUI.Model.HardwareModel import HardwareModel
 
 
 class HardwareManager:
-    def __init__(self, hardware_config, driver_root):
+    def __init__(self, hardware_config, driver_root, results_config_manager):
+        self.results_config_manager = results_config_manager
         """
         Initializes the hardware manager with a list of drivers and configured hardware devices
         :param hardware_config:

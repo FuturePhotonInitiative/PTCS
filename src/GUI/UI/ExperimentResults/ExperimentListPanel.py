@@ -3,7 +3,7 @@ from src.GUI.Util import GUI_CONSTANTS
 import src.GUI.Util.Globals as Globals
 
 
-class ExperimentListPanel(wx.ListBox):
+class ExperimentListPanel(wx.TreeCtrl):
     """
     Panel for displaying a list of the experiments that have been run
     """
@@ -20,6 +20,8 @@ class ExperimentListPanel(wx.ListBox):
         self.SetForegroundColour(GUI_CONSTANTS.LIST_PANEL_FOREGROUND_COLOR)
 
         # Adds all the experiments in the application queue to the display list
+
+        self.root = None
         self.reload_panel()
 
         # Runs deselect_and_return_control_to_default on a double click or when escape is pressed
@@ -53,6 +55,9 @@ class ExperimentListPanel(wx.ListBox):
         """
         Reloads it self, updates if the Queue has changed
         """
-        self.Clear()
-        for result in Globals.systemConfigManager.get_results_manager().get_list_of_experiment_result_names():
-            self.Append(result)
+        self.DeleteAllItems()
+        self.root = self.AddRoot(GUI_CONSTANTS.EXPERIMENT_QUEUE_RESULT_ROOT)
+        for que_result in Globals.systemConfigManager.get_results_manager().get_queue_results():
+            queue_root = self.AppendItem(self.root, que_result.get_name())
+            for exp_result_name in que_result.get_experiment_results_list():
+                self.AppendItem(queue_root, exp_result_name)

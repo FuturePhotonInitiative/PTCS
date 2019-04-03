@@ -34,3 +34,7 @@ QUEUE_LABEL_PROPORTION = .1
 
 WORKING_DIRECTORY = "C:\\Users\\wxs5474\\PycharmProjects\\SPAE\\System"
 
+EXPERIMENT_QUEUE_RESULT_ROOT = "Experiment Queues"
+
+QUEUE_FILE_TITLE = "queue_result"
+EXPERIMENT_FILE_TITLE = "experiment_result"

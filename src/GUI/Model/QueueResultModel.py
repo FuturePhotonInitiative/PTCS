@@ -1,13 +1,18 @@
 import datetime
 import json
 
+from src.GUI.Util.Functions import clean_name_for_file
+from src.GUI.Util.GUI_CONSTANTS import QUEUE_FILE_TITLE
+
 
 class QueueResultsModel:
     def __init__(self,
+                 results_config_root,
                  start_datetime=datetime.datetime.today(),
                  end_datetime=datetime.datetime.today(),
                  experiments_results_locations=None,
                  queue_result_config=None):
+        self.results_config_root = results_config_root
         if queue_result_config is None:
             if experiments_results_locations is None:
                 experiments_results_locations = []
@@ -49,10 +54,18 @@ class QueueResultsModel:
         with open(filename, 'w') as config_file:
             json.dump(config_dict, config_file, indent=4 if pretty_print else None, default=str)
 
+    def save(self):
+        self.export_to_json(self.results_config_root + "/" + self.get_name() + ".json")
+
+    def get_name(self):
+        now = self.start_datetime
+        name = QUEUE_FILE_TITLE + str(now)
+        name = clean_name_for_file(name)
+        return name
 
     def add_experiment_result(self,
-                              experiment_config_location):
-        self.experiments_results_locations.append(experiment_config_location)
+                              experiment_result_location):
+        self.experiments_results_locations.append(experiment_result_location)
 
     def start_queue(self):
         self.start_datetime = datetime.datetime.today()

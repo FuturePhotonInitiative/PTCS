@@ -10,7 +10,7 @@ class QueueRunner(Thread):
     Thread class to run a provided queue
     """
 
-    def __init__(self, queue, working_directory):
+    def __init__(self, queue, working_directory, queue_result):
         """
         Create a new QueueRunner that will run the provided queue using the provided temporary directory
         :param queue:
@@ -20,6 +20,7 @@ class QueueRunner(Thread):
         """
         Thread.__init__(self)
         self.queue = queue
+        self.queue_result = queue_result
         self.tmp_dir = working_directory
         # Initialize the status of all of the experiments in the queue to "not yet run"
         self.experiment_status = {}
@@ -34,6 +35,7 @@ class QueueRunner(Thread):
             Nothing
         """
         print "Starting the Queue"
+        self.queue_result.start_queue()
         # TODO catch any exceptions run by prober and try to continue, but only if a flag in the __init__ has been
         # set
         self.queue.schedule_experiments()
@@ -44,10 +46,12 @@ class QueueRunner(Thread):
 
             tmp_file_name = self.tmp_dir + "/tmp" + self.current_experiment.get_name().replace(" ", "_") + ".json"
             self.current_experiment.export_to_json(tmp_file_name)
-            Prober.main(["Prober.py", tmp_file_name], config_manager=Globals.systemConfigManager)
+            Prober.main(["Prober.py", tmp_file_name], config_manager=Globals.systemConfigManager, queue_result=self.queue_result)
             self.experiment_status[self.current_experiment] = 1
             os.remove(tmp_file_name)
         self.current_experiment = None
+        self.queue_result.end_queue()
+        self.queue_result.save()
 
     def get_current_experiment(self):
         """

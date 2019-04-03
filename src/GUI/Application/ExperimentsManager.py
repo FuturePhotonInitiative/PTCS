@@ -4,7 +4,8 @@ from src.GUI.Model.ExperimentModel import Experiment
 
 
 class ExperimentsManager:
-    def __init__(self, experiment_roots, script_root):
+    def __init__(self, experiment_roots, script_root, results_config_manager):
+        self.results_config_manager = results_config_manager
         self.experiment_roots = experiment_roots
         self.script_root = script_root
 

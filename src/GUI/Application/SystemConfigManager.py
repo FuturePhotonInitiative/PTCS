@@ -45,7 +45,7 @@ class SystemConfigManager:
         """
         if self.hardware_manager is None:
             self.hardware_manager = \
-                HardwareManager(self.file_locations["Hardware_Config"], self.file_locations["Driver_Root"])
+                HardwareManager(self.file_locations["Hardware_Config"], self.file_locations["Driver_Root"], self)
         return self.hardware_manager
 
     def get_experiments_manager(self):
@@ -57,7 +57,7 @@ class SystemConfigManager:
         """
         if self.experiments_manager is None:
             self.experiments_manager = \
-                ExperimentsManager(self.file_locations["Experiment_Roots"], self.file_locations["Script_Root"])
+                ExperimentsManager(self.file_locations["Experiment_Roots"], self.file_locations["Script_Root"], self)
         return self.experiments_manager
 
     def get_queue_manager(self):
@@ -67,7 +67,7 @@ class SystemConfigManager:
             A new QueueManager object if one has not already been created by this class, an existing on otherwise.
         """
         if self.queue_manager is None:
-            self.queue_manager = QueueManager(GUI_CONSTANTS.WORKING_DIRECTORY)
+            self.queue_manager = QueueManager(GUI_CONSTANTS.WORKING_DIRECTORY, self)
         return self.queue_manager
 
     def get_results_manager(self):
@@ -79,7 +79,7 @@ class SystemConfigManager:
         """
         if self.results_manager is None:
             self.results_manager = ResultsManager(self.file_locations["Results_Root"],
-                                                  self.file_locations["Results_Config_Root"])
+                                                  self.file_locations["Results_Config_Root"], self)
         return self.results_manager
 
     def set_script_root(self, new_root):
