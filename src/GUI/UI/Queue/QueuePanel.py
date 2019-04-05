@@ -3,6 +3,7 @@ from wx import Font
 
 from src.GUI.Util import GUI_CONSTANTS
 import src.GUI.Util.Globals as Globals
+from src.GUI.Util.Functions import fix_text_size
 
 
 class QueuePanel(wx.StaticBox):
@@ -75,14 +76,9 @@ class QueuePanel(wx.StaticBox):
         Reloads the display list with the current Queue contents
         """
         self.list_box.Clear()
+        fix_text_size(self.run_button, 10)
         for experiment in Globals.systemConfigManager.get_queue_manager().get_experiment_names():
             self.list_box.Append(experiment)
 
     def run_the_queue(self, event):
-        font = self.run_button.GetFont()
-        print font
-        size = wx.Size(self.run_button.GetSize().Get()[1] / 2, self.run_button.GetSize().Get()[1] / 2)
-        print size
-        Font.SetPixelSize(font, size)
-        self.run_button.SetFont(font)
         Globals.systemConfigManager.get_queue_manager().run()

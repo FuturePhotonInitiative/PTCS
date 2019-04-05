@@ -4,6 +4,8 @@ from src.GUI.UI.Hardware.HardwarePage import HardwarePage
 from src.GUI.UI.BuildExperiment.BuildExperimentPage import BuildExperimentsPage
 from src.GUI.UI.Queue.QueuePage import QueuePage
 import src.GUI.Util.GUI_CONSTANTS as CONSTANTS
+from src.GUI.Util import Globals
+
 
 class MainFrame(wx.Frame):
     def __init__(self, parent, id):
@@ -11,7 +13,12 @@ class MainFrame(wx.Frame):
         self.panel = wx.Panel(self)
         self.notebook = wx.Notebook(self.panel)
         # self.notebook.SetTabSize()
-        self.notebook.AddPage(QueuePage(self.notebook), CONSTANTS.QUEUE_PAGE_NAME)
+        self.queue_page = QueuePage(self.notebook)
+        self.hardware_page = HardwarePage(self.notebook)
+        self.build_experiments_page = BuildExperimentsPage(self.notebook)
+        self.experiment_results_page = ExperimentResultsPage(self.notebook)
+
+        self.notebook.AddPage(self.queue_page, CONSTANTS.QUEUE_PAGE_NAME)
         self.notebook.AddPage(HardwarePage(self.notebook), CONSTANTS.HARDWARE_PAGE_NAME)
         self.notebook.AddPage(BuildExperimentsPage(self.notebook), CONSTANTS.BUILD_EXPERIMENTS_PAGE_NAME)
         self.notebook.AddPage(ExperimentResultsPage(self.notebook), CONSTANTS.RESULTS_PAGE_NAME)

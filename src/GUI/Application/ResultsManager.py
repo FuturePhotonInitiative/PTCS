@@ -15,6 +15,8 @@ class ResultsManager:
         self.results_config_root = results_config_root
         self.queue_result_list = []
         self.experiment_result_dict = {}
+        if not os.path.exists(results_config_root):
+            os.mkdir(results_config_root)
         for config in os.listdir(results_config_root):
             if QUEUE_FILE_TITLE in config:
                 self.queue_result_list.append(QueueResultModel.QueueResultsModel(results_config_root,queue_result_config=results_config_root + "/" + config))
@@ -52,8 +54,8 @@ class ResultsManager:
 
     def make_new_queue_result(self):
         result = QueueResultModel.QueueResultsModel(self.results_config_root)
-
         self.queue_result_list.append(result)
+        # print "STUFF HAPPENS HERE", len(self.queue_result_list)
         return result
 
     def save_experiment_results(self):

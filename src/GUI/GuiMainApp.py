@@ -11,6 +11,7 @@ if __name__ == '__main__':
     # TODO temp testing code to make sure queue displays properly
     app = wx.App()
     frame = MainFrame(None, -1)
+    Globals.systemConfigManager.mainframe = frame
     frame.Show()
     app.MainLoop()
 

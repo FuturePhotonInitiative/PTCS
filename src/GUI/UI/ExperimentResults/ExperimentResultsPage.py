@@ -31,3 +31,6 @@ class ExperimentResultsPage(wx.Panel):
         sizer.Add(self.results_file_list_panel, CONSTANTS.RESULTS_FILE_PANEL_PROPORTION, wx.EXPAND)
         self.SetSizer(sizer)
         sizer.Layout()
+
+    def reload(self):
+        self.experiment_list_panel.reload_panel(None)
