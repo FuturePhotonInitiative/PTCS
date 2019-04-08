@@ -21,7 +21,8 @@ def main(data_map, experiment_result):
 	# create path for results if not existent
 
 	# Writing the config file in json format for future use
-	experiment_result.add_text_file("config", json.dumps(config, separators=(',', ": "), indent=4))
+	experiment_result.add_json_file_dict("config", config)
+	# experiment_result.add_json_file_dict("config", json.dumps(config, separators=(',', ": "), indent=4))
 	# with open("config.json", "w+") as config_file:
 	# 	# config_file.write(str(config).replace('}, ', '}, \n').replace('], ', '], \n').replace("\'", "\""))
 	# 	config_file.write()
