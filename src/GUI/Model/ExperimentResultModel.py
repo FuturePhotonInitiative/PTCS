@@ -84,7 +84,7 @@ class ExperimentResultsModel:
         axes.scatter(x_axis, y_axis)
 
         os.chdir(self.experiment_results_directory)
-        text = os.getcwd() + file_name + ".png"
+        text = os.getcwd() + "//" + file_name + ".png"
 
         self.experiments_results_files.append(text)
 

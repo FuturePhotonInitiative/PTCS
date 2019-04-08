@@ -41,7 +41,7 @@ class QueuePanel(wx.StaticBox):
         self.Bind(wx.EVT_KEY_DOWN, self.deselect_and_return_control_to_default)
         self.Bind(wx.EVT_LISTBOX_DCLICK, self.deselect_and_return_control_to_default)
 
-        # Runs the on_experiment_select function when an experiment is selected
+        # Runs the on_result_select function when an experiment is selected
         self.Bind(wx.EVT_LISTBOX, self.on_experiment_select)
 
 

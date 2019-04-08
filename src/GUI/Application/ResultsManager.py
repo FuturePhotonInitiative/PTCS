@@ -21,14 +21,14 @@ class ResultsManager:
             if QUEUE_FILE_TITLE in config:
                 self.queue_result_list.append(QueueResultModel.QueueResultsModel(results_config_root,queue_result_config=results_config_root + "/" + config))
             else:
-                self.experiment_result_dict[config] = (ExperimentResultsModel(results_root,
+                self.experiment_result_dict[config.replace(".json", "")] = (ExperimentResultsModel(results_root,
                                                                               experiment_result_config=results_config_root + "/" + config))
 
 
     def get_list_of_queue_results(self):
         pass
 
-    def get_list_of_experiment_result(self, key):
+    def get_experiment_result(self, key):
         return self.experiment_result_dict[key]
 
     def get_list_of_experiment_result_names(self):

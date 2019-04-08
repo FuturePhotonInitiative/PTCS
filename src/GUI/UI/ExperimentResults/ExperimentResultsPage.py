@@ -34,3 +34,6 @@ class ExperimentResultsPage(wx.Panel):
 
     def reload(self):
         self.experiment_list_panel.reload_panel(None)
+
+    def render_result(self, result):
+        self.results_file_list_panel.render_panel(result)
