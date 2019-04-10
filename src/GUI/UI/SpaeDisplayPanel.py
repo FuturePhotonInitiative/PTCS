@@ -1,0 +1,19 @@
+import wx
+
+
+class SpaeDisplayPanel(wx.StaticBox):
+    def __init__(self, parent):
+        wx.StaticBox.__init__(self, parent)
+        pass
+
+    def set_up_ui_control(self):
+        pass
+
+    def reload(self):
+        pass
+
+    def deselected(self, event):
+        pass
+
+    def selected(self, event):
+        pass

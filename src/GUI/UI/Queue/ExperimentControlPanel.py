@@ -2,9 +2,10 @@ import wx
 import src.GUI.Util.GUI_CONSTANTS
 import src.GUI.Model.ExperimentModel
 import src.GUI.Util.Globals as Globals
+from src.GUI.UI.SpaeControlPanel import SpaeControlPanel
 
 
-class ExperimentControlPanel(wx.StaticBox):
+class ExperimentControlPanel(SpaeControlPanel):
     """
     A panel for viewing and modifying the variables in an experiment
     """
@@ -15,7 +16,10 @@ class ExperimentControlPanel(wx.StaticBox):
         :param parent: The parent to display the panel on
         :param experiment: The experiment to use when rendering
         """
-        wx.StaticBox.__init__(self, parent)
+        SpaeControlPanel.__init__(self, parent)
+
+
+        self.UI_control = Globals.systemConfigManager.get_ui_controller()
 
         # Sets up the colors display Constants are in Util.CONSTANTS
         self.SetBackgroundColour(src.GUI.Util.GUI_CONSTANTS.CONTROL_PANEL_COLOR)
@@ -39,7 +43,7 @@ class ExperimentControlPanel(wx.StaticBox):
         self.add_button = None
 
         # Renders the panel with the given experiment
-        self.render_with_experiment(experiment)
+        self.render(experiment)
 
     def render_without_experiment(self):
         """
@@ -54,15 +58,18 @@ class ExperimentControlPanel(wx.StaticBox):
         self.variables_boxes = {}
 
         # Sets up default page
-        self.choice_box = wx.Choice(self, choices=self.get_experiments())
+        self.choice_box = wx.Choice(self, choices=Globals.systemConfigManager.get_experiments_manager().get_available_experiments_names())
+        # self.UI_control.add_control_to_text_list(self.choice_box)
         self.add_button = wx.Button(self, label="Add")
+        # self.UI_control.add_control_to_text_list(self.add_button)
         self.sizer.Add(self.choice_box, 1, wx.SHAPED | wx.ALL | wx.ALIGN_CENTRE)
         self.sizer.Add(self.add_button, 1, wx.EXPAND | wx.ALL)
 
         self.add_button.Bind(wx.EVT_BUTTON, self.add_experiment)
         self.sizer.Layout()
+        # self.UI_control.fix_control_list()
 
-    def render_with_experiment(self, experiment):
+    def render(self, experiment):
         """
         Sets up the panel with an experiment and it's components
         :param experiment: The experiment to render the page with
@@ -84,7 +91,9 @@ class ExperimentControlPanel(wx.StaticBox):
                 # Set up label and text field
                 hbox = wx.BoxSizer(wx.HORIZONTAL)
                 text_feild = wx.TextCtrl(self, value=str(self.experiment.get_data_value(variable)))
+                # self.UI_control.add_control_to_text_list(text_feild)
                 label = wx.StaticText(self, label=variable)
+                # self.UI_control.add_control_to_text_list(label)
 
                 # Add the components to the sizers
                 hbox.Add(label, 1, wx.EXPAND | wx.ALL)
@@ -101,6 +110,7 @@ class ExperimentControlPanel(wx.StaticBox):
 
             # Set up remove button
             self.remove_button = wx.Button(self, label="Remove")
+            # self.UI_control.add_control_to_text_list(self.remove_button)
 
             # Bind the remove button to a remove function
             self.remove_button.Bind(wx.EVT_BUTTON, self.remove_experiment)
@@ -122,13 +132,6 @@ class ExperimentControlPanel(wx.StaticBox):
         for variable in self.experiment.get_data_keys():
             self.experiment.set_data_value(variable, self.variables_text_fields[variable].GetValue())
 
-    def get_experiments(self):
-        """
-        Gets a list of available experiment classes
-        :return: a list of available experiment classes
-        """
-        return self.GetParent().get_experiment_classes()
-
     def add_experiment(self, evt):
         """
         Adds an experiment to the queue
@@ -138,7 +141,7 @@ class ExperimentControlPanel(wx.StaticBox):
         experiment = Globals.systemConfigManager.get_experiments_manager().get_experiment_from_name(experiment)
         if experiment:
             Globals.systemConfigManager.get_queue_manager().add_to_queue(experiment)
-            self.GetParent().reload()
+            self.GetParent().reload_display_panel()
 
     def remove_experiment(self, evt):
         """
@@ -148,5 +151,5 @@ class ExperimentControlPanel(wx.StaticBox):
         if self.experiment:
             Globals.systemConfigManager.get_queue_manager().remove_from_queue(self.experiment)
             self.render_without_experiment()
-            self.GetParent().reload()
+            self.GetParent().reload_display_panel()
 

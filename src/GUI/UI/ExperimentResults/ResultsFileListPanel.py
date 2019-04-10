@@ -25,7 +25,7 @@ class ResultsFileListPanel(wx.StaticBox):
         self.sizer.Add(self.list_box, 1, wx.EXPAND | wx.ALL)
 
         # Runs the file selection handler when a file is selected
-        self.Bind(wx.EVT_LISTBOX, self.on_result_select)
+        self.Bind(wx.EVT_LISTBOX_DCLICK, self.on_result_select)
 
         self.render_panel(None)
 

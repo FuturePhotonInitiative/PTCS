@@ -156,6 +156,7 @@ class ExperimentResultsModel:
 
     def add_json_file_dict(self, file_name, data_dict):
         out_file_name = self.experiment_results_directory + "//" + file_name + ".json"
+
         with open(out_file_name, 'w') as out_file:
             json.dump(data_dict, out_file)
         self.experiments_results_files.append(out_file_name)

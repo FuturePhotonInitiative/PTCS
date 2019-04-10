@@ -46,8 +46,7 @@ class SystemConfigManager:
             A new HardwareManager object if one has not already been created by this class, an existing on otherwise.
         """
         if self.ui_controller is None and self.mainframe is not None:
-            self.ui_controller = \
-                UIController(self.mainframe)
+            self.ui_controller = UIController(self.mainframe)
         return self.ui_controller
 
 
