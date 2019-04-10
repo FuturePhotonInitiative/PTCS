@@ -6,7 +6,7 @@ class SpaeDisplayPanel(wx.StaticBox):
         wx.StaticBox.__init__(self, parent)
         pass
 
-    def set_up_ui_control(self):
+    def set_up_ui_control(self, ui_control):
         pass
 
     def reload(self):

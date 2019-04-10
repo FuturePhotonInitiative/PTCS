@@ -47,8 +47,7 @@ class QueuePanel(SpaeDisplayPanel):
         # Runs the queue when the run button is pressed
         self.Bind(wx.EVT_BUTTON, self.run_the_queue)
 
-    def set_up_ui_control(self):
-        ui_control = Globals.systemConfigManager.get_ui_controller()
+    def set_up_ui_control(self, ui_control):
         ui_control.add_control_to_text_list(self.run_button)
 
     def reload(self):

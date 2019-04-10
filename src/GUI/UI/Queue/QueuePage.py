@@ -21,7 +21,7 @@ class QueuePage(SpaePage):
 
         # Sets up the sub-panels
         self.queue_panel = QueuePanel(self)
-        self.control_panel = ExperimentControlPanel(self, None)
+        self.control_panel = ExperimentControlPanel(self)
         SpaePage.add_panels(self, self.queue_panel, self.control_panel,
                         display_propotion=CONSTANTS.QUEUE_PANEL_PROPORTION,
                         control_proportion=CONSTANTS.QUEUE_CONTROL_PANEL_PROPORTION)

@@ -1,8 +1,11 @@
 import wx
 import src.GUI.Util.GUI_CONSTANTS as CONSTANTS
+from src.GUI.UI.SpaeControlPanel import SpaeControlPanel
+from src.GUI.UI.SpaeDisplayPanel import SpaeDisplayPanel
+from src.GUI.UI.SpaePage import SpaePage
 
 
-class BuildExperimentsPage(wx.Panel):
+class BuildExperimentsPage(SpaePage):
     """
 
     """
@@ -16,16 +19,11 @@ class BuildExperimentsPage(wx.Panel):
             which will hold a field for building an experiment by linking lego like scripts together
         :param parent: The wxframe that the Build Experiment Page will be shown on
         """
-        wx.Panel.__init__(self, parent)
+        SpaePage.__init__(self, parent)
 
-        # sets up the sub-sections
-        self.experiments_panel = wx.StaticBox(self)
-        self.scripts_panel = wx.StaticBox(self)
-
-        # adds the subsections to the page
-        sizer = wx.BoxSizer(wx.HORIZONTAL)
-        sizer.Add(self.scripts_panel, CONSTANTS.BUILD_SCRIPT_PANEL_PROPORTION, wx.EXPAND)
-        sizer.Add(self.experiments_panel, CONSTANTS.BUILD_PANEL_PROPORTION, wx.EXPAND)
-
-        self.SetSizer(sizer)
-        sizer.Layout()
+        # Sets up the sub-panels
+        self.experiments_panel = SpaeDisplayPanel(self)
+        self.scripts_panel = SpaeControlPanel(self)
+        SpaePage.add_panels(self, self.experiments_panel, self.scripts_panel,
+                        display_propotion=CONSTANTS.BUILD_PANEL_PROPORTION,
+                        control_proportion=CONSTANTS.BUILD_SCRIPT_PANEL_PROPORTION)

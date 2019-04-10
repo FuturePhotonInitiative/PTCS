@@ -37,7 +37,7 @@ class HardwareListPanel(SpaeDisplayPanel):
         # Renders the selected hardware config
         self.Bind(wx.EVT_LISTBOX, self.selected)
 
-    def set_up_ui_control(self):
+    def set_up_ui_control(self, ui_control):
         pass
 
     def reload(self):

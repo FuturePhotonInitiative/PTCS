@@ -10,7 +10,7 @@ class ExperimentControlPanel(SpaeControlPanel):
     A panel for viewing and modifying the variables in an experiment
     """
 
-    def __init__(self, parent, experiment):
+    def __init__(self, parent, experiment=None):
         """
         Sets up an experiment control panel
         :param parent: The parent to display the panel on
@@ -45,35 +45,43 @@ class ExperimentControlPanel(SpaeControlPanel):
         # Renders the panel with the given experiment
         self.render(experiment)
 
-    def render_without_experiment(self):
-        """
-        Renders the panel with the default setup which allows for adding an experiment to the queue
-        """
+    def set_up_ui_control(self, ui_control):
+        if ui_control is None:
+            ui_control = Globals.systemConfigManager.get_ui_controller()
+        if ui_control:
+            controls_to_add = []
 
-        # Clears out the old experiment and it's components
-        self.sizer.Clear(delete_windows=True)
-        self.experiment = None
-        self.variables_text_fields = {}
-        self.variables_labels = {}
-        self.variables_boxes = {}
+            controls_to_add.extend(self.variables_labels)
 
-        # Sets up default page
-        self.choice_box = wx.Choice(self, choices=Globals.systemConfigManager.get_experiments_manager().get_available_experiments_names())
-        # self.UI_control.add_control_to_text_list(self.choice_box)
-        self.add_button = wx.Button(self, label="Add")
-        # self.UI_control.add_control_to_text_list(self.add_button)
-        self.sizer.Add(self.choice_box, 1, wx.SHAPED | wx.ALL | wx.ALIGN_CENTRE)
-        self.sizer.Add(self.add_button, 1, wx.EXPAND | wx.ALL)
+            controls_to_add.append(self.choice_box)
+            controls_to_add.append(self.remove_button)
+            controls_to_add.append(self.add_button)
+            print "ADD BUTTON:", self.add_button
 
-        self.add_button.Bind(wx.EVT_BUTTON, self.add_experiment)
-        self.sizer.Layout()
-        # self.UI_control.fix_control_list()
+
+            for control in controls_to_add:
+                ui_control.add_control_to_text_list(control)
+
+    def clean_up_ui_control(self):
+        ui_control = Globals.systemConfigManager.get_ui_controller()
+        if ui_control:
+            controls_to_add = []
+
+            controls_to_add.extend(self.variables_labels)
+
+            controls_to_add.append(self.choice_box)
+            controls_to_add.append(self.remove_button)
+            controls_to_add.append(self.add_button)
+
+            for control in controls_to_add:
+                ui_control.remove_control_from_text_list(control)
 
     def render(self, experiment):
         """
         Sets up the panel with an experiment and it's components
         :param experiment: The experiment to render the page with
         """
+        self.clean_up_ui_control()
         if experiment is not None and experiment != self.experiment:
 
             # Set the new experiment to the experiment to be worked with
@@ -123,6 +131,31 @@ class ExperimentControlPanel(SpaeControlPanel):
         elif experiment is None:
             # if there is no experiment given, render with no experiment
             self.render_without_experiment()
+        self.set_up_ui_control(None)
+
+    def render_without_experiment(self):
+        """
+        Renders the panel with the default setup which allows for adding an experiment to the queue
+        """
+
+        # Clears out the old experiment and it's components
+        self.sizer.Clear(delete_windows=True)
+        self.experiment = None
+        self.variables_text_fields = {}
+        self.variables_labels = {}
+        self.variables_boxes = {}
+
+        # Sets up default page
+        self.choice_box = wx.Choice(self, choices=Globals.systemConfigManager.get_experiments_manager().get_available_experiments_names())
+        # self.UI_control.add_control_to_text_list(self.choice_box)
+        self.add_button = wx.Button(self, label="Add")
+        # self.UI_control.add_control_to_text_list(self.add_button)
+        self.sizer.Add(self.choice_box, 1, wx.SHAPED | wx.ALL | wx.ALIGN_CENTRE)
+        self.sizer.Add(self.add_button, 1, wx.EXPAND | wx.ALL)
+
+        self.add_button.Bind(wx.EVT_BUTTON, self.add_experiment)
+        self.sizer.Layout()
+        # self.UI_control.fix_control_list()
 
     def update_variable(self, evt):
         """
@@ -141,7 +174,9 @@ class ExperimentControlPanel(SpaeControlPanel):
         experiment = Globals.systemConfigManager.get_experiments_manager().get_experiment_from_name(experiment)
         if experiment:
             Globals.systemConfigManager.get_queue_manager().add_to_queue(experiment)
-            self.GetParent().reload_display_panel()
+
+            ui_control = Globals.systemConfigManager.get_ui_controller()
+            ui_control.rebuild_queue_page()
 
     def remove_experiment(self, evt):
         """
@@ -151,5 +186,7 @@ class ExperimentControlPanel(SpaeControlPanel):
         if self.experiment:
             Globals.systemConfigManager.get_queue_manager().remove_from_queue(self.experiment)
             self.render_without_experiment()
-            self.GetParent().reload_display_panel()
+
+            ui_control = Globals.systemConfigManager.get_ui_controller()
+            ui_control.rebuild_queue_page()
 

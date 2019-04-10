@@ -47,8 +47,7 @@ class ExperimentListPanel(SpaeDisplayPanel):
         self.Bind(wx.EVT_TREE_SEL_CHANGED, self.selected)
         self.Bind(wx.EVT_BUTTON, self.reload)
 
-    def set_up_ui_control(self):
-        ui_control = Globals.systemConfigManager.get_ui_controller()
+    def set_up_ui_control(self, ui_control):
         ui_control.add_control_to_text_list(self.run_button)
 
     def reload(self, event=None):
