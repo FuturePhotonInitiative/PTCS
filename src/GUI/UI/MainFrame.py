@@ -13,6 +13,8 @@ class MainFrame(wx.Frame):
         self.panel = wx.Panel(self)
         self.notebook = wx.Notebook(self.panel)
         # self.notebook.SetTabSize()
+
+        self.timer = wx.Timer(self)
         self.queue_page = QueuePage(self.notebook)
         self.hardware_page = HardwarePage(self.notebook)
         self.build_experiments_page = BuildExperimentsPage(self.notebook)
@@ -22,14 +24,18 @@ class MainFrame(wx.Frame):
         self.notebook.AddPage(HardwarePage(self.notebook), CONSTANTS.HARDWARE_PAGE_NAME)
         self.notebook.AddPage(BuildExperimentsPage(self.notebook), CONSTANTS.BUILD_EXPERIMENTS_PAGE_NAME)
         self.notebook.AddPage(ExperimentResultsPage(self.notebook), CONSTANTS.RESULTS_PAGE_NAME)
+
+
         sizer = wx.BoxSizer()
         sizer.Add(self.notebook, 1, wx.EXPAND)
         self.panel.SetSizer(sizer)
         sizer.Layout()
-        # self.fixTabSize(None)
-        self.Bind(wx.EVT_SIZE, self.fixTabSize)
+        # self.fix_tab_size(None)
+        self.Bind(wx.EVT_SIZE, self.fix_tab_size)
+        self.Bind(wx.EVT_TIMER, self.run_page_update, self.timer)
+        self.timer.Start(5000)
 
-    def fixTabSize(self, event):
+    def fix_tab_size(self, event):
         event.Skip()
         f = self.GetFont()
         dc = wx.WindowDC(self)
@@ -40,3 +46,11 @@ class MainFrame(wx.Frame):
                                          CONSTANTS.RESULTS_PAGE_NAME)
         size = (self.GetSize()[0] - width - CONSTANTS.SPACE_SIZE * (self.notebook.GetPageCount() + 1) ) / (self.notebook.GetPageCount() * 2)
         self.notebook.SetPadding(wx.Size(size, 3))
+
+    def run_page_update(self, event):
+        print "ding"
+        UI_controller = Globals.systemConfigManager.get_ui_controller()
+        if UI_controller:
+            UI_controller.fix_control_list()
+            UI_controller.rebuild_all_pages()
+
