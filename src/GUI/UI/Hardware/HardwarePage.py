@@ -1,11 +1,11 @@
-import wx
-from src.GUI.Util import GUI_CONSTANTS
+from src.GUI.UI.SpaeControlPanel import SpaeControlPanel
+from src.GUI.UI.SpaePage import SpaePage
 from HardwareListPanel import HardwareListPanel
-
 import src.GUI.Util.GUI_CONSTANTS as CONSTANTS
 
 
-class HardwarePage(wx.Panel):
+
+class HardwarePage(SpaePage):
     """
     A page for displaying and modifying hardware configurations
     """
@@ -20,20 +20,11 @@ class HardwarePage(wx.Panel):
         """
 
         # Attaching self to the parent
-        wx.Panel.__init__(self, parent)
+        SpaePage.__init__(self, parent)
 
         # Sets up the sub-panels
         self.hardwareConfigurationListPanel = HardwareListPanel(self)
-        self.controlPanel = wx.StaticBox(self)
-
-
-        # Adds the sub-panels to the page and sizes them appropriately, adds labels if necessary
-        sizer = wx.BoxSizer(wx.HORIZONTAL)
-        right_side = wx.BoxSizer(wx.VERTICAL)
-        right_side.Add(wx.StaticText(self, label=CONSTANTS.HARDWARE_PANEL_NAME), CONSTANTS.QUEUE_LABEL_PROPORTION, wx.TOP)
-        right_side.Add(self.hardwareConfigurationListPanel, 1, wx.EXPAND | wx.ALL)
-        sizer.Add(self.controlPanel, CONSTANTS.HARDWARE_CONTROL_PANEL_PROPORTION, wx.EXPAND, CONSTANTS.LIST_PANEL_MARGIN)
-        sizer.Add(right_side, CONSTANTS.HARDWARE_PANEL_PROPORTION, wx.EXPAND, CONSTANTS.LIST_PANEL_MARGIN)
-
-        self.SetSizer(sizer)
-        sizer.Layout()
+        self.control_panel = SpaeControlPanel(self)
+        self.add_panels(self.hardwareConfigurationListPanel, self.control_panel,
+                        display_propotion=CONSTANTS.HARDWARE_PANEL_PROPORTION,
+                        control_proportion=CONSTANTS.HARDWARE_CONTROL_PANEL_PROPORTION)

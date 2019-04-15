@@ -3,11 +3,12 @@ from HardwareManager import HardwareManager
 from QueueManager import QueueManager
 from ExperimentsManager import ExperimentsManager
 from ResultsManager import ResultsManager
+from src.GUI.Application.UIController import UIController
 from src.GUI.Util import GUI_CONSTANTS
 
 
 class SystemConfigManager:
-    def __init__(self, files_path):
+    def __init__(self, files_path, mainframe=None):
         """
         Create a new SystemConfigurationManager based on the "Files" configuration provided
         :param files_path:
@@ -16,7 +17,8 @@ class SystemConfigManager:
         """
 
         self.files_path = files_path
-
+        self.mainframe = None
+        self.ui_controller = None
         self.file_locations = {}
         with open(files_path) as config_file:
             self.file_locations = json.load(config_file)
@@ -36,6 +38,18 @@ class SystemConfigManager:
         self.queue_manager = None
         self.hardware_manager = None
 
+    def get_ui_controller(self):
+        """
+        Create a new or return an existing HardwareManager based on the Hardware configuration files pointed to by
+        the files_path referenced in this SystemConfigManager's constructor
+        :return:
+            A new HardwareManager object if one has not already been created by this class, an existing on otherwise.
+        """
+        if self.ui_controller is None and self.mainframe is not None:
+            self.ui_controller = UIController(self.mainframe)
+        return self.ui_controller
+
+
     def get_hardware_manager(self):
         """
         Create a new or return an existing HardwareManager based on the Hardware configuration files pointed to by
@@ -45,7 +59,7 @@ class SystemConfigManager:
         """
         if self.hardware_manager is None:
             self.hardware_manager = \
-                HardwareManager(self.file_locations["Hardware_Config"], self.file_locations["Driver_Root"])
+                HardwareManager(self.file_locations["Hardware_Config"], self.file_locations["Driver_Root"], self)
         return self.hardware_manager
 
     def get_experiments_manager(self):
@@ -57,7 +71,7 @@ class SystemConfigManager:
         """
         if self.experiments_manager is None:
             self.experiments_manager = \
-                ExperimentsManager(self.file_locations["Experiment_Roots"], self.file_locations["Script_Root"])
+                ExperimentsManager(self.file_locations["Experiment_Roots"], self.file_locations["Script_Root"], self)
         return self.experiments_manager
 
     def get_queue_manager(self):
@@ -67,7 +81,7 @@ class SystemConfigManager:
             A new QueueManager object if one has not already been created by this class, an existing on otherwise.
         """
         if self.queue_manager is None:
-            self.queue_manager = QueueManager(GUI_CONSTANTS.WORKING_DIRECTORY)
+            self.queue_manager = QueueManager(GUI_CONSTANTS.WORKING_DIRECTORY, self)
         return self.queue_manager
 
     def get_results_manager(self):
@@ -78,7 +92,8 @@ class SystemConfigManager:
             A new ResultsManager object if one has not already been created by this class, an existing on otherwise.
         """
         if self.results_manager is None:
-            self.results_manager = ResultsManager(self.file_locations["Results_Root"])
+            self.results_manager = ResultsManager(self.file_locations["Results_Root"],
+                                                  self.file_locations["Results_Config_Root"], self)
         return self.results_manager
 
     def set_script_root(self, new_root):
