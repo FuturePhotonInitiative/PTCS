@@ -4,65 +4,41 @@ import os
 import matplotlib.pyplot as plt
 
 
-def main(data_map):
+def main(data_map, experiment_result):
     """
     This stage exports the reduced data into plots
     :param data_map: The dictionary to store data between tasks
+    :param experiment_result: ExperimentResultsModel object
     :return: None
     """
-    results_reduce = data_map['Data']['Reduce']
-    results_collect = data_map['Data']['Collect']
-    config = data_map['Config']
-    # create unique file with time stamp and name of experiment
-    identifier = time.strftime("%m%d%Y_%H%M%S", time.gmtime()) + "_" + str(data_map['Config']['Name'].replace(' ', '_'))
+    reduced_data = []
+    collected_data = []
+    for list_points in data_map['Data']['Collect']:
+        new_list = []
+        for point in list_points:
+            new_list.append(float(point))
+        collected_data.append(new_list)
+    for list_points in data_map['Data']['Reduce']:
+        new_list = []
+        for point in list_points:
+            new_list.append(float(point))
+        reduced_data.append(new_list)
 
-    return_path = os.getcwd()
+    # Create json file for Config used in experiment
+    experiment_result.add_json_file_dict("Config", data_map['Config'])
+    # Writing out collected data to csv
+    experiment_result.add_csv("Collected_Data", collected_data)
+    # Writing out reduced data to csv
+    experiment_result.add_csv("Reduced_Data", reduced_data)
 
-    # create path for results if not existent
-    if not os.path.exists("../Results"):
-        os.mkdir("../Results")
-    os.chdir("../Results")
-
-    # create path for unique identifier for experiment
-    if not os.path.exists(identifier):
-        os.mkdir(identifier)
-    os.chdir(identifier)
-
-    # Writing the config file in json format for future use
-    with open("config.json", "w+") as config_file:
-        # config_file.write(str(config).replace('}, ', '}, \n').replace('], ', '], \n').replace("\'", "\""))
-        config_file.write(json.dumps(config, separators=(',', ": "), indent=4))
-
-    # arrays for plotting x and y axis
     x_axis = []
     y_axis = []
-    # Writing out collect results to csv
-    with open("collect_results.csv", "w+") as collect_csv:
-        collect_csv.write('VoltageSource,VoltageRead\n')
-        for voltage in sorted(results_collect.keys()):
-            collect_csv.write(str(voltage))
-            for logic in results_collect[voltage]:
-                collect_csv.write(',' + str(logic))
-            collect_csv.write('\n')
-
-    # Writing out and plotting reduce results to csv
-    with open("reduce_results.csv", "w+") as reduce_csv:
-        reduce_csv.write('Voltage,PercentError\n')
-        for voltage in sorted(results_reduce.keys()):
-            reduce_csv.write(str(voltage) + ',' + str(results_reduce[voltage]) + '\n')
-            x_axis.append(float(voltage))
-            y_axis.append(results_reduce[voltage])
+    for voltage in sorted(reduced_data):
+        x_axis.append(float(voltage))
+        y_axis.append(reduced_data[voltage])
 
     # Plot out Reduced Results
-    plt.scatter(x_axis, y_axis)
-    plt.autoscale()
-    plt.title("Percent Error vs. Voltage Applies")
-    plt.xlabel("Voltage\n"+str(os.getcwd()) + "Voltage_vs_PercentError.png")
-    plt.text(0, 0, str(os.getcwd()) + "Voltage_vs_PercentError.png")
-    plt.ylabel('Percent Error')
-    plt.savefig("Voltage_vs_PercentError")
-    plt.show()
-
-    os.chdir(return_path)
-
+    experiment_result.add_scatter_chart("Voltage_vs_PercentError", x_axis, y_axis,
+                                        title="Voltage vs Percent Error", x_label="Voltage",
+                                        y_label="Percent Error")
     return

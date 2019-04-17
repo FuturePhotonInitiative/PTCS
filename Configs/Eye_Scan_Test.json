@@ -1,0 +1,31 @@
+{
+  "Name": "Eye Scan Test",
+  "Devices":
+              [
+                "VCU108"
+              ],
+  "Experiment" :
+              [
+                {
+                  "Type":"PY_SCRIPT",
+                  "Source": "EyescanCollect.py",
+                  "Order":  1
+                },
+                {
+                  "Type":"PY_SCRIPT",
+                  "Source": "EyescanReduce.py",
+                  "Order":  2
+                },
+                {
+                  "Type":"PY_SCRIPT",
+                  "Source": "EyescanExport.py",
+                  "Order":  3
+                }
+              ],
+  "Data" :
+          {
+            "Scale_Factor": 0,
+            "Points": 0,
+            "DRP": 0
+          }
+}

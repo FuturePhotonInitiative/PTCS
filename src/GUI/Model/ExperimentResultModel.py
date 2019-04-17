@@ -2,7 +2,9 @@ import datetime
 import json
 import os
 from shutil import copyfile
+from matplotlib.colors import LinearSegmentedColormap
 import matplotlib.pyplot as plt
+
 
 class ExperimentResultsModel:
     def __init__(self,
@@ -25,13 +27,28 @@ class ExperimentResultsModel:
         else:
             self.load_from_json(experiment_result_config)
 
+    def __enter__(self):
+        """
+        Enter method for ability to use "with open" statements
+        :return: Class Object
+        """
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        """
+        Exit to close object
+        :param exc_type:
+        :param exc_val:
+        :param exc_tb:
+        :return:
+        """
+        pass
+
     def load_from_json(self, filename):
         """
         Write the configuration stored in this Experiment object to a json formatted file
         :param filename:
             The name of the file to write to.  WARNING: The specified file will be overwritten
-        :param pretty_print:
-            If true, print the json with indentation, otherwise keep the JSON compact
         :return:
         None
         """
@@ -71,7 +88,8 @@ class ExperimentResultsModel:
         else:
             self.experiments_results_files.append(file_name)
 
-    def add_scatter_chart(self, file_name, x_axis, y_axis, x_label="", y_label = "", title=""):
+    def add_scatter_chart(self, file_name, x_axis, y_axis, autoscale=True, x_lim=(-10, 10), y_lim=(-10, 10),
+                          x_label="", y_label="", title=""):
         return_dir = os.getcwd()
         figure = plt.figure()
         axes = figure.add_axes((0.1, 0.2, 0.8, 0.7))
@@ -80,7 +98,7 @@ class ExperimentResultsModel:
         axes.set_xlabel(x_label)
         axes.set_ylabel(y_label)
 
-        print x_axis, y_axis
+        # print x_axis, y_axis
         axes.scatter(x_axis, y_axis)
 
         os.chdir(self.experiment_results_directory)
@@ -91,30 +109,75 @@ class ExperimentResultsModel:
         figure.text(0.0, 0.06, text[:len(text) / 2], ha='left')
         figure.text(0.0, 0.02, text[len(text) / 2:], ha='left')
 
-        axes.set_xlim((0, 10))
-        axes.set_ylim((0, 8))
-        # plt.autoscale()
+        if autoscale is True:
+            plt.autoscale()
+        else:
+            axes.set_xlim(x_lim)
+            axes.set_ylim(y_lim)
+
         plt.savefig(file_name)
         os.chdir(return_dir)
 
+    def add_eyescan_heat_map(self, graph_data):
+        """
+        This function creates an eyescan heat map
+        :param graph_data: unicode data provided from data_map
+        :return: None
+        """
+        return_dir = os.getcwd()
+        os.chdir(self.experiment_results_directory)
+
+        colors = [(0, 0, 0.8), (0, 0, 0.95), (0, 0, 1), (0, 0.5, 1), (0, 0.85, 1),
+                  (0, 1, 1), (0, 1, 0.3), (0, 1, 0), (0.7, 1, 0), (1, 1, 0),
+                  (1, 0.65, 0), (1, 0.5, 0), (1, 0.15, 0), (1, 0, 0), (0.65, 0, 0)]
+        n = len(colors)
+        cm = LinearSegmentedColormap.from_list('Eye_Scan_Map', colors, N=n)
+
+        # Plot all of the data points on one plot
+        fig, ax = plt.subplots()
+        im = ax.imshow(graph_data, aspect='auto', extent=[-0.5, 0.5, -127, 127], cmap=cm, vmin=0, vmax=50)
+
+        # Create colorbar for heat map to meet requirements for eyescan colorbar
+        colorbar = ax.figure.colorbar(im)
+        colorbar.ax.set_ylabel("Bit Error Rate [Percentage]", rotation=-90, va="bottom")
+        ax.set_title("Eye Scan Heat Map")
+        ax.set_xlabel("Horizontal Offset [UI]")  # -0.5 to 0.5 every time
+        ax.set_ylabel("Vertical Offset [CODES]")  # no higher than 127 in either direction
+        plt.savefig()
+
+        # Plot the Center Eye of the Eyescan on one plot
+        new_graph_points = []
+        for d in graph_data:
+            new_graph_points.append(d[len(d) / 2 - len(d) / 10:len(d) / 2 + len(d) / 10])
+        fig, ax = plt.subplots()
+        im = ax.imshow(new_graph_points, aspect=0.00035, extent=[-0.1, 0.1, -127, 127], cmap=cm, vmin=0, vmax=50)
+        colorbar = ax.figure.colorbar(im)
+        colorbar.ax.set_ylabel("Bit Error Rate [Percentage]", rotation=-90, va="bottom")
+        ax.set_title("Eye Scan Heat Map (Center eye)")
+        ax.set_xlabel("Horizontal Offset [UI]")
+        ax.set_ylabel("Vertical Offset [CODES]")
+        plt.savefig()
+
+        os.chdir(return_dir)
+
     def add_csv(self, file_name, data, column_labels=None, row_labels=None, title="",
-                seperator=",", surround_character="\"", new_line="\n"):
+                separator=",", surround_character="\"", new_line="\n"):
         out_data = ""
         if column_labels is not None:
             if row_labels is not None:
-                out_data += surround_character + title + surround_character + seperator
-            out_data = seperator.join(map(lambda s: surround_character + str(s) + surround_character,
+                out_data += surround_character + title + surround_character + separator
+            out_data = separator.join(map(lambda s: surround_character + str(s) + surround_character,
                                           column_labels))
             out_data += new_line
         for i in range(max(len(row_labels), len(data))):
             if row_labels is not None and len(row_labels) > i:
-                out_data += surround_character + row_labels[i] + surround_character + seperator
+                out_data += surround_character + row_labels[i] + surround_character + separator
             if len(data) > i:
                 if type(data[i]) is list:
-                    out_data += seperator.join(map(lambda s: surround_character + str(s) + surround_character, data[i]))
+                    out_data += separator.join(map(lambda s: surround_character + str(s) + surround_character, data[i]))
                 else:
-                    out_data +=surround_character + str(data[i]) + surround_character
-                # out_data += seperator.join(map(lambda s: surround_character + str(s) + surround_character, data[i]))
+                    out_data += surround_character + str(data[i]) + surround_character
+                # out_data += separator.join(map(lambda s: surround_character + str(s) + surround_character, data[i]))
                 out_data += new_line
         out_file_name = self.experiment_results_directory + "//" + file_name + ".csv"
         with open(out_file_name, "w") as out_file:
@@ -122,20 +185,21 @@ class ExperimentResultsModel:
         self.experiments_results_files.append(out_file_name)
 
     def add_csv_dict(self, file_name, data_dict, row_labels, column_labels=None, title="",
-                seperator=",", surround_character="\"", new_line="\n"):
+                     separator=",", surround_character="\"", new_line="\n"):
         out_data = ""
         if column_labels is not None:
-            out_data += surround_character + title + surround_character + seperator
-            out_data = seperator.join(map(lambda s: surround_character + str(s) + surround_character,
+            out_data += surround_character + title + surround_character + separator
+            out_data = separator.join(map(lambda s: surround_character + str(s) + surround_character,
                                           column_labels))
             out_data += new_line
         for key in row_labels:
-            out_data += surround_character + key + surround_character + seperator
+            out_data += surround_character + key + surround_character + separator
             if key in data_dict:
                 if type(data_dict[key]) is list:
-                    out_data += seperator.join(map(lambda s: surround_character + str(s) + surround_character, data_dict[key]))
+                    out_data += separator.join(map(lambda s: surround_character + str(s) + surround_character,
+                                                   data_dict[key]))
                 else:
-                    out_data +=surround_character + str(data_dict[key]) + surround_character
+                    out_data += surround_character + str(data_dict[key]) + surround_character
                 out_data += new_line
         out_file_name = self.experiment_results_directory + "//" + file_name + ".csv"
         with open(out_file_name, "w") as out_file:
@@ -158,7 +222,7 @@ class ExperimentResultsModel:
         out_file_name = self.experiment_results_directory + "//" + file_name + ".json"
 
         with open(out_file_name, 'w') as out_file:
-            json.dump(data_dict, out_file)
+            json.dump(data_dict, out_file, separators=(',', ": "), indent=4)
         self.experiments_results_files.append(out_file_name)
     #
     # def add_binary_data_file(self, data, file_name):
