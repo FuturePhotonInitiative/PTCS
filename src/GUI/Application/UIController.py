@@ -1,3 +1,7 @@
+import sys
+
+from src.GUI.UI.Queue.ExperimentControlPanel import ExperimentControlPanel
+from src.GUI.UI.Queue.ExperimentOutputPanel import ExperimentOutputPanel
 from src.GUI.Util.Functions import fix_text_size
 
 
@@ -32,8 +36,23 @@ class UIController:
 
     def fix_control_list(self):
         for control in self.controls_to_fix_text_size:
+            # print control
             fix_text_size(control, 10)
 
     def switch_to_result(self):
         # self.mainframe.notebook
         pass
+
+    def redirectSTDout(self, logger):
+        if logger:
+            sys.stdout = logger
+        else:
+            sys.stdout = sys.__stdout__
+
+    def switch_queue_to_running(self):
+        self.mainframe.queue_page.set_control(ExperimentOutputPanel(self.mainframe.queue_page))
+        self.mainframe.queue_page.control_panel.set_up_ui_control(self)
+
+    def switch_queue_to_edit(self):
+        self.mainframe.queue_page.set_control(ExperimentControlPanel(self.mainframe.queue_page))
+        self.mainframe.queue_page.control_panel.set_up_ui_control(self)

@@ -33,7 +33,7 @@ class MainFrame(wx.Frame):
         # self.fix_tab_size(None)
         self.Bind(wx.EVT_SIZE, self.fix_tab_size)
         self.Bind(wx.EVT_TIMER, self.run_page_update, self.timer)
-        self.timer.Start(5000)
+        self.timer.Start(500)
 
     def fix_tab_size(self, event):
         event.Skip()
@@ -48,7 +48,7 @@ class MainFrame(wx.Frame):
         self.notebook.SetPadding(wx.Size(size, 3))
 
     def run_page_update(self, event):
-        print "ding"
+        # print "ding"
         UI_controller = Globals.systemConfigManager.get_ui_controller()
         if UI_controller:
             UI_controller.fix_control_list()

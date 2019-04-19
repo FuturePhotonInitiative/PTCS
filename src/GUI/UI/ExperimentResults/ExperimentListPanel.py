@@ -54,13 +54,13 @@ class ExperimentListPanel(SpaeDisplayPanel):
         self.reload(None)
 
     def set_up_ui_control(self, ui_control):
-        ui_control.add_control_to_text_list(self.run_button)
+        pass
 
     def reload(self, event=None):
         """
         Reloads it self, updates if the Queue has changed
         """
-        print "RELOADING", self.root, self, event
+        # print "RELOADING", self.root, self, event
         if not self.root:
             self.root = self.tree_box.AddRoot(GUI_CONSTANTS.EXPERIMENT_QUEUE_RESULT_ROOT)
         # print self.tree_box.GetChildrenCount(self.root, recursively=False), len(Globals.systemConfigManager.get_results_manager().get_queue_results())

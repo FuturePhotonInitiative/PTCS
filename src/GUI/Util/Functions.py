@@ -15,17 +15,20 @@ def fix_text_size(control, margin):
     try:
         font = control.GetFont()
         # print font
-        size = wx.Size(control.GetSize().Get()[1] / 2, control.GetSize().Get()[1] / 2)
+        # size = wx.Size(control.GetSize().Get()[1] / 4, control.GetSize().Get()[1] / 4)
         # print size
-        wx.Font.SetPixelSize(font, size)
+        wx.Font.Scale(font, round((float(control.GetSize().Get()[1] - margin) /
+        float(font.GetPixelSize()[1]))/2.0))
+        # wx.Font.SetPixelSize(font, size)
         dc = wx.ScreenDC()
         dc.SetFont(font)
         w, h = dc.GetTextExtent("test string")
-        if w + margin > control.GetSize().Get()[-0] and \
-                control.GetSize().Get()[-0] * (control.GetSize().Get()[-0] - margin / w) > 0:
-            scale = (control.GetSize().Get()[-0] - margin) / w
-            size = size.Scale(scale, scale)
-            wx.Font.SetPixelSize(font, size)
+        if w + margin > control.GetSize().Get()[0] and \
+                control.GetSize().Get()[0] * (float(control.GetSize().Get()[0] - margin) / float(w)) > 0:
+            # print 2
+            scale = round(float(control.GetSize().Get()[0] - margin) / float(w), 2)
+            wx.Font.Scale(font, scale)
+            # print scale
         control.SetFont(font)
     except Exception as e:
         pass

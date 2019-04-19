@@ -56,7 +56,7 @@ class ExperimentControlPanel(SpaeControlPanel):
             controls_to_add.append(self.choice_box)
             controls_to_add.append(self.remove_button)
             controls_to_add.append(self.add_button)
-            print "ADD BUTTON:", self.add_button
+            # print "ADD BUTTON:", self.add_button
 
 
             for control in controls_to_add:
