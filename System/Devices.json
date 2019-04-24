@@ -10,8 +10,13 @@
     "Default" : "129.21.172.198"
   },
   "Oscilloscope" : {
-    "Driver": "AgilentDSO7000A",
-    "Type": "VISA",
-    "Default": "USB0::0x0957::0x1745::MY48260511::0::INSTR"
+    "Driver" : "AgilentDSO7000A",
+    "Type" : "VISA",
+    "Default" : "USB0::0x0957::0x1745::MY48260511::0::INSTR"
+  },
+  "VCU 108" : {
+    "Driver" : "VCU108",
+    "Type" : "VISA",
+    "Default" : "COM5"
   }
 }

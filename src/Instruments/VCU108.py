@@ -1,6 +1,7 @@
 import inspect
 import re
 import pyvisa
+import pyvisa.constants as constants
 
 
 class VCU108(object):
@@ -67,19 +68,32 @@ class VCU108(object):
 		else:
 			return self.device.query(command)
 
+
+	# ALEX RUN THIS
 	def run_petb_read(self, pin):
 		"""
 		petb gpio read [port=0] [pin], port is always 0
 		:param pin: string, pin value, must be in valid_pins
 		:return: data, all data from command, will need to be parsed later
 		"""
+		data = []
 		valid_pins = ["modsel", "reset", "modprs", "int", "lpmode", "all"]
 		if not self.check_connected():
 			return False
 		else:
 			if pin not in valid_pins:
 				return "Invalid pin sent."
-			return self.device.query("petb gpio read 0 "+str(pin))
+			# self.device.flush(self.device.session)
+			self.device.write("petb gpio read 0 "+str(pin)+"\r\n\n")
+			line = ""
+			line = self.device.read()
+			print line
+			data.append(line)
+			while self.device.bytes_in_buffer > 0:
+				line = self.device.read()
+				print line
+				data.append(line)
+			return data
 
 	def run_petb_set(self, pin):
 		"""
@@ -94,7 +108,13 @@ class VCU108(object):
 		else:
 			if pin not in valid_pins:
 				return "Invalid pin sent."
-			return self.device.query("petb gpio set 0 "+str(pin))
+			self.device.write("petb gpio set 0 "+str(pin))
+			data.append(self.device.read())
+			data.append(self.device.read())
+			data.append(self.device.read())
+			data.append(self.device.read())
+			data.append(self.device.read())
+			return data
 
 	def run_petb_clear(self, pin):
 		"""
