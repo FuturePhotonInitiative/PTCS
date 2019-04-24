@@ -52,37 +52,24 @@ class SpaePage(wx.Panel):
         self.display_panel.set_up_ui_control(ui_control)
         self.control_panel.set_up_ui_control(ui_control)
 
-    # def set_display(self,
-    #                display_panel,
-    #                display_title=None,
-    #                display_propotion=1):
-    #     self.display_panel = display_panel
-    #
-    #     if display_title:
-    #         self.display_title = display_title
-    #
-    #     if display_propotion != 1:
-    #         self.display_propotion = display_propotion
-    #
-    #     # sizer = wx.BoxSizer(wx.HORIZONTAL)
-    #
-    #     # sets up right sub-panel
-    #     right_side = wx.BoxSizer(wx.VERTICAL)
-    #     if self.display_title is not None:
-    #         right_side.Add(wx.StaticText(self, label=self.display_title), CONSTANTS.LABEL_PROPORTION, wx.TOP)
-    #     right_side.Add(self.display_panel, 1, wx.EXPAND | wx.ALL)
-    #
-    #     # sets up left sub-panel
-    #     left_side = wx.BoxSizer(wx.VERTICAL)
-    #     if self.control_title is not None:
-    #         left_side.Add(wx.StaticText(self, label=self.control_title), CONSTANTS.LABEL_PROPORTION, wx.TOP)
-    #     left_side.Add(self.control_panel, 1, wx.EXPAND | wx.ALL)
-    #
-    #     self.GetSizer().Clear(delete_windows=True)
-    #     self.GetSizer().Add(right_side, self.display_propotion, wx.EXPAND | wx.ALL)
-    #     self.GetSizer().Add(self.control_panel, self.control_proportion, wx.EXPAND | wx.ALL)
-    #
-    #     self.GetSizer().Layout()
+    def set_display(self,
+                   display_panel,
+                   display_title=None,
+                   display_propotion=1):
+        self.display_panel = display_panel
+
+        if display_title:
+            self.display_title = display_title
+
+        if display_propotion != 1:
+            self.display_propotion = display_propotion
+
+        self.right_side.Clear(delete_windows=True)
+        if self.display_title is not None:
+            self.right_side.Add(wx.StaticText(self, label=self.display_title), CONSTANTS.LABEL_PROPORTION, wx.TOP)
+        self.right_side.Add(self.display_panel, 1, wx.EXPAND | wx.ALL)
+
+        self.GetSizer().Layout()
 
     def set_control(self,
                     control_panel,
@@ -96,22 +83,9 @@ class SpaePage(wx.Panel):
         if control_proportion != 1:
             self.control_proportion = control_proportion
 
-        # sizer = wx.BoxSizer(wx.HORIZONTAL)
-
-        # sets up right sub-panel
-        # right_side = wx.BoxSizer(wx.VERTICAL)
-        # if self.display_title is not None:
-        #     right_side.Add(wx.StaticText(self, label=self.display_title), CONSTANTS.LABEL_PROPORTION, wx.TOP)
-        # right_side.Add(self.display_panel, 1, wx.EXPAND | wx.ALL)
-
-        # sets up left sub-panel
         self.left_side.Clear(delete_windows=True)
         if self.control_title is not None:
             self.left_side.Add(wx.StaticText(self, label=self.control_title), CONSTANTS.LABEL_PROPORTION, wx.TOP)
         self.left_side.Add(self.control_panel, 1, wx.EXPAND | wx.ALL)
-
-        # self.GetSizer().Clear(delete_windows=True)
-        # self.GetSizer().Add(right_side, self.display_propotion, wx.EXPAND | wx.ALL)
-        # self.GetSizer().Add(self.control_panel, self.control_proportion, wx.EXPAND | wx.ALL)
 
         self.GetSizer().Layout()

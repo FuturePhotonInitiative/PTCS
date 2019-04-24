@@ -17,13 +17,13 @@ class MainFrame(wx.Frame):
         self.timer = wx.Timer(self)
         self.queue_page = QueuePage(self.notebook)
         self.hardware_page = HardwarePage(self.notebook)
-        self.build_experiments_page = BuildExperimentsPage(self.notebook)
+        # self.build_experiments_page = BuildExperimentsPage(self.notebook)
         self.experiment_results_page = ExperimentResultsPage(self.notebook)
 
         self.notebook.AddPage(self.queue_page, CONSTANTS.QUEUE_PAGE_NAME)
-        self.notebook.AddPage(HardwarePage(self.notebook), CONSTANTS.HARDWARE_PAGE_NAME)
-        self.notebook.AddPage(BuildExperimentsPage(self.notebook), CONSTANTS.BUILD_EXPERIMENTS_PAGE_NAME)
-        self.notebook.AddPage(ExperimentResultsPage(self.notebook), CONSTANTS.RESULTS_PAGE_NAME)
+        self.notebook.AddPage(self.experiment_results_page, CONSTANTS.RESULTS_PAGE_NAME)
+        self.notebook.AddPage(self.hardware_page, CONSTANTS.HARDWARE_PAGE_NAME)
+        # self.notebook.AddPage(self.build_experiments_page, CONSTANTS.BUILD_EXPERIMENTS_PAGE_NAME)
 
 
         sizer = wx.BoxSizer()
