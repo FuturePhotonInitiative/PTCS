@@ -1,10 +1,11 @@
 import time
 
 
-def main(data_map):
+def main(data_map, experiment_result):
     """
     This stage varies an applied voltage to an oscilloscope and collects the resulting samples
     :param data_map: The dictionary to store data between tasks
+    :param experiment_result: ExperimentResultsModel object
     :return: None
     """
     voltage_source = data_map['Devices']['Voltage_Source']

@@ -1,10 +1,5 @@
 import inspect
 import re
-
-
-# import time
-import time
-
 import pyvisa
 
 
@@ -56,181 +51,298 @@ class VCU108(object):
 			self.device.write(str(vertical_boundary))
 			self.device.write(str(points))
 			self.device.write(str(drp))
+			line = ""
 			while "END" not in line:
 				try:
 					line = self.device.read()
+					print line
 					data.append(line)
 				except pyvisa.errors.VisaIOError:
 					continue
-			# read
+			return data
 
 	def run_raw_command(self, command):
 		if not self.check_connected():
 			return False
 		else:
-			self.reset_menu()
 			return self.device.query(command)
 
-	def run_UART(self):
+	def run_petb_read(self, pin):
+		"""
+		petb gpio read [port=0] [pin], port is always 0
+		:param pin: string, pin value, must be in valid_pins
+		:return: data, all data from command, will need to be parsed later
+		"""
+		valid_pins = ["modsel", "reset", "modprs", "int", "lpmode", "all"]
 		if not self.check_connected():
 			return False
 		else:
-			self.reset_menu()
-			return self.device.query("1")
+			if pin not in valid_pins:
+				return "Invalid pin sent."
+			return self.device.query("petb gpio read 0 "+str(pin))
 
-	def run_LED(self):
+	def run_petb_set(self, pin):
+		"""
+		petb gpio write [port=0] [pin], port is always 0
+		:param pin: string, pin value, must be in valid_pins
+		:return: data, all data from command, will need to be parsed later
+		"""
+		data = []
+		valid_pins = ["modsel", "reset", "modprs", "int", "lpmode", "all"]
 		if not self.check_connected():
 			return False
 		else:
-			self.reset_menu()
+			if pin not in valid_pins:
+				return "Invalid pin sent."
+			return self.device.query("petb gpio set 0 "+str(pin))
 
-			self.device.clear()
-			return "Complete"
-
-	def run_IIC(self):
+	def run_petb_clear(self, pin):
+		"""
+		petb gpio write [port=0] [pin], port is always 0
+		:param pin: string, pin value, must be in valid_pins
+		:return: data, all data from command, will need to be parsed later
+		"""
+		data = []
+		valid_pins = ["modsel", "reset", "modprs", "int", "lpmode", "all"]
 		if not self.check_connected():
 			return False
 		else:
-			while self.device.bytes_in_buffer != 0:
-				self.device.read()
-			self.device.write("3")
-			time.sleep(0.2)
-			buf = ""
-			while True:
-				while self.device.bytes_in_buffer == 0:
-					time.sleep(0.05)
-				buf = self.device.read()
-				if re.match("[3\r]+", buf):
-					buf = ""
-				else:
-					break
-			while self.device.bytes_in_buffer != 0:
-				line = self.device.read()
-				if re.match("Press any key to return to main menu", line):
-					self.device.write('z')
-					break
-				else:
-					buf += (line + "\n")
-			return buf
+			if pin not in valid_pins:
+				return "Invalid pin sent."
+			return self.device.query("petb gpio clear 0 "+str(pin))
 
-			# self.reset_menu()
-			# buf = ""
-			# self.device.write("3")
-			# # time.sleep(1)
-			# count = 0
-			# readData = False
-			# # self.device.query(b'3')
-			# # self.device.clear()
-			# while True or count > 50:
-			# 	line = str(self.device.query("z")).strip()
-			# 	print line
-			# 	if re.match("Press any key to return to main menu", line):
-			# 		break
-			# 	if readData:
-			# 		buf += line + "\n"
-			# 	if re.match("3", line):
-			# 		readData = True
-			# 	count += 1
-			# time.sleep(0.5)
-			# self.device.clear()
-
-	def run_timer(self):
+	def run_petb_toggle(self, pin):
+		"""
+		petb gpio write [port=0] [pin], port is always 0
+		:param pin: string, pin value, must be in valid_pins
+		:return: data, all data from command, will need to be parsed later
+		"""
+		data = []
+		valid_pins = ["modsel", "reset", "modprs", "int", "lpmode", "all"]
 		if not self.check_connected():
 			return False
 		else:
-			self.reset_menu()
-			return self.device.query("5")
+			if pin not in valid_pins:
+				return "Invalid pin sent."
+			return self.device.query("petb gpio toggle 0 "+str(pin))
 
-	def run_switch(self):
+	def run_pek_read(self, pin=0, port=0):
+		"""
+		pek gpio read [port=0] [pin=0]
+		:param pin: string, pin value, must be in valid_pins
+		:param port: int, port number, must be in valid_ports
+		:return: data, all data from command, will need to be parsed later
+		"""
+		data = []
+		valid_pins = [0, 1, 2, 3, 4, 5, 6, 7]
+		valid_ports = [0, 1, 2, 3]
+
 		if not self.check_connected():
 			return False
 		else:
-			self.reset_menu()
-			return self.device.query("7")
+			if pin not in valid_pins:
+				print "Invalid pin sent."
+				return False
+			if port not in valid_ports:
+				print "Invalid port sent."
+				return False
+			return self.device.query("pek gpio read " + str(port) + " " + str(pin))
 
-	def run_HDMI(self):
+	def run_pek_set(self, pin=0, port=0):
+		"""
+		pek gpio set [port=0] [pin=0]
+		:param pin: string, pin value, must be in valid_pins
+		:param port: int, port number, must be in valid_ports
+		:return: data, all data from command, will need to be parsed later
+		"""
+		data = []
+		valid_pins = [0, 1, 2, 3, 4, 5, 6, 7]
+		valid_ports = [0, 1, 2, 3]
+
 		if not self.check_connected():
 			return False
 		else:
-			self.reset_menu()
-			return self.device.query("8")
+			if pin not in valid_pins:
+				print "Invalid pin sent."
+				return False
+			if port not in valid_ports:
+				print "Invalid port sent."
+				return False
+			return self.device.query("pek gpio set " + str(port) + " " + str(pin))
 
-	def run_DDR4(self):
+	def run_pek_clear(self, pin=0, port=0):
+		"""
+		pek gpio clear [port=0] [pin=0]
+		:param pin: string, pin value, must be in valid_pins
+		:param port: int, port number, must be in valid_ports
+		:return: data, all data from command, will need to be parsed later
+		"""
+		data = []
+		valid_pins = [0, 1, 2, 3, 4, 5, 6, 7]
+		valid_ports = [0, 1, 2, 3]
+
 		if not self.check_connected():
 			return False
 		else:
-			self.reset_menu()
-			return self.device.query("9")
+			if pin not in valid_pins:
+				print "Invalid pin sent."
+				return False
+			if port not in valid_ports:
+				print "Invalid port sent."
+				return False
+			return self.device.query("pek gpio clear " + str(port) + " " + str(pin))
 
-	def run_BRAM(self):
+	def run_pek_toggle(self, pin=0, port=0):
+		"""
+		pek gpio toggle [port=0] [pin=0]
+		:param pin: string, pin value, must be in valid_pins
+		:param port: int, port number, must be in valid_ports
+		:return: data, all data from command, will need to be parsed later
+		"""
+		data = []
+		valid_pins = [0, 1, 2, 3, 4, 5, 6, 7]
+		valid_ports = [0, 1, 2, 3]
+
 		if not self.check_connected():
 			return False
 		else:
-			self.reset_menu()
-			return self.device.query("A")
+			if pin not in valid_pins:
+				print "Invalid pin sent."
+				return False
+			if port not in valid_ports:
+				print "Invalid port sent."
+				return False
+			return self.device.query("pek gpio toggle " + str(port) + " " + str(pin))
 
-	def run_button(self):
+	def run_pek_write(self, pin=0, port=0, value=0):
+		"""
+		pek gpio write [port=0] [pin=0]
+		:param pin: string, pin value, must be in valid_pins
+		:param port: int, port number, must be in valid_ports
+		:param value: int, value, must be 0 or 1
+		:return: data, all data from command, will need to be parsed later
+		"""
+		data = []
+		valid_pins = [0, 1, 2, 3, 4, 5, 6, 7]
+		valid_ports = [0, 1, 2, 3]
+		valid_values = [0, 1]
+
 		if not self.check_connected():
 			return False
 		else:
-			self.reset_menu()
-			return self.device.query("B")
+			if pin not in valid_pins:
+				print "Invalid pin sent."
+				return False
+			if port not in valid_ports:
+				print "Invalid port sent."
+				return False
+			if value not in valid_values:
+				print "Invalid port sent."
+				return False
+			return self.device.query("pek gpio write " + str(port) + " " + str(pin) + " " + str(value))
 
-	def run_clocking(self):
+	def run_pek_list(self):
+		"""
+		pek gpio list
+		:return: data, all data from command, will need to be parsed later
+		"""
+		data = []
+
 		if not self.check_connected():
 			return False
 		else:
-			self.reset_menu()
-			return self.device.query("C")
+			return self.device.query("pek gpio list")
 
-	def run_PMOD(self):
+	def run_adc_read(self, channel="00"):
+		"""
+		adc read [channel]
+		:param channel: string, must be in valid_channels
+		:return: data, all data from command, will need to be parsed later
+		"""
+		data = []
+		valid_channels = ["00", "0e", "10", "13", "16", "17"]
+
 		if not self.check_connected():
 			return False
 		else:
-			self.reset_menu()
-			return self.device.query("D")
+			if channel not in valid_channels:
+				print "Channel not valid."
+				return False
+			return self.device.query("adc read " + str(channel))
 
-	def run_LVDS(self):
+	def run_dac_write(self, value=""):
+		"""
+		dac write []
+		:param value: string, data to be written to the DAC
+		:return: data, all data from command, will need to be parsed later
+		"""
+		data = []
+
 		if not self.check_connected():
 			return False
 		else:
-			self.reset_menu()
-			return self.device.query("F")
+			return self.device.query("dac write " + str(value))
 
-	def run_sys_mon(self):
+	def run_spixfer(self, value):
+		"""
+		spixfer [string]
+		:param value: string, data to be written to SPI
+		:return: data, all data from command, will need to be parsed later
+		"""
+		data = []
+
 		if not self.check_connected():
 			return False
 		else:
-			self.reset_menu()
-			return self.device.query("G")
+			return self.device.query("spixfer " + str(value))
 
-	def run_ethernet(self):
+	def run_spilib(self, value):
+		"""
+		spilib [string]
+		:param value: string, data to be written to SPI
+		:return: data, all data from command, will need to be parsed later
+		"""
+		data = []
+
 		if not self.check_connected():
 			return False
 		else:
-			self.reset_menu()
-			return self.device.query("H")
+			return self.device.query("spilib "+str(value))
 
-	def run_exit(self):
+	def run_i2cwrite(self, address, value):
+		"""
+		i2cwrite [address] [byte value]
+		:param address: string, must be between 0x00 and 0xFF
+		:param value: string, byte value to write to address
+		:return: data, all data from command, will need to be parsed later
+		"""
+		data = []
+		valid_address = re.compile(r'(?P<name>0x[0-9ABCDEF][0-9ABCDEF])')
+		match = valid_address.match(address)
+
 		if not self.check_connected():
 			return False
 		else:
-			self._locked = True
-			self.reset_menu()
-			return self.device.query("0")
+			if match is None:
+				print "Enter a valid address"
+				return False
+			return self.device.query("i2cwrite " + str(address) + " " + str(value))
 
-	def reset_menu(self):
-		if not self.check_connected() or self._locked:
+	def run_i2cread(self, address, value=""):
+		"""
+		i2cwrite [address] [byte value]
+		:param address: string, must be between 0x00 and 0xFF
+		:param value: string, optional, number of bytes to read
+		:return: data, all data from command, will need to be parsed later
+		"""
+		data = []
+		valid_address = re.compile(r'(?P<name>0x[0-9ABCDEF][0-9ABCDEF])')
+		match = valid_address.match(address)
+
+		if not self.check_connected():
 			return False
 		else:
-			tries = 0
-			self.device.query(b'z')
-			# self.device.clear()
-			while True or tries > 100:
-				tries += 1
-				response = self.device.read()
-				response = str(response).strip()
-				print response
-				if re.match("0: Exit", response):
-					break
-		# self.device.clear()
+			if match is None:
+				print "Enter a valid address"
+				return False
+			return self.device.query("i2cread " + str(address) + " " + str(value))
