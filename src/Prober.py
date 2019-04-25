@@ -293,7 +293,7 @@ def generate_arg_list_from_parameter_file(arg_file):
     return arglist
 
 
-def main(args, config_manager=None, queue_result=None):
+def main(args, config_manager=None, queue_result=None, logger = None):
     """
     Entry point of SPAE, loads config file
     :param args: test configuration file

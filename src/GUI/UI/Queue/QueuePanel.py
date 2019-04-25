@@ -54,9 +54,11 @@ class QueuePanel(SpaeDisplayPanel):
         """
         Reloads the display list with the current Queue contents
         """
-        self.list_box.Clear()
-        for experiment in Globals.systemConfigManager.get_queue_manager().get_experiment_names():
-            self.list_box.Append(experiment)
+
+        if self.list_box.GetCount() != len(Globals.systemConfigManager.get_queue_manager().get_experiment_names()):
+            self.list_box.Clear()
+            for experiment in Globals.systemConfigManager.get_queue_manager().get_experiment_names():
+                self.list_box.Append(experiment)
 
     def deselected(self, event):
         """
@@ -81,4 +83,9 @@ class QueuePanel(SpaeDisplayPanel):
         pass
 
     def run_the_queue(self, event):
+        print "Running Queue"
+        ui_control = Globals.systemConfigManager.get_ui_controller()
+        if ui_control is not None:
+            print "Switching Queue Mode"
+            ui_control.switch_queue_to_running()
         Globals.systemConfigManager.get_queue_manager().run()

@@ -34,7 +34,7 @@ class QueueRunner(Thread):
         :return:
             Nothing
         """
-        print "Starting the Queue"
+        print "\n====================\nStarting the Queue\n====================\n"
         self.queue_result.start_queue()
         # TODO catch any exceptions run by prober and try to continue, but only if a flag in the __init__ has been
         # set
@@ -52,6 +52,7 @@ class QueueRunner(Thread):
         self.current_experiment = None
         self.queue_result.end_queue()
         self.queue_result.save()
+        print "\n====================\nQueue has finished\n====================\n"
 
     def get_current_experiment(self):
         """
