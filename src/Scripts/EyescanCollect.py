@@ -12,6 +12,6 @@ def main(data_map, experiment_result):
     drp = float(data_map['Data']['Initial']["DRP"])
 
     experiment_result.start_experiment()
-    data_map['Data']['Collect'] = vcu108.run_eye_scan(scale_factor, points, drp)
+    data_map['Data']['Collect'] = vcu108.run_eyescan(scale_factor, points, drp)
     experiment_result.end_experiment()
     return
