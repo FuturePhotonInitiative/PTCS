@@ -67,11 +67,20 @@ class VCU108(object):
 		:param step: step size of voltages
 		:return: data, all data from command, will need to be parsed later
 		"""
+		data = []
+		line = ""
 		if not self.check_connected():
 			return False
 		else:
 			self.device.write("petb eyescan "+str(range_value)+" "+str(scale_factor)+" "+str(horizontal)+" "+str(vertical)+" "+str(drp)+" "+str(step))
-			return self.read_data()
+			while "END" not in line:
+				try:
+					line = self.device.read()
+					print line
+					data.append(line)
+				except pyvisa.VisaIOError:
+					continue
+			return data
 
 	def run_raw_command(self, command):
 		if not self.check_connected():

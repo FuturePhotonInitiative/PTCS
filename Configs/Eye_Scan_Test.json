@@ -2,7 +2,7 @@
   "Name": "Eye Scan Test",
   "Devices":
               [
-                "VCU108"
+                "VCU 108"
               ],
   "Experiment" :
               [
@@ -24,8 +24,11 @@
               ],
   "Data" :
           {
-            "Scale_Factor": 0,
-            "Points": 0,
-            "DRP": 0
+            "Range": 0,
+            "Scale": 0,
+            "Horizontal_Boundary": 127,
+            "Vertical_Boundary":  512,
+            "DRP": 0,
+            "Step": 2
           }
 }
