@@ -118,45 +118,37 @@ class ExperimentResultsModel:
         plt.savefig(file_name)
         os.chdir(return_dir)
 
-    def add_eyescan_heat_map(self, graph_data):
+    def add_heat_map(self, graph_data,  title, colormap, aspect='auto', graph_extent=(-0.5, 0.5, -127, 127),
+                     colorbar_title="Bit Error Rate [Percentage]", y_label="Vertical Offset [UI]",
+                     x_label="Horizontal Offset [CODES]", vmin=0, vmax=50):
         """
-        This function creates an eyescan heat map
+        This function creates a heat map. Defaults are for Eye Scan
         :param graph_data: unicode data provided from data_map
+        :param title: string, title of the plot
+        :param colormap: colormap for colorbar
+        :param aspect: aspect ratio
+        :param graph_extent: range for data in heat map
+        :param colorbar_title: Title for colorbar
+        :param y_label: label for y axis
+        :param x_label: label for x axis
+        :param vmin: min value for colorbar
+        :param vmax: max value for colorbar
         :return: None
         """
         return_dir = os.getcwd()
         os.chdir(self.experiment_results_directory)
 
-        colors = [(0, 0, 0.8), (0, 0, 0.95), (0, 0, 1), (0, 0.5, 1), (0, 0.85, 1),
-                  (0, 1, 1), (0, 1, 0.3), (0, 1, 0), (0.7, 1, 0), (1, 1, 0),
-                  (1, 0.65, 0), (1, 0.5, 0), (1, 0.15, 0), (1, 0, 0), (0.65, 0, 0)]
-        n = len(colors)
-        cm = LinearSegmentedColormap.from_list('Eye_Scan_Map', colors, N=n)
-
         # Plot all of the data points on one plot
         fig, ax = plt.subplots()
-        im = ax.imshow(graph_data, aspect='auto', extent=[-0.5, 0.5, -127, 127], cmap=cm, vmin=0, vmax=50)
+        im = ax.imshow(graph_data, aspect=aspect, extent=graph_extent, cmap=colormap, vmin=vmin, vmax=vmax)
 
         # Create colorbar for heat map to meet requirements for eyescan colorbar
         colorbar = ax.figure.colorbar(im)
-        colorbar.ax.set_ylabel("Bit Error Rate [Percentage]", rotation=-90, va="bottom")
-        ax.set_title("Eye Scan Heat Map")
-        ax.set_xlabel("Horizontal Offset [UI]")  # -0.5 to 0.5 every time
-        ax.set_ylabel("Vertical Offset [CODES]")  # no higher than 127 in either direction
-        plt.savefig()
-
-        # Plot the Center Eye of the Eyescan on one plot
-        new_graph_points = []
-        for d in graph_data:
-            new_graph_points.append(d[len(d) / 2 - len(d) / 10:len(d) / 2 + len(d) / 10])
-        fig, ax = plt.subplots()
-        im = ax.imshow(new_graph_points, aspect=0.00035, extent=[-0.1, 0.1, -127, 127], cmap=cm, vmin=0, vmax=50)
-        colorbar = ax.figure.colorbar(im)
-        colorbar.ax.set_ylabel("Bit Error Rate [Percentage]", rotation=-90, va="bottom")
-        ax.set_title("Eye Scan Heat Map (Center eye)")
-        ax.set_xlabel("Horizontal Offset [UI]")
-        ax.set_ylabel("Vertical Offset [CODES]")
-        plt.savefig()
+        colorbar.ax.set_ylabel(colorbar_title, rotation=-90, va="bottom")
+        ax.set_title(title)
+        ax.set_xlabel(x_label)  # -0.5 to 0.5 every time
+        ax.set_ylabel(y_label)  # no higher than 127 in either direction
+        plt.savefig(title.replace(' ', "_"))
 
         os.chdir(return_dir)
 
