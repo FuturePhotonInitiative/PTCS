@@ -302,7 +302,7 @@ def main(args, config_manager=None, queue_result=None, logger = None):
 
     from GUI.Application.SystemConfigManager import SystemConfigManager
     if config_manager is None:
-        config_manager = SystemConfigManager('../../System/Files.json')
+        config_manager = SystemConfigManager('../System/Files.json')
 
     print('Starting SPAE...')
     if len(args) == 1:

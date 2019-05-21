@@ -17,7 +17,6 @@ class ExperimentResultsModel:
         self.experiment_results_directory = experiment_results_directory
         if experiment_result_config is None:
             if experiment_config_location is not None:
-                print experiment_config_location
                 self.experiment_config_location = json.load(open(experiment_config_location, "r"))
             if experiments_results_files is None:
                 experiments_results_files = []
