@@ -1,4 +1,6 @@
 import os
+from matplotlib.colors import LinearSegmentedColormap
+import csv
 
 def main(data_map, experiment_result):
     vcu108 = data_map['Devices']['VCU 108']
@@ -23,3 +25,26 @@ def main(data_map, experiment_result):
     with open(newscript, "w") as newfile:
         newfile.writelines(script)
     os.system('C:\\Xilinx\\Vivado\\2017.4\\bin\\vivado -mode tcl < ' + newscript)
+
+    # Create colormap for heatmaps
+    colors = [(0, 0, 0.8), (0, 0, 0.95), (0, 0, 1), (0, 0.5, 1), (0, 0.85, 1),
+              (0, 1, 1), (0, 1, 0.3), (0, 1, 0), (0.7, 1, 0), (1, 1, 0),
+              (1, 0.65, 0), (1, 0.5, 0), (1, 0.15, 0), (1, 0, 0), (0.65, 0, 0)]
+    n = len(colors)
+    colormap = LinearSegmentedColormap.from_list('Eye_Scan_Map', colors, N=n)
+
+    reduced = []
+    with open(experiment_result.experiment_results_directory + "/Collected_Data.csv") as data:
+        reader = csv.reader(data, delimiter=',')
+        ind = 0
+        for row in reader:
+            ind += 1
+            if ind >= 23:
+                lyst = row[1:]
+                if len(lyst) > 0:
+                    floatrow = []
+                    for v in lyst:
+                        floatrow.append(float(v) * 200.0)
+                    reduced.append(floatrow)
+
+    experiment_result.add_heat_map(reduced, "Eye Scan Heat Map", colormap, vmax=25)

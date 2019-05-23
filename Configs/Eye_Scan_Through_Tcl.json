@@ -1,5 +1,5 @@
 {
-  "Name": "Eye Scan Test (Tcl)",
+  "Name": "New Eye Scan Test",
   "Devices":
               [
                 "VCU 108"
@@ -19,7 +19,7 @@
             "Horizontal_Boundary": 127,
             "Vertical_Boundary":  512,
             "DRP": 0,
-            "Horizontal_Step": 2,
+            "Horizontal_Step": 1,
             "Vertical_Step": 1,
             "Tcl_Script_Location": "C:\\Users\\ofs9424\\SPAE\\eyescan_procedure.tcl"
           }

@@ -118,8 +118,8 @@ class ExperimentResultsModel:
         os.chdir(return_dir)
 
     def add_heat_map(self, graph_data,  title, colormap, aspect='auto', graph_extent=(-0.5, 0.5, -127, 127),
-                     colorbar_title="Bit Error Rate [Percentage]", y_label="Vertical Offset [UI]",
-                     x_label="Horizontal Offset [CODES]", vmin=0, vmax=50):
+                     colorbar_title="Bit Error Rate [Percentage]", y_label="Voltage (Codes)",
+                     x_label="Unit Interval", vmin=0, vmax=50):
         """
         This function creates a heat map. Defaults are for Eye Scan
         :param graph_data: unicode data provided from data_map

@@ -19,11 +19,14 @@ class Experiment:
         with open(config_file) as config:
             self.config_dict = json.load(config)
         self.scripts = []
-        for s in self.config_dict['Experiment']:
-            self.scripts.append(ExperimentScript(s))
+        if self.config_dict.get('Experiment', None) is not None:
+            for s in self.config_dict['Experiment']:
+                self.scripts.append(ExperimentScript(s))
         self.scripts = sorted(self.scripts, key=lambda elem: elem.order)
         self.dependencies = dependencies
         self.priority = priority
+        if self.config_dict.get('Tcl', None) is not None:
+            self.tcl_file = self.config_dict['Tcl']
 
     def copy(self):
         return Experiment(self.config_file_name, dependencies=self.dependencies, priority=self.priority)
