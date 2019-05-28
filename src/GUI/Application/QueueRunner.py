@@ -1,8 +1,10 @@
 import os
+import datetime
 from threading import Thread
 
 from src import Prober
 from src.GUI.Util import Globals
+from src.GUI.Util.Functions import clean_name_for_file
 
 from src.GUI.Model.ExperimentModel import Experiment
 
@@ -68,10 +70,16 @@ class QueueRunner(Thread):
         # TODO catch any exceptions run by prober and try to continue, but only if a flag in the __init__ has been
         # set
         self.queue.schedule_experiments()
-        master_tcl = "set output " + "C:\\Users\\ofs9424\\SPAE\\TestThisShit" + "\\Collected_Data.csv\n"
+        now = datetime.datetime.today()
+
+        name = "Tcl_Experiment" + str(now)
+        name = clean_name_for_file(name)
+        result_dir = Globals.systemConfigManager.get_results_manager().results_root
+        master_tcl = ""
         for i in range(len(self.queue)):
             with open(self.queue.get_ith_experiment(i).tcl_file, "r") as f:
                 done_sets = False
+                master_tcl += "set output \"" + result_dir + "/" + name + "/Collected_Data" + str(i+1) + ".csv\"\n"
                 for line in f.readlines():
                     if not done_sets:
                         if not line.startswith("set"):
@@ -99,7 +107,7 @@ class QueueRunner(Thread):
         exp['Source'] = 'script.py'
         exp['Order'] = 1
         with open(pyLoc, "w") as f:
-            f.write(("import os\nos.system('C:\\Xilinx\\Vivado\\2017.4\\bin\\vivado -mode tcl < ' + '" + target_location + "')").replace('\\', '\\\\'))
+            f.write(("import os\ndef main(data_map, experiment_result):\n\tos.system('C:\\Xilinx\\Vivado\\2017.4\\bin\\vivado -mode tcl < ' + '" + target_location + "')").replace('\\', '\\\\'))
         master_experiment.config_dict['Experiment'].append(exp)
         print "exporting to " + tmp_file_name
         master_experiment.export_to_json(tmp_file_name)
@@ -125,6 +133,7 @@ class QueueRunner(Thread):
 
     def run(self):
         self.run_tcl_tests()
+        #self.run_standard()
 
     def get_current_experiment(self):
         """

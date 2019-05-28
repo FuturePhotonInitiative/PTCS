@@ -61,7 +61,10 @@ class Experiment:
         :return:
             All of the keys currently set in the "Data" section of the experiment's configuration
         """
-        return self.config_dict["Data"].keys()
+        if self.config_dict.get("Data", None) is not None:
+            return self.config_dict["Data"].keys()
+        else:
+            return []
 
     def get_scripts(self):
         """
