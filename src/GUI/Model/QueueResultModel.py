@@ -13,6 +13,7 @@ class QueueResultsModel:
                  experiments_results_locations=None,
                  queue_result_config=None):
         self.results_config_root = results_config_root
+        self.time = None
         if queue_result_config is None:
             if experiments_results_locations is None:
                 experiments_results_locations = []

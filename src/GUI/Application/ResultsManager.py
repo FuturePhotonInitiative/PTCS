@@ -36,6 +36,8 @@ class ResultsManager:
 
     def make_new_experiment_result(self, exeriment_config_location, queue_result):
         now = datetime.datetime.today()
+        if queue_result.time is not None:
+            now = queue_result.time
         exp = Experiment(exeriment_config_location)
 
         name = exp.get_name() + str(now)

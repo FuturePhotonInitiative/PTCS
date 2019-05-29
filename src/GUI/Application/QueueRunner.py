@@ -74,12 +74,14 @@ class QueueRunner(Thread):
 
         name = "Tcl_Experiment" + str(now)
         name = clean_name_for_file(name)
+        self.queue_result.time = now
         result_dir = Globals.systemConfigManager.get_results_manager().results_root
         master_tcl = ""
         for i in range(len(self.queue)):
             with open(self.queue.get_ith_experiment(i).tcl_file, "r") as f:
                 done_sets = False
                 master_tcl += "set output \"" + result_dir + "/" + name + "/Collected_Data" + str(i+1) + ".csv\"\n"
+                master_tcl += "set index " + str(i+1) + "\n"
                 for line in f.readlines():
                     if not done_sets:
                         if not line.startswith("set"):
