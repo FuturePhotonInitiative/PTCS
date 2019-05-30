@@ -46,7 +46,9 @@ class QueueRunner(Thread):
 
             tmp_file_name = self.tmp_dir + "/tmp" + self.current_experiment.get_name().replace(" ", "_") + ".json"
             self.current_experiment.export_to_json(tmp_file_name)
-            Prober.main(["Prober.py", tmp_file_name], config_manager=Globals.systemConfigManager, queue_result=self.queue_result)
+            Prober.main(["Prober.py", "-c", tmp_file_name],
+                        config_manager=Globals.systemConfigManager,
+                        queue_result=self.queue_result)
             self.experiment_status[self.current_experiment] = 1
             os.remove(tmp_file_name)
         self.current_experiment = None
