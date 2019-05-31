@@ -105,6 +105,12 @@ class Args:
             return_lst.append(variable)
         return return_lst
 
+    def add_parameters(self, data_map):
+        for item in self.parameters:
+            # The config data is stored in two places in the data map
+            data_map['Config']['Data'][item[0]] = item[1]
+            data_map['Data']['Initial'][item[0]] = item[1]
+
     def obtain_config_file(self):
         """
         allows for the input of an experimental config file if no config
