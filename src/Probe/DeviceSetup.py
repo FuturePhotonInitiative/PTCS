@@ -45,7 +45,7 @@ class DeviceSetup:
 
     def connect_devices(self, config_file_devices, file_locations, exit_stack):
         """
-        Initializes all devices specified in the JSON config, this will also dynamically import the drivers
+        Initializes all devices specified in the device list. this will also dynamically import the drivers
         specified if one hasn't been imported already
         :param config_file_devices: The list of devices to be used
         :param file_locations: The JSON Files object with standard file directories

@@ -36,7 +36,7 @@ class Args:
         :return:
             A list of arguments from the parameter file in the format defined for command line variable definition
         """
-        arglist = []
+        arg_list = []
         contents = arg_file.read()
         # One variable per line in this format
         for line in contents.split("\n"):
@@ -54,22 +54,20 @@ class Args:
             args = filter(lambda arg: len(arg) > 0, args)
             # Only return the to string of the list if there's more than one element
             if len(args) >= 2:
-                arglist.append(name + "=" + str(args))
+                arg_list.append(name + "=" + str(args))
             else:
-                arglist.append(name + "=" + str(args[0]))
-        return arglist
+                arg_list.append(name + "=" + str(args[0]))
+        return arg_list
 
     @staticmethod
     def parse_command_line_definitions(args):
         """
         Parses experiment parameters provided at the command line and adds them to the data dictionary.
-        :param data_dict:
-            The initialized data dictionary
         :param args:
-            The argument list, not including the program name (sys.argv[0]) or JSON config file (sys.argv[1]).
+            The argument list, not including the program name (sys.argv[0]), the json config file, or the param file.
             It is recommended to call this using python list slicing (sys.argv[2:]).
         :return:
-            None
+            A list of variable=value definitions
         """
         return_lst = []
         for var in args:

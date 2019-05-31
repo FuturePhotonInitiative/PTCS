@@ -50,7 +50,6 @@ class ConfigFileManipulation:
         """
         Initializes optional Data section of the JSON config into the data map for the tasks
         :param data_map: The dictionary to store data between tasks
-        :param json_file: The JSON config object
         :return: None
         """
         data_section = self.config.get('Data', None)
@@ -65,8 +64,7 @@ class ConfigFileManipulation:
         """
         Extracts the scripts from the JSON config and stages them for execution. This will put the scripts in an ordered
             list where each element is a list of tasks to be spawned in parallel
-        :param json_file: The JSON config object
-        :param json_locations: The JSON Files object with standard file directories
+        :param file_locations: The JSON Files object with standard file directories
         :return: The list of staged task lists
         """
         scripts_root = str(file_locations['Script_Root'])
