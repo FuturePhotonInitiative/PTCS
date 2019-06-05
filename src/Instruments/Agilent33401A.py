@@ -12,7 +12,7 @@ import re
 
 class Agilent34401A(object):
 	"""
-	This class models the Agilent 34401A Multimeter.
+	This class models the Agilent 34401A Power Supply.
 	"""
 
 	methods = []
