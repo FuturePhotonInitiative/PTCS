@@ -1,5 +1,4 @@
-# Class for Agilent E3643A DC Power Supply
-
+# Class for
 import inspect
 import re
 import pyvisa
@@ -8,7 +7,7 @@ import pyvisa.constants
 
 class AgilentDSO7000A(object):
 	"""
-	This class models the Agilent DC power supply.
+	This class models the Agilent DSO700A Oscilloscope.
 	"""
 
 	methods = []
@@ -21,24 +20,6 @@ class AgilentDSO7000A(object):
 		:type: PyVisa open_resource object
 		"""
 		self.device = device
-
-	def __enter__(self):
-		"""
-		Enter method for ability to use "with open" statements
-		:return: Driver Object
-		"""
-		return self
-
-	def __exit__(self, exc_type, exc_val, exc_tb):
-		"""
-		Exit to close object
-		:param exc_type:
-		:param exc_val:
-		:param exc_tb:
-		:return:
-		"""
-		self.device.close()
-		pass
 
 	def who_am_i(self):
 		if self.check_connected():
@@ -61,17 +42,6 @@ class AgilentDSO7000A(object):
 		except pyvisa.errors.InvalidSession:
 			self.device = None
 			return False
-
-	def run_identify(self):
-		"""
-		Identifies itself using IDN query
-		:return:
-		"""
-		if self.check_connected():
-			identity = self.device.query("*IDN?")
-			return identity
-		else:
-			raise Exception('Serial communication port is not open.')
 
 	def run_measure_set_source(self, channel_num):
 		"""
