@@ -1,17 +1,11 @@
-"""
-A class that contains basic commands that all drivers may want to run
-"""
-
+from src.Instruments.EVTDriver import EVTDriver
 import pyvisa
-import inspect
-import re
 
 
-class EVTPyVisaDriver:
+class PyVisaDriver(EVTDriver):
 
     def __init__(self, device, name):
-        self.device = device
-        self.name = name
+        EVTDriver.__init__(self, device, name)
 
     def __enter__(self):
         """
@@ -20,25 +14,17 @@ class EVTPyVisaDriver:
         """
         return self
 
-    def __exit__(self):
+    def __exit__(self, exc_type, exc_val, exc_tb):
         """
         Close the device connection
-        :return:
         """
         self.device.close()
 
     def who_am_i(self):
         if self.check_connected():
-            return self.name + " at " + self.device.resource_info[0].alias
+            return self.name + " - Connected to" + self.device.resource_info[0].alias
         else:
             return self.name + " DISCONNECTED"
-
-    def what_can_i(self):
-        methods = []
-        for method in inspect.getmembers(self, inspect.ismethod):
-            if re.match('^run_.+', method[0]):
-                methods.append(method)
-        return methods
 
     def check_connected(self):
         if not self.device:

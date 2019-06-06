@@ -1,13 +1,16 @@
-from EVTPyVisaDriver import EVTPyVisaDriver
+from src.Instruments.PyVisaDriver import PyVisaDriver
 
 
-class Newport835(EVTPyVisaDriver):
+class Newport835(PyVisaDriver):
+    """
+    This class models a Newport 835 Optical Power Meter
+    """
 
     INCLUDE_UNITS = "G0"
     SUPPRESS_UNITS = "G1"
 
     def __init__(self, device):
-        EVTPyVisaDriver.__init__(self, device, "Newport 835 Optical Power Meter")
+        PyVisaDriver.__init__(self, device, "Newport 835 Optical Power Meter")
 
         # Each command needs to end with a 'X' to be executed and for the device to be ready for another command.
         # More than one command per command string is possible, but it is cleaner to not.

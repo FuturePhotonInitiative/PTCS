@@ -1,322 +1,276 @@
-import inspect
-import re
-
 import numpy
-import pyvisa
+
+from src.Instruments.PyVisaDriver import PyVisaDriver
 
 OK = True
 OK_MSG = 'OK'
 ERROR_BGN = 'Command'
 
 
-class BOSA400(object):
-	"""
-	This class models the BOSA400
-	"""
-	methods = []
+class BOSA400(PyVisaDriver):
+    """
+    This class models an Aragon BOSA 400
+    """
 
-	def __init__(self, device):
-		"""
-		Constructor method
-		"""
-		self.device = device
+    def __init__(self, device):
+        """
+        Constructor method
+        """
+        PyVisaDriver.__init__(self, device, "Aragon BOSA 400")
 
-		self.max_wavelength = 1579.9
-		self.min_wavelength = 1520
+        self.max_wavelength = 1579.9
+        self.min_wavelength = 1520
 
-	def __enter__(self):
-		"""
-		Enter method for ability to use "with open" statements
-		:return: Driver Object
-		"""
-		return self
+    # LASER FUNCTION CALLS
+    def run_get_max_wavelength(self):
+        """
+        Queries the maximum allowed wavelength
 
-	def __exit__(self):
-		"""
-		Exit to close object
-		:return:
-		"""
-		self.device.close()
+        :returns: Integer
+        """
+        return self.max_wavelength
 
-	def who_am_i(self):
-		"""
-		:returns: reference to device
-		"""
-		if self.check_connected():
-			return "AragonBOSA400 at " + self.device.resource_info[0].alias
-		else:
-			return "AragonBOSA400 DISCONNECTED"
+    def run_get_min_wavelength(self):
+        """
+        Queries the minimum allowed wavelength
 
-	def what_can_i(self):
-		"""
-		:returns: instrument attributes
-		"""
-		if len(BOSA400.methods) is 0:
-			for method in inspect.getmembers(self, inspect.ismethod):
-				if re.match('^run_.+', method[0]):
-					BOSA400.methods.append(method)
-		return BOSA400.methods
+        :returns: Integer
+        """
+        return self.min_wavelength
 
-	def check_connected(self):
-		if not self.device:
-			return False
-		try:
-			return self.device.session is not None
-		except pyvisa.errors.InvalidSession:
-			self.device = None
-			return False
+    def run_set_wavelength(self, wavelength):
+        """
+        Loads a single wavelength (in nanometers) and sets output high
 
-	# LASER FUNCTION CALLS
+        :param wavelength: Specified wavelength
+        :type wavelength: Integer
+        """
+        command = 'sens:wav:stat {} nm'.format(wavelength)
+        response = self.device.query(command)
+        check_response(command, response, OK)
 
-	def run_get_max_wavelength(self):
-		"""
-		Queries the maximum allowed wavelength
+    def run_set_power(self, wavelength):
+        """
+            BOSA cannot adjust output power - raise exception
+        """
+        raise BOSAException('Cannot adjust output power.')
 
-		:returns: Integer
-		"""
-		return self.max_wavelength
+    def run_sweep_wavelengths_trigger_setup(self, start, end, step):
+        """
+        Have to keep track of Triggers in main command, use Stop Sweep Command to end sweep.
+        Extra triggers do not make the laser sweep outside of specified end wavelength.
+        Remember to shut off laser after sweep ends
 
-	def run_get_min_wavelength(self):
-		"""
-		Queries the minimum allowed wavelength
+        :param start: Specified wavelength between 1520-1580
+        :type start: Integer
+        :param end: Specified wavelength between 1520-1580
+        :type end: Integer
+        :param step: Specified step in nm
+        :type step: Float
+        """
+        if not self.run_get_min_wavelength() < start < self.run_get_max_wavelength():
+            raise BOSAException('start wavelength Out of Bounds.')
+        if not self.run_get_min_wavelength() < end < self.run_get_max_wavelength():
+            raise BOSAException('end wavelength Out of Bounds.')
+        if start > end:
+            raise BOSAException('start wavelength must be smaller than end.')
 
-		:returns: Integer
-		"""
-		return self.min_wavelength
+        # set single sweep
+        command = 'sens:wav:single on'
+        response = self.device.query(command)
+        check_response(command, response, OK)
+        # set start waveLength
+        command = 'sens:wav:star {} nm'.format(start)
+        response = self.device.query(command)
+        check_response(command, response, OK)
+        # set end wavelength
+        command = 'sens:wav:stop {} nm'.format(end)
+        response = self.device.query(command)
+        check_response(command, response, OK)
+        # set sweep speed
+        command = 'sens:wav:speed {} nm'.format(step)
+        response = self.device.query(command)
+        check_response(command, response, OK)
 
-	def run_set_wavelength(self, wavelength):
-		"""
-		Loads a single wavelength (in nanometers) and sets output high
+    def run_trigger(self):
+        """
+        Triggers laser - Now this just starts the sweep
+        """
+        command = 'sens:sweep on'
+        response = self.device.query(command)
+        check_response(command, response, OK)
 
-		:param wavelength: Specified wavelength
-		:type wavelength: Integer
-		"""
-		command = 'sens:wav:stat {} nm'.format(wavelength)
-		response = self.device.query(command)
-		check_response(command, response, OK)
+    def run_stop_sweep(self):
+        """
+        Stop sweep
+        """
+        command = 'sens:sweep off'
+        response = self.device.query(command)
+        check_response(command, response, OK)
 
-	def run_set_power(self, wavelength):
-		"""
-			BOSA cannot adjust output power - raise exception
-		"""
-		raise BOSAException('Cannot adjust output power.')
+    def run_output_off(self):
+        """
+        Turns output of laser source OFF
+        """
+        command = 'sens:switch off'
+        response = self.device.query(command)
+        check_response(command, response, OK)
 
-	def run_sweep_wavelengths_trigger_setup(self, start, end, step):
-		"""
-		Have to keep track of Triggers in main command, use Stop Sweep Command to end sweep.
-		Extra triggers do not make the laser sweep outside of specified end wavelength.
-		Remember to shut off laser after sweep ends
+    def run_output_on(self):
+        """
+        Turns output of laser source OFF
+        """
+        command = 'sens:switch on'
+        response = self.device.query(command)
+        check_response(command, response, OK)
 
-		:param start: Specified wavelength between 1520-1580
-		:type start: Integer
-		:param end: Specified wavelength between 1520-1580
-		:type end: Integer
-		:param step: Specified step in nm
-		:type step: Float
-		"""
-		if not self.run_get_min_wavelength() < start < self.run_get_max_wavelength():
-			raise BOSAException('start wavelength Out of Bounds.')
-		if not self.run_get_min_wavelength() < end < self.run_get_max_wavelength():
-			raise BOSAException('end wavelength Out of Bounds.')
-		if start > end:
-			raise BOSAException('start wavelength must be smaller than end.')
+        # wait until the laser is on
+        while True:
+            command = 'sens:switch?'
+            response = self.device.query(command)
+            check_response(command, response)
+            if response.lower().startswith('on'):
+                break
 
-		# set single sweep
-		command = 'sens:wav:single on'
-		response = self.device.query(command)
-		check_response(command, response, OK)
-		# set start waveLength
-		command = 'sens:wav:star {} nm'.format(start)
-		response = self.device.query(command)
-		check_response(command, response, OK)
-		# set end wavelength
-		command = 'sens:wav:stop {} nm'.format(end)
-		response = self.device.query(command)
-		check_response(command, response, OK)
-		# set sweep speed
-		command = 'sens:wav:speed {} nm'.format(step)
-		response = self.device.query(command)
-		check_response(command, response, OK)
+    def run_get_wavelength(self):
+        """
+        Queries wavelength of the laser
 
-	def run_trigger(self):
-		"""
-		Triggers laser - Now this just starts the sweep
-		"""
-		command = 'sens:sweep on'
-		response = self.device.query(command)
-		check_response(command, response, OK)
+        :returns: Float
+        """
+        command = 'sens:wav:stat?'
+        response = self.device.query(command)
+        check_response(command, response)
+        print response  # TODO finalize how to parse and return a number
 
-	def run_stop_sweep(self):
-		"""
-		Stop sweep
-		"""
-		command = 'sens:sweep off'
-		response = self.device.query(command)
-		check_response(command, response, OK)
+    def run_get_power(self):
+        """
+        Gets output power in dbm
+        :returns: Float
+        """
+        pass
 
-	def run_output_off(self):
-		"""
-		Turns output of laser source OFF
-		"""
-		command = 'sens:switch off'
-		response = self.device.query(command)
-		check_response(command, response, OK)
+    def run_get_feedback(self):
+        return self.run_get_power()
 
-	def run_output_on(self):
-		"""
-		Turns output of laser source OFF
-		"""
-		command = 'sens:switch on'
-		response = self.device.query(command)
-		check_response(command, response, OK)
+    def run_get_aux_input_power(self):
+        pass
 
-		# wait until the laser is on
-		while True:
-			command = 'sens:switch?'
-			response = self.device.query(command)
-			check_response(command, response)
-			if response.lower().startswith('on'):
-				break
+    def run_sweep_wavelengths_continuous(self, start, end, time):
+        """
+        Executes a sweep with respect to a specified time
 
-	def run_get_wavelength(self):
-		"""
-		Queries wavelength of the laser
+        :param start: Specified wavelength between 1520-1580
+        :type start: Integer
+        :param end: Specified wavelength between 1520-1580
+        :type end: Integer
+        :param time: Specified time
+        :type time: Float
+        """
+        pass
 
-		:returns: Float
-		"""
-		command = 'sens:wav:stat?'
-		response = self.device.query(command)
-		check_response(command, response)
-		print response  # TODO finalize how to parse and return a number
+    # Function Calls Component Analyzer
+    def run_get_il(self, start, end, step, polarization):
+        """
+        Executes a sweep with respect to a specified time and collect injection loss information
 
-	def run_get_power(self):
-		"""
-		Gets output power in dbm
-		:returns: Float
-		"""
-		pass
+        :param start: Specified wavelength between 1520-1580
+        :type start: Integer
+        :param end: Specified wavelength between 1520-1580
+        :type end: Integer
+        :param step: Specified step
+        :type step: Float
+        :param polarization: polarization mode
+        :type step: String
+        """
 
-	def run_get_feedback(self):
-		return self.run_get_power()
+    def run_get_rl(self, start, end, step, polarization):
+        """
+        Executes a sweep with respect to a specified time and collect reflection loss information
 
-	def run_get_aux_input_power(self):
-		pass
+        :param start: Specified wavelength between 1520-1580
+        :type start: Integer
+        :param end: Specified wavelength between 1520-1580
+        :type end: Integer
+        :param step: Specified step
+        :type step: Float
+        :param polarization: polarization mode
+        :type step: String
+        """
 
-	def run_sweep_wavelengths_continuous(self, start, end, time):
-		"""
-		Executes a sweep with respect to a specified time
+    # Function Calls OSA
+    def run_get_spectrum(self, start, end, step):
+        """
+        Executes a sweep with respect to a specified time and collect reflection loss information
 
-		:param start: Specified wavelength between 1520-1580
-		:type start: Integer
-		:param end: Specified wavelength between 1520-1580
-		:type end: Integer
-		:param time: Specified time
-		:type time: Float
-		"""
-		pass
+        :param start: Specified wavelength between 1520-1580
+        :type start: Integer
+        :param end: Specified wavelength between 1520-1580
+        :type end: Integer
+        :param step: Specified step
+        :type step: Float
+        """
+        if not self.run_get_min_wavelength() < start < self.run_get_max_wavelength():
+            raise BOSAException('start wavelength Out of Bounds.')
+        if not self.run_get_min_wavelength() < end < self.run_get_max_wavelength():
+            raise BOSAException('end wavelength Out of Bounds.')
+        if start > end:
+            raise BOSAException('start wavelength must be smaller than end.')
 
-	# Function Calls Component Analyzer
-	def run_get_il(self, start, end, step, polarization):
-		"""
-		Executes a sweep with respect to a specified time and collect injection loss information
+        resolution = nm_to_ghz(step)
 
-		:param start: Specified wavelength between 1520-1580
-		:type start: Integer
-		:param end: Specified wavelength between 1520-1580
-		:type end: Integer
-		:param step: Specified step
-		:type step: Float
-		:param polarization: polarization mode
-		:type step: String
-		"""
+        # set start
+        command = 'sens:wav:star {} nm'.format(start)
+        response = self.device.query(command)
+        check_response(command, response, OK)
+        # set stop
+        command = 'sens:wav:stop {} nm'.format(end)
+        response = self.device.query(command)
+        check_response(command, response, OK)
+        # set resolution
+        command = 'sens:wav:res {} ghz'.format(resolution)
+        response = self.device.query(command)
+        check_response(command, response, OK)
 
-	def run_get_rl(self, start, end, step, polarization):
-		"""
-		Executes a sweep with respect to a specified time and collect reflection loss information
+        # command = 'trace:data:count?'
+        # response = self.device.query(command)
+        # check_response(command, response)
+        # print response
 
-		:param start: Specified wavelength between 1520-1580
-		:type start: Integer
-		:param end: Specified wavelength between 1520-1580
-		:type end: Integer
-		:param step: Specified step
-		:type step: Float
-		:param polarization: polarization mode
-		:type step: String
-		"""
+        # get the trace
+        command = 'trace:data?'
+        response = self.device.query(command)
+        check_response(command, response)
 
-	# Function Calls OSA
-	def run_get_spectrum(self, start, end, step):
-		"""
-		Executes a sweep with respect to a specified time and collect reflection loss information
+        # parse csv string
+        trace_data = response.split(',')
+        n_trace_data = numpy.array(trace_data)
+        n_trace_data = numpy.reshape(n_trace_data, (len(trace_data) / 2, 2))
 
-		:param start: Specified wavelength between 1520-1580
-		:type start: Integer
-		:param end: Specified wavelength between 1520-1580
-		:type end: Integer
-		:param step: Specified step
-		:type step: Float
-		"""
-		if not self.run_get_min_wavelength() < start < self.run_get_max_wavelength():
-			raise BOSAException('start wavelength Out of Bounds.')
-		if not self.run_get_min_wavelength() < end < self.run_get_max_wavelength():
-			raise BOSAException('end wavelength Out of Bounds.')
-		if start > end:
-			raise BOSAException('start wavelength must be smaller than end.')
+        # take only enough points according to step
+        # NOTE: BOSA does't change its sampling rate; it only changes it on the display
+        original_size = numpy.size(n_trace_data, 0)
+        print 'orig: ', original_size
+        target_size = int((end - start + 1) / float(step) + 1)
+        print 'targ: ', target_size
+        skip_step = original_size / target_size
+        print 'skip: ', skip_step
+        return_data = n_trace_data[::skip_step]
 
-		resolution = nm_to_ghz(step)
-
-		# set start
-		command = 'sens:wav:star {} nm'.format(start)
-		response = self.device.query(command)
-		check_response(command, response, OK)
-		# set stop
-		command = 'sens:wav:stop {} nm'.format(end)
-		response = self.device.query(command)
-		check_response(command, response, OK)
-		# set resolution
-		command = 'sens:wav:res {} ghz'.format(resolution)
-		response = self.device.query(command)
-		check_response(command, response, OK)
-
-		# command = 'trace:data:count?'
-		# response = self.device.query(command)
-		# check_response(command, response)
-		# print response
-
-		# get the trace
-		command = 'trace:data?'
-		response = self.device.query(command)
-		check_response(command, response)
-
-		# parse csv string
-		trace_data = response.split(',')
-		n_trace_data = numpy.array(trace_data)
-		n_trace_data = numpy.reshape(n_trace_data, (len(trace_data) / 2, 2))
-
-		# take only enough points according to step
-		# NOTE: BOSA does't change its sampling rate; it only changes it on the display
-		original_size = numpy.size(n_trace_data, 0)
-		print 'orig: ', original_size
-		target_size = int((end - start + 1) / float(step) + 1)
-		print 'targ: ', target_size
-		skip_step = original_size / target_size
-		print 'skip: ', skip_step
-		return_data = n_trace_data[::skip_step]
-
-		return return_data.astype(float).tolist()
+        return return_data.astype(float).tolist()
 
 
 def check_response(command, response, ok=False):
-	if response.startswith(ERROR_BGN) or (ok and not response.startswith(OK_MSG)):
-		raise BOSAException('cmd:< {} > responded with: {}'.format(command, response))
+    if response.startswith(ERROR_BGN) or (ok and not response.startswith(OK_MSG)):
+        raise BOSAException('cmd:< {} > responded with: {}'.format(command, response))
 
 
 def nm_to_ghz(nm):
-	return nm * 125
+    return nm * 125
 
 
 class BOSAException(Exception):
-	pass
+    pass
 
 
 # no need for logger or main as this code will be implemented in a test script

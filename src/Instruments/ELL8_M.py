@@ -1,260 +1,203 @@
-import pyvisa
 import logging
-import inspect
-import re
 import sys
+
+from src.Instruments.PyVisaDriver import PyVisaDriver
 
 # the rotating stage class for the ELL8/M motor
 # 	- wraps around Rot_Motor
 DEG_PER_CNT = 0.00137329
 
 
-class ELL8(object):
+class ELL8(PyVisaDriver):
+    """
+    This class models an ELL8 rotation stage
+    """
 
-	methods = []
+    def __init__(self, device):
+        """
+            Constructor
+        """
+        PyVisaDriver.__init__(self, device, "ELL8")
 
-	def __init__(self, device):
-		"""
-			Constructor
-		"""
-		self.device = device
+        self.position = 0
+        self.zeros_position = 0
+        self.count = -1
 
-		self.position = 0
-		self.zeros_position = 0
-		self.count = -1
+        # get the logger we loaded once in the beginning
+        self.logger = logger
 
-		# get the logger we loaded once in the beginning
-		self.logger = logger
+        # extra class info - for logger
+        # self.ext = {'com_port': self.ser.port, 'ClassName': 'Rot_Motor'}
 
-		# extra class info - for logger
-		# self.ext = {'com_port': self.ser.port, 'ClassName': 'Rot_Motor'}
+        self.run_home()
 
-		self.run_home()
+    def run_delta_move(self, steps):
+        """
+            rotate the stage by specified # of steps
+        """
+        self.position += steps
 
-	def who_am_i(self):
-		"""
-		:returns: reference to device
-		"""
-		if self.check_connected():
-			return "ELL8 at " + self.device.resource_info[0].alias
-		else:
-			return "ELL8 DISCONNECTED"
+        # HOSTREQ_MOVERELATIVE
+        self.device.write('0mr')
 
-	def what_can_i(self):
-		"""
-		:returns: instrument attributes
-		"""
-		if len(ELL8.methods) is 0:
-			for method in inspect.getmembers(self, inspect.ismethod):
-				if re.match('^run_.+', method[0]):
-					ELL8.methods.append(method)
-		return ELL8.methods
+        # converted this line to not use this function
+        # self.device.write(int2hex_str(steps, 4))
+        self.device.write_binary_values('', [steps], datatype='i', is_big_endian=sys.byteorder != 'little')
 
-	def check_connected(self):
-		if not self.device:
-			return False
-		try:
-			return self.device.session is not None
-		except pyvisa.errors.InvalidSession:
-			self.device = None
-			return False
+        # wait for ell8 position message
+        self.device.read(termination='0pO')
 
-	def run_delta_move(self, steps):
-		"""
-			rotate the stage by specified # of steps
-		"""
-		self.position += steps
+    def run_abs_move(self, steps):
+        """
+            rotate the stage by specified # of steps
+        """
 
-		# HOSTREQ_MOVERELATIVE
-		self.device.write('0mr')
+        # HOSTREQ_MOVERELATIVE
+        self.device.write('0mr')
 
-		# converted this line to not use this function
-		# self.device.write(int2hex_str(steps, 4))
-		self.device.write_binary_values('', [steps], datatype='i', is_big_endian=sys.byteorder != 'little')
+        # converted this line to not use this function
+        # self.device.write(int2hex_str(steps - self.position, 4))
+        self.device.write_binary_values('', [steps - self.position], datatype='i',
+                                        is_big_endian=sys.byteorder != 'little')
 
-		# wait for ell8 position message
-		self.device.read(termination='0pO')
+        self.position = steps
 
-	def run_abs_move(self, steps):
-		"""
-			rotate the stage by specified # of steps
-		"""
+        # wait for ell8 position message
+        self.device.read(termination='0pO')
 
-		# HOSTREQ_MOVERELATIVE
-		self.device.write('0mr')
+    def run_home(self):
+        """
+            homes the stage
+        """
+        #
+        self.device.write('0ho0')
+        self.device.read(termination='0pO')
 
-		# converted this line to not use this function
-		# self.device.write(int2hex_str(steps - self.position, 4))
-		self.device.write_binary_values('', [steps - self.position], datatype='i',
-		                                is_big_endian=sys.byteorder != 'little')
+    def run_get_position(self):
+        """
+         return the motors current position
+        """
+        # _HOSTREQ_HOME
+        return self.position
 
-		self.position = steps
+    def run_set_as_zero(self, zer_deg):
+        """
+         change the origin (zero)
+        """
 
-		# wait for ell8 position message
-		self.device.read(termination='0pO')
+        # TODO resolve missing new_zero reference
 
-	def run_home(self):
-		"""
-			homes the stage
-		"""
-		#
-		self.device.write('0ho0')
-		self.device.read(termination='0pO')
+        self.zeros_position = zer_deg
+        self.position -= zer_deg
 
-	def run_get_position(self):
-		"""
-		 return the motors current position
-		"""
-		# _HOSTREQ_HOME
-		return self.position
+    def run_set_vel_params(self, vel):
+        """
+         Set the velocity parameters for the motor in terms of percentage of max
+        """
 
-	def run_set_as_zero(self, zer_deg):
-		"""
-		 change the origin (zero)
-		"""
+        # HOSTSET_VELOCITY
+        self.device.write('0sv')  # head
+        self.device.write(vel)
 
-		# TODO resolve missing new_zero reference
+    def __str__(self):
+        """
+         <For Debugging Purposes>
+         gives information relevant to the motor state
+        """
+        return 'position: ' + str(self.position) + '\nzeros-position: ' + str(self.zeros_position)
 
-		self.zeros_position = zer_deg
-		self.position -= zer_deg
+    def close(self):
+        """
+            releases motor control
+        """
+        self.device.close()
+    """
+    Unnecessary function. read() will take care of this wait
+    def move_complete(self):
+        rx = ''
+        while rx[:3] != '0PO':
+            if self.device.in_waiting > 0:
+                rx = str(self.device.read())
 
-	def run_set_vel_params(self, vel):
-		"""
-		 Set the velocity parameters for the motor in terms of percentage of max
-		"""
-
-		# HOSTSET_VELOCITY
-		self.device.write('0sv')  # head
-		self.device.write(vel)
-
-	def __str__(self):
-		"""
-		 <For Debugging Purposes>
-		 gives information relevant to the motor state
-		"""
-		return 'position: ' + str(self.position) + '\nzeros-position: ' + str(self.zeros_position)
-
-	def close(self):
-		"""
-			releases motor control
-		"""
-		self.device.close()
-	"""
-	Unnecessary function. read() will take care of this wait
-	def move_complete(self):
-		rx = ''
-		while rx[:3] != '0PO':
-			if self.device.in_waiting > 0:
-				rx = str(self.device.read())
-
-	def _get_count(self):
-		return self.count
-	"""
+    def _get_count(self):
+        return self.count
+    """
 
 
 class ELL8_M(ELL8):
+    """
+    This class models an ELL8 rotation stage motor
+    """
 
-	methods = []
+    def __init__(self, device):
+        """
+         Constructor
 
-	def __init__(self, device):
-		"""
-		 Constructor
+         ser (Serial): the Serial object that corresponds to the port
+         the motor is connected to
+        """
+        ELL8.__init__(self, device)
 
-		 ser (Serial): the Serial object that corresponds to the port
-		 the motor is connected to
-		"""
-		super(ELL8, self).__init__(self, device)
-		self.device = device
+        self.moving = False  # set to false
+        self.deg_pos = 0  # position of motor, in degrees
+        self.deg_zeros = 0  # the origin, in degrees
 
-		self.moving = False  # set to false
-		self.deg_pos = 0  # position of motor, in degrees
-		self.deg_zeros = 0  # the origin, in degrees
+    def run_delta_angle(self, deg):  # , m callback = None, params = ()):
+        """
+         Relative rotation on the motor
 
-	def __enter__(self):
-		"""
-		Enter method for ability to use "with open" statements
-		:return: Driver Object
-		"""
-		return self
+         deg (float): the degrees of rotation (negative -> counter-clockwise)
+        """
+        self.moving = True
+        self.deg_pos += deg
+        # convert degrees to steps
+        steps = int(round(deg / DEG_PER_CNT))
 
-	def __exit__(self):
-		"""
-		Exit to close object
-		:return:
-		"""
-		self.device.close()
+        super(self).run_delta_move(steps)
+        while self.deg_pos >= 360:
+            self.deg_pos -= 360
+        self.moving = False
 
-	def what_can_i(self):
-		"""
-		:returns: reference to device
-		"""
-		if len(ELL8_M.methods) is 0:
-			ELL8_M.methods = super(self).what_can_i()
-			for method in inspect.getmembers(self, inspect.ismethod):
-				if re.match('^run_.+', method[0]):
-					for sub_method in ELL8_M.methods:
-						if method[0] is sub_method[0]:
-							ELL8_M.methods.remove(sub_method)
-							break
-					ELL8_M.methods.append(method)
-		return ELL8_M.methods
+    def run_abs_angle(self, deg):
+        """
+         Relative rotation on the motor
 
-	def run_delta_angle(self, deg):  # , m callback = None, params = ()):
-		"""
-		 Relative rotation on the motor
+         deg (float): the degrees of rotation (negative -> counter-clockwise)
+        """
+        d = deg
+        while d >= 360:
+            d -= 360
 
-		 deg (float): the degrees of rotation (negative -> counter-clockwise)
-		"""
-		self.moving = True
-		self.deg_pos += deg
-		# convert degrees to steps
-		steps = int(round(deg / DEG_PER_CNT))
+        self.moving = True
+        # convert degrees to steps
+        steps = int(round(d / DEG_PER_CNT))
 
-		super(self).run_delta_move(steps)
-		while self.deg_pos >= 360:
-			self.deg_pos -= 360
-		self.moving = False
+        super(self).run_abs_move(steps)
+        self.deg_pos = d
+        self.moving = False
 
-	def run_abs_angle(self, deg):
-		"""
-		 Relative rotation on the motor
+    def run_get_angle(self):
+        """
+         return the motors current position, in degrees
+        """
+        return self.deg_pos
 
-		 deg (float): the degrees of rotation (negative -> counter-clockwise)
-		"""
-		d = deg
-		while d >= 360:
-			d -= 360
+    def run_set_as_zero(self, zer_deg):
+        """
+         change the origin (zero)
+        """
+        n_zero = int(round(zer_deg / DEG_PER_CNT))
+        super(self).run_set_as_zero(n_zero)
 
-		self.moving = True
-		# convert degrees to steps
-		steps = int(round(d / DEG_PER_CNT))
+        self.deg_zeros = zer_deg
+        self.deg_pos -= zer_deg
 
-		super(self).run_abs_move(steps)
-		self.deg_pos = d
-		self.moving = False
-
-	def run_get_angle(self):
-		"""
-		 return the motors current position, in degrees
-		"""
-		return self.deg_pos
-
-	def run_set_as_zero(self, zer_deg):
-		"""
-		 change the origin (zero)
-		"""
-		n_zero = int(round(zer_deg / DEG_PER_CNT))
-		super(self).run_set_as_zero(n_zero)
-
-		self.deg_zeros = zer_deg
-		self.deg_pos -= zer_deg
-
-	def __str__(self):
-		"""
-		 <For Debugging Purposes>
-		 gives information relevant to the motor state
-		"""
-		return 'position(degrees): ' + str(self.deg_pos) + '\nzeros-position(degrees): ' + str(self.deg_zeros)
+    def __str__(self):
+        """
+         <For Debugging Purposes>
+         gives information relevant to the motor state
+        """
+        return 'position(degrees): ' + str(self.deg_pos) + '\nzeros-position(degrees): ' + str(self.deg_zeros)
 
 
 # the motor class for ELL8/M Rotation Stage

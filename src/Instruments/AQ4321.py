@@ -1,350 +1,306 @@
-import inspect
-import re
 import time
 import pyvisa
 
+from src.Instruments.PyVisaDriver import PyVisaDriver
 
-class AQ4321(object):
-	"""
-	This class models the AndoAQ4321 laser.
 
-	.. note:: When using any laser command, remember to send shut-off-laser
-			  command at the end of each sweep command set.
-			  For Trigger Sweep, send shut-off-laser command
-			  after sweep ends (sweep end condition noted in TriggerSweepSetup function
-	"""
+class AQ4321(PyVisaDriver):
+    """
+    This class models an Ando AQ4321 laser.
 
-	methods = []
+    .. note:: When using any laser command, remember to send shut-off-laser
+              command at the end of each sweep command set.
+              For Trigger Sweep, send shut-off-laser command
+              after sweep ends (sweep end condition noted in TriggerSweepSetup function
+    """
 
-	def __init__(self, device):
-		"""
-		Constructor method
-		standard address='GPIB0::24::INSTR'
-		"""
-		self.device = device
-		self.max_wavelength = 1579.9
-		self.min_wavelength = 1520
+    def __init__(self, device):
+        """
+        Constructor method
+        standard address='GPIB0::24::INSTR'
+        """
+        PyVisaDriver.__init__(self, device, "Ando AQ4321 laser")
+        self.max_wavelength = 1579.9
+        self.min_wavelength = 1520
 #
-		# self.gpib = res_manager.open_resource(address)
-		# self.gpib.write('PASSWORD4321')
+        # self.gpib = res_manager.open_resource(address)
+        # self.gpib.write('PASSWORD4321')
 #
-		# self.gpib.write('INIT')
-		# self.gpib.write ('IDN?')
-		# info = self.gpib.read()
-		# print ('Connection Successful: %s' % info)
+        # self.gpib.write('INIT')
+        # self.gpib.write ('IDN?')
+        # info = self.gpib.read()
+        # print ('Connection Successful: %s' % info)
 
-		# self.gpib.write ('LOCK?')
-		# info = self.gpib.read()
-		# print('Locked: %s' %info)
+        # self.gpib.write ('LOCK?')
+        # info = self.gpib.read()
+        # print('Locked: %s' %info)
 #
-		# #Ensure Output is OFF
-		# self.gpib.write ('L0')
+        # #Ensure Output is OFF
+        # self.gpib.write ('L0')
 #
-		# #Check Output Status
-		# time.sleep(0.55)
-		# self.gpib.write ('L?')
-		# info = self.gpib.read()
-		# print('Output: %s' %info)
+        # #Check Output Status
+        # time.sleep(0.55)
+        # self.gpib.write ('L?')
+        # info = self.gpib.read()
+        # print('Output: %s' %info
 
-	def __enter__(self):
-		"""
-		Enter method for ability to use "with open" statements
-		:return: Driver Object
-		"""
-		return self
+    def run_get_max_wavelength(self):
+        """
+        Queries the maximum allowed wavelength
 
-	def __exit__(self):
-		"""
-		Exit to close object
-		:return:
-		"""
-		self.device.close()
+        :returns: Integer
+        """
+        return self.max_wavelength
 
-	def who_am_i(self):
-		"""
-		:returns: reference to device
-		"""
-		if self.check_connected():
-			return "Ando AQ4321 at " + self.device.resource_info[0].alias
-		else:
-			return "Ando AQ4321 DISCONNECTED"
+    def run_get_min_wavelength(self):
+        """
+        Queries the minimum allowed wavelength
 
-	def what_can_i(self):
-		"""
-		:returns: instrument attributes
-		"""
-		if len(AQ4321.methods) is 0:
-			for method in inspect.getmembers(self, inspect.ismethod):
-				if re.match('^run_.+', method[0]):
-					AQ4321.methods.append(method)
-		return AQ4321.methods
+        :returns: Integer
+        """
+        return self.min_wavelength
 
-	def check_connected(self):
-		if not self.device:
-			return False
-		try:
-			return self.device.session is not None
-		except pyvisa.errors.InvalidSession:
-			self.device = None
-			return False
+    def run_set_wavelength(self, wavelength):
+        """
+        Loads a single wavelength and sets output high
 
-	def run_get_max_wavelength(self):
-		"""
-		Queries the maximum allowed wavelength
+        :param wavelength: Specified wavelength
+        :type wavelength: Integer
+        """
+        self.run_output_off()
 
-		:returns: Integer
-		"""
-		return self.max_wavelength
+        if wavelength < 1520 or wavelength > 1620:
+            print ('Specified Wavelength Out of Range')
+        else:
+            # Execute setting of wavelength
+            self.device.write('TWL ' + str(wavelength))
+            time.sleep(0.55)
+            self.device.write('TWL?')
+            info = self.device.read()
+            print ('Wavelength Sent: %s' % info)
 
-	def run_get_min_wavelength(self):
-		"""
-		Queries the minimum allowed wavelength
+            self.device.write('L1')
 
-		:returns: Integer
-		"""
-		return self.min_wavelength
+            # High for test period
+            while self.run_check_status_single() is False:
+                time.sleep(0.1)
+                # Print if successful
+            print('Single Wavelength Complete')
 
-	def run_set_wavelength(self, wavelength):
-		"""
-		Loads a single wavelength and sets output high
+    def run_sweep_wavelengths_step(self, start, end, step):
+        """
+        Executes a sweep with respect to a specified step
 
-		:param wavelength: Specified wavelength
-		:type wavelength: Integer
-		"""
-		self.run_output_off()
+        :param start: Specified wavelength between 1520-1580
+        :type start: Integer
+        :param end: Specified wavelength between 1520-1580
+        :type end: Integer
+        :param step: Specified step must be greater or equal to than 0.001
+        :type step: Float
+        """
+        self.run_output_off()
 
-		if wavelength < 1520 or wavelength > 1620:
-			print ('Specified Wavelength Out of Range')
-		else:
-			# Execute setting of wavelength
-			self.device.write('TWL ' + str(wavelength))
-			time.sleep(0.55)
-			self.device.write('TWL?')
-			info = self.device.read()
-			print ('Wavelength Sent: %s' % info)
+        if (
+            float(start) < 1520 or
+            float(start) > 1580 or
+            float(end) < 1520 or
+            float(end) > 1580 or
+            float(step) < 0.001
+        ):
+            print ('Start '+str(float(start))+' End '+str(float(end)))
+            print ('Specified Wavelengths Out of Range, or Step Too Low')
 
-			self.device.write('L1')
+        else:
+            self.device.write('TSWM 0')
+            self.device.write('TSTAWL ' + str(start))
+            self.device.write('TSTPWL ' + str(end))
+            self.device.write('TSTEWL ' + str(step))
+            self.device.write('TSTET 0.2')    # Time between each step
+            self.device.write('L1')
+            self.device.write('TSGL')         # Step Sweep
 
-			# High for test period
-			while self.run_check_status_single() is False:
-				time.sleep(0.1)
-				# Print if successful
-			print('Single Wavelength Complete')
+            # Wait for reception
+            while self.run_check_status() is False:
+                pass
 
-	def run_sweep_wavelengths_step(self, start, end, step):
-		"""
-		Executes a sweep with respect to a specified step
+            # Print when successful
+            print ('Sweep Wavelength Step Complete')
 
-		:param start: Specified wavelength between 1520-1580
-		:type start: Integer
-		:param end: Specified wavelength between 1520-1580
-		:type end: Integer
-		:param step: Specified step must be greater or equal to than 0.001
-		:type step: Float
-		"""
-		self.run_output_off()
+    def run_sweep_wavelengths_continuous(self, start, end, step):
+        """
+        Executes a sweep with respect to a specified time
 
-		if (
-			float(start) < 1520 or
-			float(start) > 1580 or
-			float(end) < 1520 or
-			float(end) > 1580 or
-			float(step) < 0.001
-		):
-			print ('Start '+str(float(start))+' End '+str(float(end)))
-			print ('Specified Wavelengths Out of Range, or Step Too Low')
+        :param start: Specified wavelength between 1520-1580
+        :type start: Integer
+        :param end: Specified wavelength between 1520-1580
+        :type end: Integer
+        :param step: Specified time
+        :type step: Float
+        """
 
-		else:
-			self.device.write('TSWM 0')
-			self.device.write('TSTAWL ' + str(start))
-			self.device.write('TSTPWL ' + str(end))
-			self.device.write('TSTEWL ' + str(step))
-			self.device.write('TSTET 0.2')    # Time between each step
-			self.device.write('L1')
-			self.device.write('TSGL')         # Step Sweep
+        self.run_output_off()
 
-			# Wait for reception
-			while self.run_check_status() is False:
-				pass
+        if start < 1520 or start > 1580 or end < 1520 or end > 1580:
+            print ('Specified Wavelengths Out of Range')
 
-			# Print when successful
-			print ('Sweep Wavelength Step Complete')
+        else:
+            self.device.write('TSWM 1')
+            self.device.write('TSTAWL ' + str(start))
+            self.device.write('TSTPWL ' + str(end))
+            self.device.write('TSWET ' + str(step))
+            self.device.write('L1')
+            self.device.write('TSGL')  # Single Sweep
 
-	def run_sweep_wavelengths_continuous(self, start, end, step):
-		"""
-		Executes a sweep with respect to a specified time
+            while self.run_check_status() is False:
+                pass
+            print ('Sweep Wavelength Continuous Complete')
 
-		:param start: Specified wavelength between 1520-1580
-		:type start: Integer
-		:param end: Specified wavelength between 1520-1580
-		:type end: Integer
-		:param step: Specified time
-		:type step: Float
-		"""
+    def run_sweep_wavelengths_trigger_setup(self, start, end, step):
+        """
+        Have to keep track of Triggers in main command, use Stop Sweep Command to end sweep.
+        Extra triggers do not make the laser sweep outside of specified end wavelength.
+        Remember to shut off laser after sweep ends
 
-		self.run_output_off()
+        :param start: Specified wavelength between 1520-1580
+        :type start: Integer
+        :param end: Specified wavelength between 1520-1580
+        :type end: Integer
+        :param step: Specified time
+        :type step: Float
+        """
 
-		if start < 1520 or start > 1580 or end < 1520 or end > 1580:
-			print ('Specified Wavelengths Out of Range')
+        self.run_output_off()
+        self.run_stop_sweep()
 
-		else:
-			self.device.write('TSWM 1')
-			self.device.write('TSTAWL ' + str(start))
-			self.device.write('TSTPWL ' + str(end))
-			self.device.write('TSWET ' + str(step))
-			self.device.write('L1')
-			self.device.write('TSGL')  # Single Sweep
+        if (
+            float(start) < 1520 or
+            float(start) > 1580 or
+            float(end) < 1520 or
+            float(end) > 1580 or
+            float(step) < 0.001
+        ):
+            print ('Specified Wavelengths Out of Range, or Step Too Low')
 
-			while self.run_check_status() is False:
-				pass
-			print ('Sweep Wavelength Continuous Complete')
+        else:
+            self.device.write('TSWM 2')
+            self.device.write('TSTAWL ' + str(start))
+            self.device.write('TSTPWL ' + str(end))
+            self.device.write('TSTEWL ' + str(step))
+            self.device.write('L1')
+            self.device.write('TSGL')  # Single Sweep
+            time.sleep(4)
+            print ('Trigger Setup Complete')
 
-	def run_sweep_wavelengths_trigger_setup(self, start, end, step):
-		"""
-		Have to keep track of Triggers in main command, use Stop Sweep Command to end sweep.
-		Extra triggers do not make the laser sweep outside of specified end wavelength.
-		Remember to shut off laser after sweep ends
+    def trigger(self):
+        """Triggers laser"""
 
-		:param start: Specified wavelength between 1520-1580
-		:type start: Integer
-		:param end: Specified wavelength between 1520-1580
-		:type end: Integer
-		:param step: Specified time
-		:type step: Float
-		"""
+        time.sleep(0.4)
+        self.device.write('TRIG')
+        time.sleep(0.05)
 
-		self.run_output_off()
-		self.run_stop_sweep()
+    def run_check_status(self):
+        """
+        Checks the status of the laser. Handles timeout exception
 
-		if (
-			float(start) < 1520 or
-			float(start) > 1580 or
-			float(end) < 1520 or
-			float(end) > 1580 or
-			float(step) < 0.001
-		):
-			print ('Specified Wavelengths Out of Range, or Step Too Low')
+        :returns: Boolean
+        """
 
-		else:
-			self.device.write('TSWM 2')
-			self.device.write('TSTAWL ' + str(start))
-			self.device.write('TSTPWL ' + str(end))
-			self.device.write('TSTEWL ' + str(step))
-			self.device.write('L1')
-			self.device.write('TSGL')  # Single Sweep
-			time.sleep(4)
-			print ('Trigger Setup Complete')
+        try:
+            self.device.write('SRQ3?')
+            status = int(self.device.read())
+            print('Status: %d' % status)
+            if status > 0:
+                return True
+            else:
+                return False
+        except pyvisa.errors.VisaIOError:
+            time.sleep(0.2)
+            return self.run_check_status()
 
-	def trigger(self):
-		"""Triggers laser"""
+    def run_check_status_single(self):
+        """
+        Checks the status of the laser. Handles timeout exception
 
-		time.sleep(0.4)
-		self.device.write('TRIG')
-		time.sleep(0.05)
+        :returns: Boolean
+        """
 
-	def run_check_status(self):
-		"""
-		Checks the status of the laser. Handles timeout exception
+        try:
+            self.device.write('SRQ0?')
+            status = int(self.device.read())
+            if status > 0:
+                return True
+            else:
+                return False
+        except pyvisa.errors.VisaIOError:
+            time.sleep(0.2)
+            return self.run_check_status()
 
-		:returns: Boolean
-		"""
+    def run_manual_step(self, step):
+        """
+        Use if want to manually step by a particular size, in con-junction with Send Single Wavelength
 
-		try:
-			self.device.write('SRQ3?')
-			status = int(self.device.read())
-			print('Status: %d' % status)
-			if status > 0:
-				return True
-			else:
-				return False
-		except pyvisa.errors.VisaIOError:
-			time.sleep(0.2)
-			return self.run_check_status()
+        :param step: specified step increment, but be greater than or equal to 0.001
+        :type step: Float
+        """
 
-	def run_check_status_single(self):
-		"""
-		Checks the status of the laser. Handles timeout exception
+        if step < 0.001:
+                print('Step size cannot be lower than 0.001')
+        else:
+            self.device.write('TSTEWL ' + str(step))
+            self.device.write('TWLUP')
 
-		:returns: Boolean
-		"""
+    def run_stop_sweep(self):
+        """
+        Stop sweep
+        """
+        self.device.write('TSTP')
 
-		try:
-			self.device.write('SRQ0?')
-			status = int(self.device.read())
-			if status > 0:
-				return True
-			else:
-				return False
-		except pyvisa.errors.VisaIOError:
-			time.sleep(0.2)
-			return self.run_check_status()
+    def run_pause_sweep(self):
+        """
+        Suspend sweep
+        """
+        self.device.write('TPAS')
 
-	def run_manual_step(self, step):
-		"""
-		Use if want to manually step by a particular size, in con-junction with Send Single Wavelength
+    def run_resume_sweep(self):
+        """
+        Use after pause to resume, still have to call trigger() for next data point if using with trigger sweep
+        """
+        self.device.write('TCONT')
 
-		:param step: specified step increment, but be greater than or equal to 0.001
-		:type step: Float
-		"""
+    def run_output_off(self):
+        """
+        Turns output of laser source OFF
 
-		if step < 0.001:
-				print('Step size cannot be lower than 0.001')
-		else:
-			self.device.write('TSTEWL ' + str(step))
-			self.device.write('TWLUP')
+        .. note:: Output occasionally doesn't turn off unless turned ON beforehand
+        """
+        self.device.write('L0')
 
-	def run_stop_sweep(self):
-		"""
-		Stop sweep
-		"""
-		self.device.write('TSTP')
+    def run_get_wavelength(self):
+        """
+        Queries wavelength of the laser
 
-	def run_pause_sweep(self):
-		"""
-		Suspend sweep
-		"""
-		self.device.write('TPAS')
+        :returns: Float
+        """
+        self.device.write('TWL?')
+        return float(self.device.read())
 
-	def run_resume_sweep(self):
-		"""
-		Use after pause to resume, still have to call trigger() for next data point if using with trigger sweep
-		"""
-		self.device.write('TCONT')
+    def run_set_power(self, power=0):
+        """
+        Sets power in dbm
 
-	def run_output_off(self):
-		"""
-		Turns output of laser source OFF
+        :param power: Specified power to set the laser to in dbm
+        :type power: Integer
+        """
+        self.device.write('TPDB ' + str(power))
 
-		.. note:: Output occasionally doesn't turn off unless turned ON beforehand
-		"""
-		self.device.write('L0')
+    def run_get_power(self):
+        """
+        Gets output power in dbm
 
-	def run_get_wavelength(self):
-		"""
-		Queries wavelength of the laser
-
-		:returns: Float
-		"""
-		self.device.write('TWL?')
-		return float(self.device.read())
-
-	def run_set_power(self, power=0):
-		"""
-		Sets power in dbm
-
-		:param power: Specified power to set the laser to in dbm
-		:type power: Integer
-		"""
-		self.device.write('TPDB ' + str(power))
-
-	def run_get_power(self):
-		"""
-		Gets output power in dbm
-
-		:returns: Float
-		"""
-		self.device.write('TPDB?')
-		return float(self.device.read())
+        :returns: Float
+        """
+        self.device.write('TPDB?')
+        return float(self.device.read())
 
 
 '''
