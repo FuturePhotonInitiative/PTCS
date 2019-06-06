@@ -32,8 +32,7 @@ class QueueRunner(Thread):
             self.experiment_status[queue.get_ith_experiment(i)] = -1
         self.current_experiment = None
 
-
-    def run_standard(self):
+    def run(self):
         """
         Run the provided queue
         :return:
@@ -69,7 +68,7 @@ class QueueRunner(Thread):
         self.queue_result.save()
         print "\n====================\nQueue has finished\n====================\n"
 
-    def run_tcl_tests(self, tcl_end, start_index=0, target_location="C:\\Users\\ofs9424\\SPAE\\TCL\\combined.tcl"):
+    def run_tcl_tests(self, tcl_end, start_index=0, target_location="..\\..\\TCL\\combined.tcl"):
         """
                 Run a series of TCL tests starting at the given index
                 :return:
@@ -83,10 +82,13 @@ class QueueRunner(Thread):
         self.queue_result.time = now
         result_dir = Globals.systemConfigManager.get_results_manager().results_root
         master_tcl = ""
+        os.mkdir("C:/Users/ofs9424/SPAE/Results/" + name)
         for i in range(start_index, tcl_end):
             with open(self.queue.get_ith_experiment(i).tcl_file, "r") as f:
                 done_sets = False
-                master_tcl += "set output \"" + result_dir + "/" + name + "/Collected_Data" + str(i+1) + ".csv\"\n"
+                ex_name = clean_name_for_file(self.queue.get_ith_experiment(i).get_name())
+                os.mkdir(result_dir + "/" + name + "/" + ex_name + "_" + str(i+1))
+                master_tcl += "set output \"" + result_dir + "/" + name + "/" + ex_name + "_" + str(i+1) + "/Collected_Data.csv\"\n"
                 master_tcl += "set index " + str(i+1) + "\n"
                 for line in f.readlines():
                     if not done_sets:
@@ -109,6 +111,10 @@ class QueueRunner(Thread):
                 for key in self.queue.get_ith_experiment(i).config_dict['Devices']:
                     if key not in master_experiment.config_dict['Devices']:
                         master_experiment.config_dict['Devices'].append(key)
+            if self.queue.get_ith_experiment(i).config_dict.get('Experiment', None) is not None:
+                for key in self.queue.get_ith_experiment(i).config_dict['Experiment']:
+                    if key not in master_experiment.config_dict['Experiment']:
+                        master_experiment.config_dict['Experiment'].append(key)
         tmp_file_name = self.tmp_dir + "\\tmp\\" + master_experiment.get_name().replace(" ", "_") + ".json"
         pyLoc = self.tmp_dir + "\\..\\..\\src\\Scripts\\script.py"
         exp = dict()
@@ -122,10 +128,10 @@ class QueueRunner(Thread):
         master_experiment.export_to_json(tmp_file_name)
         Prober.main(["Prober.py", tmp_file_name], config_manager=Globals.systemConfigManager,
                     queue_result=self.queue_result)
-
-    def run(self):
-        #self.run_tcl_tests()
-        self.run_standard()
+        for i in range(start_index, tcl_end):
+            ex_name = clean_name_for_file(self.queue.get_ith_experiment(i).get_name())
+            if len(os.listdir(result_dir + "/" + name + "/" + ex_name + "_" + str(i+1))) == 0:
+                os.rmdir(result_dir + "/" + name + "/" + ex_name + "_" + str(i+1))
 
     def get_current_experiment(self):
         """
