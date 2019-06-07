@@ -2,10 +2,10 @@
 
 import time
 
-from src.Instruments.PyVisaDriver import PyVisaDriver
+from src.Instruments.IEEE_488_2 import IEEE_488_2
 
 
-class AgilentE3643A(PyVisaDriver):
+class AgilentE3643A(IEEE_488_2):
     """
     This class models an Agilent E3643A Power Supply
     """
@@ -17,18 +17,7 @@ class AgilentE3643A(PyVisaDriver):
         :param device: device from PyVisa open_resource object
         :type: PyVisa open_resource object
         """
-        PyVisaDriver.__init__(self, device, "Agilent E3643A Power Supply")
-
-    def run_identify(self):
-        """
-        Identifies itself using IDN query
-        :return:
-        """
-        if self.check_connected():
-            identity = self.device.query("*IDN?")
-            return identity
-        else:
-            raise Exception('Serial communication port is not open.')
+        IEEE_488_2.__init__(self, device, "Agilent E3643A Power Supply")
 
     def run_get_voltage(self):
         """

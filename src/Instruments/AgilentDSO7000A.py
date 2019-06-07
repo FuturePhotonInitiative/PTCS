@@ -1,9 +1,9 @@
 import re
 
-from src.Instruments.PyVisaDriver import PyVisaDriver
+from src.Instruments.IEEE_488_2 import IEEE_488_2
 
 
-class AgilentDSO7000A(PyVisaDriver):
+class AgilentDSO7000A(IEEE_488_2):
     """
     This class models an Agilent DSO7000A Oscilloscope.
     """
@@ -15,7 +15,7 @@ class AgilentDSO7000A(PyVisaDriver):
         :param device: device from PyVisa open_resource object
         :type: PyVisa open_resource object
         """
-        PyVisaDriver.__init__(self, device, "Agilent DSO7000A Oscilloscope")
+        IEEE_488_2.__init__(self, device, "Agilent DSO7000A Oscilloscope")
 
     def run_measure_set_source(self, channel_num):
         """

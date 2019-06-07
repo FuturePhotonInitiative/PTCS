@@ -1,15 +1,15 @@
 import struct
 
-from src.Instruments.PyVisaDriver import PyVisaDriver
+from src.Instruments.IEEE_488_2 import IEEE_488_2
 
 
-class HP8163A(PyVisaDriver):
+class HP8163A(IEEE_488_2):
     """
     This class models an Agilent HP8163A Lightwave Multimeter
     """
 
     def __init__(self, device):
-        PyVisaDriver.__init__(self, device, "Agilent HP8163A Lightwave Multimeter")
+        IEEE_488_2.__init__(self, device, "Agilent HP8163A Lightwave Multimeter")
         self.__channel = None
         self.__port = None
 
@@ -37,7 +37,7 @@ class HP8163A(PyVisaDriver):
 
     def run_prep_measure_on_trigger(self, samples=64):
         if self.__port != 2:
-            self.device.write('*CLS')
+            self.run_clear_status()
             samples = str(samples)
             self.device.write('sens' + self.__channel + ':chan' + self.__port + ':func:stat logg,stop')
             self.device.write('trig' + self.__channel + ':chan' + self.__port + ':inp sme')
