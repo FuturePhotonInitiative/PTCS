@@ -22,7 +22,7 @@ class PyVisaDriver(EVTDriver):
 
     def who_am_i(self):
         if self.check_connected():
-            return self.name + " - Connected to" + self.device.resource_info[0].alias
+            return self.name + " - Connected to " + self.device.resource_info[0].alias
         else:
             return self.name + " DISCONNECTED"
 

@@ -2,28 +2,31 @@
 
 import re
 import inspect
+import abc
 
 
 class EVTDriver:
+
+    __metaclass__ = abc.ABCMeta
 
     def __init__(self, device, name):
         self.device = device
         self.name = name
 
+    @abc.abstractmethod
     def __enter__(self):
-        # abstract
         pass
 
+    @abc.abstractmethod
     def __exit__(self, exc_type, exc_val, exc_tb):
-        # abstract
         pass
 
+    @abc.abstractmethod
     def check_connected(self):
-        # abstract
         pass
 
+    @abc.abstractmethod
     def who_am_i(self):
-        # abstract
         pass
 
     def what_can_i(self):
