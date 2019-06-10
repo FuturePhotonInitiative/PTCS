@@ -1,4 +1,3 @@
-# Class for Agilent 33401A Power Supply
 """
 MODIFICATION HISTORY:
     6/11/2018
@@ -26,7 +25,6 @@ class Agilent34401A(PyVisaDriver):
     def run_get_voltage(self, scaled=False, query_range=10, resolution=0.01):
         """
         Queries the voltage of multimeter.
-
         :param scaled: Optional scaling
         :type scaled: Boolean
         :param query_range: range for query
@@ -47,7 +45,6 @@ class Agilent34401A(PyVisaDriver):
     def run_get_current(self, query_range=1, resolution=0.000001):
         """
         Queries the current reading of the multimeter
-
         :param query_range: range for query
         :type query_range: Integer
         :param resolution: resolution for query
@@ -68,7 +65,6 @@ class Agilent34401A(PyVisaDriver):
     def run_set_scaling(self, factor=1):
         """
         Sets the scaling factor of the multimeter instrument.
-
         :param factor: Desired factor
         :type factor: Float or Integer
         """
@@ -78,7 +74,6 @@ class Agilent34401A(PyVisaDriver):
     def run_get_scaling(self):
         """
         Gets the scaling factor.
-
         :returns: Scaling factor as Int or Float
         """
 
