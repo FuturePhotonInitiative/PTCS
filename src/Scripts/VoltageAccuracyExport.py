@@ -34,8 +34,7 @@ def main(data_map, experiment_result):
         reduced_data.append(new_list)
 
 
-    # Create json file for Config used in experiment
-    experiment_result.add_json_file_dict("Config", data_map['Config'])
+    
     # Writing out collected data to csv
     experiment_result.add_csv("Collected_Data", collected_data, row_labels=[])
     # Writing out reduced data to csv

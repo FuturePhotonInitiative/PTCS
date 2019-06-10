@@ -356,6 +356,8 @@ def main(args, config_manager=None, queue_result=None, logger = None):
                 if vars(parsed)['additionalParams']:
                     parse_command_line_definitions(data_map, vars(parsed)['additionalParams'])
                 parse_command_line_definitions(data_map, unparsed)
+            # Create json file for Config used in experiment
+            experiment_result.add_json_file_dict("Config", data_map['Config'])
             spawn_scripts(scripts, data_map, config_manager.file_locations, experiment_result)
 
         experiment_result.end_experiment()
