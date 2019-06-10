@@ -8,7 +8,6 @@ class ExperimentQueue:
 
     def __init__(self):
         """
-        Create a new SPAEModel for the SPAE GUI
         :param system_config:
             A list of filenames which hold the application configuration, they are opened, parsed,
             and stored in the order they are provided in in the list.

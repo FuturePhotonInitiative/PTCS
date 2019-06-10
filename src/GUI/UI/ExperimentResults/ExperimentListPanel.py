@@ -1,10 +1,10 @@
 import wx
-from src.GUI.UI.SpaeDisplayPanel import SpaeDisplayPanel
+from src.GUI.UI.DisplayPanel import DisplayPanel
 from src.GUI.Util import GUI_CONSTANTS
 import src.GUI.Util.Globals as Globals
 
 
-class ExperimentListPanel(SpaeDisplayPanel):
+class ExperimentListPanel(DisplayPanel):
     """
     Panel for displaying a list of the experiments that have been run
     """
@@ -14,7 +14,7 @@ class ExperimentListPanel(SpaeDisplayPanel):
         Sets up the experiment list panel
         :param parent: The parent to display the panel on
         """
-        SpaeDisplayPanel.__init__(self, parent)
+        DisplayPanel.__init__(self, parent)
         self.root = None
 
         self.tree_box = wx.TreeCtrl(self)

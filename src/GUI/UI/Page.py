@@ -2,7 +2,7 @@ import wx
 import src.GUI.Util.GUI_CONSTANTS as CONSTANTS
 
 
-class SpaePage(wx.Panel):
+class Page(wx.Panel):
     def __init__(self, parent):
         wx.Panel.__init__(self, parent)
         self.display_panel = None
@@ -14,7 +14,6 @@ class SpaePage(wx.Panel):
                    display_propotion=1, control_proportion=1):
         self.display_panel = display_panel
         self.control_panel = control_panel
-
 
         self.display_title = display_title
         self.control_title = control_title

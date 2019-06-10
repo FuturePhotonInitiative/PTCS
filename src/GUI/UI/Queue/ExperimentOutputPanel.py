@@ -2,11 +2,11 @@ import wx
 import src.GUI.Util.GUI_CONSTANTS
 import src.GUI.Model.ExperimentModel
 import src.GUI.Util.Globals as Globals
-from src.GUI.UI.SpaeControlPanel import SpaeControlPanel
+from src.GUI.UI.ControlPanel import ControlPanel
 from src.GUI.Util import GUI_CONSTANTS
 
 
-class ExperimentOutputPanel(SpaeControlPanel):
+class ExperimentOutputPanel(ControlPanel):
     """
     A panel for viewing and modifying the variables in an experiment
     """
@@ -17,7 +17,7 @@ class ExperimentOutputPanel(SpaeControlPanel):
         :param parent: The parent to display the panel on
         :param experiment: The experiment to use when rendering
         """
-        SpaeControlPanel.__init__(self, parent)
+        ControlPanel.__init__(self, parent)
 
         self.UI_control = Globals.systemConfigManager.get_ui_controller()
 

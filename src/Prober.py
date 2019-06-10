@@ -36,7 +36,7 @@ def spawn_scripts(scripts, data_map, json_locations, experiment_result):
 
 def main(args, config_manager=None, queue_result=None):
     """
-    Entry point of SPAE.
+    Entry point of PTCS.
     Loads config file, parses parameters, sets up the devices, and runs the scripts specified.
     :param args: run Prober.py with no arguments to see the argument specification
     :param config_manager: the ConfigurationManager object to obtain configuration data for running the scripts
@@ -47,7 +47,7 @@ def main(args, config_manager=None, queue_result=None):
     if config_manager is None:
         config_manager = SystemConfigManager('../System/Files.json')
 
-    print('Starting SPAE...')
+    print('Starting PTCS...')
 
     arguments = Args()
     arguments.parse(args[1:])

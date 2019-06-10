@@ -1,8 +1,8 @@
-# Design of SPAE
+# Design of PTCS
 #### Introduction
 
-###### What is *SPAE* ?
-The **S**implified **P**rober for **A**utomated **E**xperimentation project is inspired by the [ProberControl](https://probercontrol.github.io/ProberControl/index.html) project created by Columbia University’s Lightwave Research Laboratory and is being developed by the Center for Detectors at Rochester Institute of Technology.
+###### What is *PTCS* ?
+The **P**IC **T**est **C**ontrol **S**oftware project is inspired by the [ProberControl](https://probercontrol.github.io/ProberControl/index.html) project created by Columbia University’s Lightwave Research Laboratory and is being developed by the Center for Detectors at Rochester Institute of Technology.
 
 ###### What is a Prober Controller?
 In this context, a Prober Controller is a piece of software that can automatically:
@@ -12,16 +12,16 @@ In this context, a Prober Controller is a piece of software that can automatical
 * Produce an output that is human readable and highlights interesting features
 * Store the output in a logical manner for future analysis
 
-###### How Does SPAE differ from ProberControl?
-While ProberControl focuses on the testing of wafer devices, SPAE places emphasis on package level testing. However, SPAE is flexible enough that wafer testing should be possible in the future if the need arises.
+###### How Does PTCS differ from ProberControl?
+While ProberControl focuses on the testing of wafer devices, PTCS places emphasis on package level testing. However, PTCS is flexible enough that wafer testing should be possible in the future if the need arises.
 
-###### Where Can I get SPAE?
-SPAE is currently available from the [Future Photon Initiative public GitHub repository.](https://github.com/FuturePhotonInitiative/SPAE)
+###### Where Can I get PTCS?
+PTCS is currently available from the [Future Photon Initiative public GitHub repository.](https://github.com/FuturePhotonInitiative/PTCS)
 
 * * *
-#### Anatomy of SPAE
+#### Anatomy of PTCS
 ###### Launcher
-The SPAE launcher is the entry point for execution and is responsible for initializing experiment prerequisites. This file is called Prober.py and is
+The PTCS launcher is the entry point for execution and is responsible for initializing experiment prerequisites. This file is called Prober.py and is
 executed using a python 2.7 interpreter. The launcher will expect the location of a valid [configuration file](#configs) to be passed as an execution argument but
 will prompt the user if one is not specified. Once a valid configuration is loaded, the launcher then stages the [scripts](#experiment). This will ensure that the
 experiment procedures are executed in the order specified, including simultaneously if designated. The launcher then attempts to connect to each of
@@ -33,7 +33,7 @@ Each device will be added to the [Data Map](#data-map) once initialized. After a
 Initial data section of the Data Map for use by experiment procedures. When the data has all been initialized, the launcher will then begin to execute the tasks
 that were specified in the configurations experiment. Once all tasks have been completed, the launcher will exit and terminate the program.
 ###### Configs
-Configuration files are the basis of all SPAE experiments. These files are all JSON formatted and have the following structure
+Configuration files are the basis of all PTCS experiments. These files are all JSON formatted and have the following structure
 <div>
 <img src="http://ridl.cfd.rit.edu/images/Prober%20Documentation/Config_Format.jpeg" height="1000" />
 <img src="http://ridl.cfd.rit.edu/images/Prober%20Documentation/Example_Config.png" height="1000" />
@@ -44,9 +44,9 @@ To comply with the JSON format, the official ECMA specification is available [he
 
 ###### Instruments
 Instruments are a software object that models some external equipment, either physical or virtual. Each of these objects need to follow a few simple design patterns
-to ensure proper compatibility with SPAE. SPAE utilizes Object Orient Programming and therefore the instrument must be represented by a class. In addition to OOP, each
+to ensure proper compatibility with PTCS. PTCS utilizes Object Orient Programming and therefore the instrument must be represented by a class. In addition to OOP, each
 instrument also must implement python's [*with*](https://docs.python.org/3/whatsnew/2.6.html#pep-343-the-with-statement) pattern, which requires an `__enter__` method
-and an `__exit__` method. Finally, SPAE also expects a few methods used to gather information about a particular device:
+and an `__exit__` method. Finally, PTCS also expects a few methods used to gather information about a particular device:
 * who_am_i
   This method should return a string that contains a reference to the type of device and it's connection status.
 * check_connected
@@ -61,13 +61,13 @@ Any other method that is user exposed, IE not strictly internal, should be prepe
 ###### Experiment
 The experiment section of the [config file](#configs) is the main logic of the experiment. It defines what needs to be run and when. This can either be python scripts that are executed,
 or any other program. If two tasks share the same order they will be executed at the same time.
-SPAE will not continue to the next stage until all of the tasks in the current stage are complete.
+PTCS will not continue to the next stage until all of the tasks in the current stage are complete.
 
-Scripts are python tasks that can be run by SPAE. These will be passed a data map which contains any data specified in the configuration as well as any data that
+Scripts are python tasks that can be run by PTCS. These will be passed a data map which contains any data specified in the configuration as well as any data that
 a previous stage may have put there. The script can add and manipulate this data map in any way it chooses. The script must have a static top level method name `main` that
 takes in one parameter (the data map). If the method returns anything it will be ignored, any data that needs to be passed should be put in the data map.
 ###### Data Map
-The data map stores data as SPAE moves from stage to stage. This is implemented as a Python dict (aka KV pair, hashmap). The data map will always contain a few sections and
+The data map stores data as PTCS moves from stage to stage. This is implemented as a Python dict (aka KV pair, hashmap). The data map will always contain a few sections and
 the rest is up to the developer of the experiment. All sections of the data map should be treated as read only with the one exception of the data section. This object is
 automatically generated by the launcher.
 
