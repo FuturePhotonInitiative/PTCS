@@ -1,7 +1,7 @@
 {
   "Name": "Base Test",
   "Devices":[
-
+    "BERT Analyzer"
   ],
   "Experiment": [
     {

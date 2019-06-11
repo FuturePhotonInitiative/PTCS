@@ -18,5 +18,10 @@
     "Driver" : "VCU108",
     "Type" : "VISA",
     "Default" : "COM5"
+  },
+  "BERT Analyzer": {
+    "Driver": "AnritsuMP2100A",
+    "Type": "VISA",
+    "Default": "GPIB::XX::INSTR"
   }
 }
