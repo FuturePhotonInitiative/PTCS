@@ -17,7 +17,6 @@ class ExperimentResultsModel:
         self.experiment_results_directory = experiment_results_directory
         if experiment_result_config is None:
             if experiment_config_location is not None:
-                print experiment_config_location
                 self.experiment_config_location = json.load(open(experiment_config_location, "r"))
             if experiments_results_files is None:
                 experiments_results_files = []
@@ -118,14 +117,15 @@ class ExperimentResultsModel:
         plt.savefig(file_name)
         os.chdir(return_dir)
 
-    def add_heat_map(self, graph_data,  title, colormap, aspect='auto', graph_extent=(-0.5, 0.5, -127, 127),
-                     colorbar_title="Bit Error Rate [Percentage]", y_label="Vertical Offset [UI]",
-                     x_label="Horizontal Offset [CODES]", vmin=0, vmax=50):
+    def add_heat_map(self, graph_data,  title, colormap, path='', aspect='auto', graph_extent=(-0.5, 0.5, -127, 127),
+                     colorbar_title="Bit Error Rate [Percentage]", y_label="Voltage (Codes)",
+                     x_label="Unit Interval", vmin=0, vmax=50):
         """
         This function creates a heat map. Defaults are for Eye Scan
         :param graph_data: unicode data provided from data_map
         :param title: string, title of the plot
         :param colormap: colormap for colorbar
+        :param path: the place to save the file
         :param aspect: aspect ratio
         :param graph_extent: range for data in heat map
         :param colorbar_title: Title for colorbar
@@ -148,7 +148,9 @@ class ExperimentResultsModel:
         ax.set_title(title)
         ax.set_xlabel(x_label)  # -0.5 to 0.5 every time
         ax.set_ylabel(y_label)  # no higher than 127 in either direction
-        plt.savefig(title.replace(' ', "_"))
+        if path == '':
+            path = title
+        plt.savefig(path.replace(' ', "_"))
 
         os.chdir(return_dir)
 
