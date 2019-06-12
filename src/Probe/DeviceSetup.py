@@ -55,35 +55,36 @@ class DeviceSetup:
         driver_root = str(file_locations['Driver_Root'])
         drivers = os.listdir(driver_root)
         drivers = [i[:-3] for i in drivers if not (i == '__init__.py' or i[-3:] != '.py')]
-        devices = {}
+        connected_devices = {}
 
         print "Finding Devices...."
 
         with open(file_locations["Hardware_Config"]) as d:
             hardware_manager = json.load(d)
-        # this one is updated for the hardware manager
-        for dev in config_file_devices:
-            if dev not in hardware_manager.keys():
-                print "Device not found in Devices.json: " + dev
+        for device_key in config_file_devices:
+            if device_key not in hardware_manager.keys():
+                print "Device not found in Devices.json: " + device_key
             else:
                 connection = None
-                device = hardware_manager[dev]
-                print device
-                if str(device['Type']) == "VISA":
-                    connection = self.attach_VISA(str(dev), str(device['Default']))
-                elif str(device['Type']) == "DIRECT" and "Default" in device.keys():
-                    connection = str(device['Default'])
+                device_config = hardware_manager[device_key]
+                if str(device_config['Type']) == "VISA":
+                    connection = self.attach_VISA(str(device_key), str(device_config['Default']))
+                elif str(device_config['Type']) == "DIRECT" and "Default" in device_config.keys():
+                    connection = str(device_config['Default'])
                 else:
-                    connection = raw_input(
-                        "\'" + str(
-                            dev) + "\' cannot be used with VISA, Please enter connection info (eg. IP address): ")
+                    connection = raw_input("\'" + str(device_key) + "\' cannot be used with VISA, "
+                                                                    "Please enter connection info (eg. IP address): ")
 
-                driver = str(device['Driver'])
-                if driver in drivers:
-                    if driver not in [i[0] for i in globals().items() if isinstance(i[1], types.ModuleType)]:
-                        globals()[driver] = imp.load_source(driver, driver_root + '\\' + driver + '.py')
-                    devices[str(dev)] = exit_stack.enter_context(inspect.getmembers(globals()[driver],
-                                                                                    inspect.isclass)[0][1](connection))
+                driver_file_name = str(device_config['Driver'])
+
+                # instantiate a class based on the name of the file it is in.
+                if driver_file_name in drivers:
+                    if driver_file_name not in [i[0] for i in globals().items() if isinstance(i[1], types.ModuleType)]:
+                        globals()[driver_file_name] = imp.load_source(driver_file_name,
+                                                                      driver_root + '\\' + driver_file_name + '.py')
+                    DriverClass = [i for i in inspect.getmembers(globals()[driver_file_name], inspect.isclass)
+                                   if i[0] == driver_file_name][0][1]
+                    connected_devices[device_key] = exit_stack.enter_context(DriverClass(connection))
                 else:
-                    sys.exit("Driver file for \'" + driver + "\' not found in Driver Root: \'" + driver_root)
-        return devices
+                    sys.exit("Driver file for \'" + driver_file_name + "\' not found in Driver Root: \'" + driver_root)
+        return connected_devices
