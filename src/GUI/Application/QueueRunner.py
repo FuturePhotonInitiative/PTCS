@@ -60,9 +60,11 @@ class QueueRunner(Thread):
             self.current_experiment = self.queue.get_ith_experiment(i)
             print(self.current_experiment.get_name())
             if self.current_experiment.get_name() == 'Save Queue':
+                # Save the queue in the Saved Experiments folder
                 self.queue.queue.pop(i)
                 self.save_queue_to_file("../../Saved_Experiments")
             elif self.current_experiment.get_name() == 'Load Queue':
+                # Load a queue from the Saved Experiments folder
                 index = self.current_experiment.config_dict['Data']['Queue']
                 rq = self.read_queue_from_file("../../Saved_Experiments/Saved_Experiment_" + str(index), "../../Configs")
                 tq = self.queue.queue[:i]
@@ -70,6 +72,7 @@ class QueueRunner(Thread):
                 tq.extend(self.queue.queue[i+1:])
                 self.queue.queue = tq
             elif self.current_experiment.get_name()[-5:] == '(Tcl)':
+                # Run a contiguous sequence of Tcl tests
                 tcl_end = i + 1
                 while tcl_end < len(self.queue) and self.queue.get_ith_experiment(tcl_end).get_name()[-5:] == '(Tcl)':
                     tcl_end += 1
@@ -81,7 +84,7 @@ class QueueRunner(Thread):
 
                 tmp_file_name = self.tmp_dir + "/tmp" + self.current_experiment.get_name().replace(" ", "_") + ".json"
                 self.current_experiment.export_to_json(tmp_file_name)
-                Prober.main(["Prober.py", tmp_file_name], config_manager=Globals.systemConfigManager, queue_result=self.queue_result)
+                Prober.main(["Prober.py", "-c", tmp_file_name], config_manager=Globals.systemConfigManager, queue_result=self.queue_result)
                 self.experiment_status[self.current_experiment] = 1
                 os.remove(tmp_file_name)
                 i += 1
@@ -90,15 +93,19 @@ class QueueRunner(Thread):
         self.queue_result.save()
         print "\n====================\nQueue has finished\n====================\n"
 
-    def run_tcl_tests(self, tcl_end, start_index=0, target_location="..\\..\\TCL\\combined.tcl"):
+    def run_tcl_tests(self, tcl_end, start_index=0):
         """
-                Run a series of TCL tests starting at the given index
+                Run a series of TCL tests
+                :param tcl_end:
+                    The ending index
+                :param start_index:
+                    The starting index
                 :return:
                     Nothing
                 """
+        # Create the main results directory for this test series
         self.queue.schedule_experiments()
         now = datetime.datetime.today()
-
         name = "Tcl_Experiment" + str(now)
         name = clean_name_for_file(name)
         self.queue_result.time = now
@@ -108,8 +115,10 @@ class QueueRunner(Thread):
         os.mkdir(output_folder)
         for i in range(start_index, tcl_end):
             with open(self.queue.get_ith_experiment(i).tcl_file, "r") as f:
+                # Edit the Tcl scripts with the test parameters
                 done_sets = False
                 ex_name = clean_name_for_file(self.queue.get_ith_experiment(i).get_name())
+                # Create a subdirectory for results from this specific test
                 os.mkdir(output_folder + "/" + ex_name + "_" + str(i+1))
                 master_tcl += "set output \"" + output_folder + "/" + ex_name + "_" + str(i+1) + "/Collected_Data.csv\"\n"
                 master_tcl += "set index " + str(i+1) + "\n"
@@ -126,9 +135,11 @@ class QueueRunner(Thread):
                                         line = words[0]+" "+words[1]+" "+str(self.queue.get_ith_experiment(i).config_dict['Data'][k]) + "\n"
                     master_tcl += line
         target_location = output_folder + "/combined.tcl"
+        # Save the combined Tcl script to be run
         with open(target_location, "w") as f:
             f.writelines(master_tcl)
 
+        # Read in necessary devices and scripts
         master_experiment = Experiment("..\\..\\template.json")
         for i in range(start_index, tcl_end):
             if self.queue.get_ith_experiment(i).config_dict.get('Devices', None) is not None:
@@ -139,6 +150,7 @@ class QueueRunner(Thread):
                 for key in self.queue.get_ith_experiment(i).config_dict['Experiment']:
                     if key not in master_experiment.config_dict['Experiment']:
                         master_experiment.config_dict['Experiment'].append(key)
+        # Generate the script to run the Tcl script through the Vivado command line
         tmp_file_name = self.tmp_dir + "\\tmp\\" + master_experiment.get_name().replace(" ", "_") + ".json"
         pyLoc = "../../src/Scripts/script.py"
         exp = dict()
@@ -151,7 +163,8 @@ class QueueRunner(Thread):
         master_experiment.config_dict['Experiment'].append(exp)
         print "exporting to " + tmp_file_name
         master_experiment.export_to_json(tmp_file_name)
-        Prober.main(["Prober.py", tmp_file_name], config_manager=Globals.systemConfigManager,
+        # Run the experiment
+        Prober.main(["Prober.py", "-c", tmp_file_name], config_manager=Globals.systemConfigManager,
                     queue_result=self.queue_result)
         for i in range(start_index, tcl_end):
             ex_name = clean_name_for_file(self.queue.get_ith_experiment(i).get_name())
@@ -175,7 +188,22 @@ class QueueRunner(Thread):
         """
         return self.experiment_status[experiment]
 
+    def add_test_series(self, config_file, vary_param, start, end, step=1):
+        rqueue = []
+        for i in range(start, end, step):
+            exp = Experiment(config_file)
+            exp['Data'][vary_param] = i
+            rqueue.append(exp)
+        return rqueue
+
     def save_queue_to_file(self, folder_path):
+        """
+        Save the queue to a file
+        :param folder_path:
+            The folder to save it in.
+        :return:
+            Nothing
+        """
         index = len(os.listdir(folder_path)) + 1
         output = ""
         for i in range(len(self.queue)):
@@ -188,6 +216,15 @@ class QueueRunner(Thread):
             f.write(output)
 
     def read_queue_from_file(self, file_path, config_root):
+        """
+        Construct a queue from a file
+        :param file_path:
+            The file to read from.
+        :param config_root:
+            The folder to read config files from.
+        :return:
+            The constructed queue.
+        """
         rqueue = []
         with open(file_path) as f:
             exp = None
@@ -201,5 +238,4 @@ class QueueRunner(Thread):
                     if ind > -1:
                         exp.config_dict['Data'][line[ind+4:-1]] = line[:ind]
             rqueue.append(exp)
-
         return rqueue
