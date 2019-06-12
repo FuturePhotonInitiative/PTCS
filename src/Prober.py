@@ -83,6 +83,8 @@ def main(args, config_manager=None, queue_result=None):
             config.config["Devices"],
             config_manager.file_locations,
             stack)
+        # Create json file for Config used in experiment
+        experiment_result.add_json_file_dict("Config", data_map['Config'])
         spawn_scripts(scripts, data_map, config_manager.file_locations, experiment_result)
 
     experiment_result.end_experiment()

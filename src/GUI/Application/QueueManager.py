@@ -10,7 +10,7 @@ class QueueManager:
     # TODO temp dir needs to be in config
     def __init__(self, working_directory, results_config_manager):
         self.results_config_manager = results_config_manager
-        self.working_directory = working_directory + "/temp"
+        self.working_directory = working_directory + "\\temp"
         if not os.path.exists(self.working_directory):
             os.makedirs(self.working_directory)
         self.runner = None
