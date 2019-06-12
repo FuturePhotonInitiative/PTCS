@@ -51,7 +51,8 @@ class ResultsManager:
         result = ExperimentResultsModel(self.results_root + "/" + name, exeriment_config_location)
         result.set_start(now)
         self.experiment_result_dict[name] = result
-        queue_result.add_experiment_result(name)
+        if queue_result:
+            queue_result.add_experiment_result(name)
         return [result, name]
 
     def make_new_queue_result(self):
