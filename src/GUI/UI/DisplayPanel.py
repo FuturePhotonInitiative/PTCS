@@ -1,7 +1,7 @@
 import wx
 
 
-class SpaeDisplayPanel(wx.StaticBox):
+class DisplayPanel(wx.StaticBox):
     def __init__(self, parent):
         wx.StaticBox.__init__(self, parent)
         pass

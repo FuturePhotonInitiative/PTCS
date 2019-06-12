@@ -1,6 +1,7 @@
 import wx
+import os
 
-MAIN_PAGE_TITLE = "Prober Control"
+MAIN_PAGE_TITLE = "PIC Test Control Software"
 PAGE_SIZE = (900, 500)
 QUEUE_PAGE_NAME = "Queue"
 HARDWARE_PAGE_NAME = "Hardware"
@@ -28,7 +29,7 @@ CONTROL_PANEL_FOREGROUND_COLOR = wx.BLACK#wx.Colour(100, 100, 100)
 
 LABEL_PROPORTION = .1
 
-WORKING_DIRECTORY = "..\\..\\..\\SPAE\\System"
+WORKING_DIRECTORY = "/".join(os.getcwd().split("\\")[:-2]) + "/System"
 
 EXPERIMENT_QUEUE_RESULT_ROOT = "Experiment Queues"
 

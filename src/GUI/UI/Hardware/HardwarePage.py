@@ -1,11 +1,11 @@
-from src.GUI.UI.SpaeControlPanel import SpaeControlPanel
-from src.GUI.UI.SpaePage import SpaePage
+from src.GUI.UI.ControlPanel import ControlPanel
+from src.GUI.UI.Page import Page
 from HardwareListPanel import HardwareListPanel
 import src.GUI.Util.GUI_CONSTANTS as CONSTANTS
 
 
 
-class HardwarePage(SpaePage):
+class HardwarePage(Page):
     """
     A page for displaying and modifying hardware configurations
     """
@@ -20,11 +20,11 @@ class HardwarePage(SpaePage):
         """
 
         # Attaching self to the parent
-        SpaePage.__init__(self, parent)
+        Page.__init__(self, parent)
 
         # Sets up the sub-panels
         self.hardwareConfigurationListPanel = HardwareListPanel(self)
-        self.control_panel = SpaeControlPanel(self)
+        self.control_panel = ControlPanel(self)
         self.add_panels(self.hardwareConfigurationListPanel, self.control_panel,
                         display_propotion=CONSTANTS.HARDWARE_PANEL_PROPORTION,
                         control_proportion=CONSTANTS.HARDWARE_CONTROL_PANEL_PROPORTION)

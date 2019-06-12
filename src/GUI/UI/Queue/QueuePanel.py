@@ -1,11 +1,11 @@
 import wx
 
-from src.GUI.UI.SpaeDisplayPanel import SpaeDisplayPanel
+from src.GUI.UI.DisplayPanel import DisplayPanel
 from src.GUI.Util import GUI_CONSTANTS
 import src.GUI.Util.Globals as Globals
 
 
-class QueuePanel(SpaeDisplayPanel):
+class QueuePanel(DisplayPanel):
     """
     Panel for rendering a queue of experiments
     """
@@ -14,7 +14,7 @@ class QueuePanel(SpaeDisplayPanel):
         Sets up the Queue Panel
         :param parent: The parent to display the panel on
         """
-        SpaeDisplayPanel.__init__(self, parent)
+        DisplayPanel.__init__(self, parent)
 
         self.list_box = wx.ListBox(self)
         # self.list_box_sizer = wx.BoxSizer(wx.HORIZONTAL)
