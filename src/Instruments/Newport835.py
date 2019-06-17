@@ -1,28 +1,33 @@
-from src.Instruments.PyVisaDriver import PyVisaDriver
+# coding=UTF-8
+from src.Instruments.GPIBtoUSBAdapter import GPIBtoUSBAdapter
 
 
-class Newport835(PyVisaDriver):
+class Newport835(GPIBtoUSBAdapter):
     """
     This class models a Newport 835 Optical Power Meter
     """
 
+    # You can write these to the instrument and they will let you include units or not.
+    # I have not been able to get them working though
     INCLUDE_UNITS = "G0"
     SUPPRESS_UNITS = "G1"
 
     def __init__(self, device):
-        PyVisaDriver.__init__(self, device, "Newport 835 Optical Power Meter")
+        GPIBtoUSBAdapter.__init__(self, device, "Newport 835 Optical Power Meter")
+
+        #self.set_gpib_address(1)
 
         # Each command needs to end with a 'X' to be executed and for the device to be ready for another command.
         # More than one command per command string is possible, but it is cleaner to not.
         self.device.write_termination = 'X' + self.device.write_termination
 
         # Every time device.write("X") is done, the instrument will return one power reading.
-        self.device.write("T5")
+        #self.device.write("T5")
 
         # The attenuator (the cap placed on the light sensor) is on.
         # If you want to take the attenuator off, than this should be changed to "A0".
         # Taking the attenuator off is only helpful in low light scenarios.
-        self.device.write("A1")
+        self.device.write("A0")
 
         # Used for setting the reading units. one can set these discrete watt ranges. nano, micro, milli.
         # "auto" sets a good range depending on the amount of light detected. This is the default.
@@ -41,12 +46,11 @@ class Newport835(PyVisaDriver):
             "20W": "R11"
         }
 
-    def run_get_wavelength(self, units=False):
+    # ✓
+    def run_get_wavelength(self):
         """
-        :param units: do you want nm at the end?
-        :return: the wavelength being detected
+        :return: the wavelength being detected in the form WAVE[n]nnn
         """
-        self.device.write(Newport835.INCLUDE_UNITS if units else Newport835.SUPPRESS_UNITS)
         return self.device.query("U1")
 
     def run_set_wavelength(self, wavelength):
@@ -55,12 +59,10 @@ class Newport835(PyVisaDriver):
         """
         self.device.write("W+" + wavelength)
 
-    def run_get_power(self, units=False):
+    def run_get_power(self):
         """
-        :param units: do you want detected units at the end?
         :return: a power reading from the instrument at the time called
         """
-        self.device.write(Newport835.INCLUDE_UNITS if units else Newport835.SUPPRESS_UNITS)
         return self.device.query("X")
 
     def run_change_reading_units(self, how_many_watts):

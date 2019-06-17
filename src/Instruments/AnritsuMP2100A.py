@@ -1,10 +1,10 @@
-from src.Instruments.IEEE_488_2 import IEEE_488_2
+from src.Instruments.GPIBtoUSBAdapter import GPIBtoUSBAdapter
 
 
-class AnritsuMP2100A(IEEE_488_2):
+class AnritsuMP2100A(GPIBtoUSBAdapter):
 
     def __init__(self, device):
-        IEEE_488_2.__init__(self, device, "Anritsu MP2100A BERT Analyzer")
+        GPIBtoUSBAdapter.__init__(self, device, "Anritsu MP2100A BERT Analyzer")
 
     def run_run_all_measurements(self):
         self.device.write("*TRG")

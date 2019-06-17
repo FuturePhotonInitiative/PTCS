@@ -1,0 +1,17 @@
+{
+    "Experiment": [
+        {
+            "Source": "PrintData.py", 
+            "Type": "PY_SCRIPT", 
+            "Order": 1
+        }
+    ], 
+    "Data": {
+        "Variable_2": 1.0, 
+        "Variable_1": 0.0
+    }, 
+    "Name": "Base Test", 
+    "Devices": [
+        "Newport OPM"
+    ]
+}

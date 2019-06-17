@@ -23,5 +23,15 @@
     "Driver": "AnritsuMP2100A",
     "Type": "VISA",
     "Default": "GPIB::XX::INSTR"
+  },
+  "GPIB-USB": {
+    "Driver": "GPIBtoUSBAdapter",
+    "Type": "VISA",
+    "Default": "COM16"
+  },
+  "Newport OPM": {
+    "Driver": "Newport835",
+    "Type": "VISA",
+    "Default": "COM16"
   }
 }
