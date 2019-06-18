@@ -9,15 +9,11 @@ import types
 
 class DeviceSetup:
 
-    # caches results for future queue jobs.
-    manager = pyvisa.ResourceManager()
-    instruments = manager.list_resources_info()
-
     def __init__(self):
-        pass
+        self.visa_rm = pyvisa.ResourceManager()
+        self.available_instruments = self.visa_rm.list_resources_info().values()
 
-    @staticmethod
-    def attach_VISA(name, default):
+    def attach_VISA(self, name, default):
         """
         Attaches device in VISA format, This will attempt to connect to a default address if it is specified in the JSON
         config, otherwise it will prompt the user to input an address from the list of currently connected devices.
@@ -26,22 +22,24 @@ class DeviceSetup:
         :return: A pyVISA device
         """
         if default:
-            for item in DeviceSetup.instruments.values():
-                if str(item.resource_name) == default or item.alias is not None and str(item.alias) == default:
-                    return DeviceSetup.manager.open_resource(default)
-            print("The default port " + default + " for " + name + " could not be found, please select it manually")
+            if default in [i.resource_name for i in self.available_instruments] + \
+                          [i.alias for i in self.available_instruments if i.alias is not None] or \
+                    default[-6:] == "SOCKET":
+                return self.visa_rm.open_resource(default)
+            print("'Default' connection string for " + name + " is invalid.",)
         else:
-            print("The default port for " + name + " was not specified, please choose one manually")
+            print("The default port for " + name + " was not specified.",)
+        print(" Do you mean one of these?:")
 
         print("*****Connected Devices*****")
-        for item in DeviceSetup.instruments.values():
+        for item in self.available_instruments:
             line = item.resource_name
             if item.alias is not None:
                 line += " -> '" + item.alias + "'"
             print(line)
         print("***************************")
         instr = raw_input("Choose instrument to connect to: ")
-        return DeviceSetup.manager.open_resource(instr)
+        return self.visa_rm.open_resource(instr)
 
     def connect_devices(self, config_file_devices, file_locations, exit_stack):
         """
