@@ -22,6 +22,6 @@
   "BERT Analyzer": {
     "Driver": "AnritsuMP2100A",
     "Type": "VISA",
-    "Default": "GPIB::XX::INSTR"
+    "Default": "TCPIP::129.21.172.198::5001::SOCKET"
   }
 }
