@@ -48,6 +48,14 @@ class ExperimentQueue:
         """
         self.queue.remove(experiment)
 
+    def clear_queue(self):
+        """
+        Clears the queue
+        :return:
+            None
+        """
+        self.queue = []
+
     def get_next_experiment(self):
         """
         :return:

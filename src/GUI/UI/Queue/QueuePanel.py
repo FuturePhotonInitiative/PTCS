@@ -24,10 +24,27 @@ class QueuePanel(DisplayPanel):
         # self.run_button_sizer = wx.BoxSizer(wx.HORIZONTAL)
         # self.sizer.Add(self.list_box_sizer, 5)
 
+        self.clear_button = wx.Button(self)
+        self.clear_button.SetLabelText("Clear Queue")
+
+        self.save_button = wx.Button(self)
+        self.save_button.SetLabelText("Save Queue")
+
+        self.load_button = wx.Button(self)
+        self.load_button.SetLabelText("Load Queue")
+
+        self.load_exp = wx.TextCtrl(self, value="1")
+
         self.sizer = wx.BoxSizer(wx.VERTICAL)
         self.SetSizer(self.sizer)
         self.sizer.Add(self.list_box, 5, wx.EXPAND | wx.ALL)
-        self.sizer.Add(self.run_button, 1, wx.EXPAND | wx.ALL)
+        self.save_sizer = wx.BoxSizer(wx.HORIZONTAL)
+        self.save_sizer.Add(self.clear_button, 1, wx.EXPAND | wx.ALL)
+        self.save_sizer.Add(self.save_button, 1, wx.EXPAND | wx.ALL)
+        self.save_sizer.Add(self.load_button, 1, wx.EXPAND | wx.ALL)
+        self.save_sizer.Add(self.load_exp, 1, wx.EXPAND | wx.ALL)
+        self.sizer.Add(self.save_sizer, 0.5, wx.EXPAND | wx.ALL)
+        self.sizer.Add(self.run_button, 2.5, wx.EXPAND | wx.ALL)
 
         # Sets up the colors display Constants are in Util.CONSTANTS
         self.list_box.SetBackgroundColour(GUI_CONSTANTS.LIST_PANEL_COLOR)
@@ -43,9 +60,11 @@ class QueuePanel(DisplayPanel):
         # Runs the selected function when an experiment is selected
         self.Bind(wx.EVT_LISTBOX, self.selected)
 
-
         # Runs the queue when the run button is pressed
         self.Bind(wx.EVT_BUTTON, self.run_the_queue)
+        self.save_button.Bind(wx.EVT_BUTTON, self.save_queue)
+        self.load_button.Bind(wx.EVT_BUTTON, self.load_queue)
+        self.clear_button.Bind(wx.EVT_BUTTON, self.clear_queue)
 
     def set_up_ui_control(self, ui_control):
         ui_control.add_control_to_text_list(self.run_button)
@@ -89,3 +108,16 @@ class QueuePanel(DisplayPanel):
             print "Switching Queue Mode"
             ui_control.switch_queue_to_running()
         Globals.systemConfigManager.get_queue_manager().run()
+
+    def clear_queue(self, event):
+        self.deselected(event)
+        Globals.systemConfigManager.get_queue_manager().clear_queue()
+
+    def save_queue(self, event):
+        i = Globals.systemConfigManager.get_queue_manager().save_queue_to_file("../../Saved_Experiments")
+        print("Queue saved: " + str(i))
+
+    def load_queue(self, event):
+        num = self.load_exp.GetValue()
+        mgr = Globals.systemConfigManager.get_queue_manager()
+        mgr.read_queue_from_file("../../Saved_Experiments/Saved_Experiment_" + str(num), "../../Configs")

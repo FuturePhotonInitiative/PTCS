@@ -18,7 +18,6 @@ class ExperimentControlPanel(ControlPanel):
         """
         ControlPanel.__init__(self, parent)
 
-
         self.UI_control = Globals.systemConfigManager.get_ui_controller()
 
         # Sets up the colors display Constants are in Util.CONSTANTS

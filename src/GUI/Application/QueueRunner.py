@@ -2,6 +2,7 @@ import os
 import datetime
 from shutil import copyfile
 from threading import Thread
+import copy
 
 from src import Prober
 from src.GUI.Util import Globals
@@ -53,6 +54,26 @@ class QueueRunner(Thread):
                 tq.extend(rq)
                 tq.extend(self.queue.queue[i+1:])
                 self.queue.queue = tq
+            elif self.queue.get_ith_experiment(i).get_name() == 'Repeat Experiment':
+                if i > 0:
+                    ex = self.queue.get_ith_experiment(i)
+                    vary_param = ex.config_dict['Data']['Parameter']
+                    start = float(ex.config_dict['Data']['Start'])
+                    if float(int(start)) == start:
+                        start = int(start)
+                    count = int(ex.config_dict['Data']['Count'])
+                    step = float(ex.config_dict['Data']['Step'])
+                    if float(int(step)) == step:
+                        step = int(step)
+                    base_exp = self.queue.get_ith_experiment(i - 1)
+                    rq = self.add_test_series(base_exp.config_file_name, base_exp.config_dict, vary_param, start, count, step)
+                    tq = self.queue.queue[:i-1]
+                    tq.extend(rq)
+                    tq.extend(self.queue.queue[i+1:])
+                    self.queue.queue = tq
+                else:
+                    self.queue.queue = self.queue.queue[1:]
+                i -= 1
             else:
                 i += 1
         i = 0
@@ -120,7 +141,8 @@ class QueueRunner(Thread):
                 ex_name = clean_name_for_file(self.queue.get_ith_experiment(i).get_name())
                 # Create a subdirectory for results from this specific test
                 os.mkdir(output_folder + "/" + ex_name + "_" + str(i+1))
-                master_tcl += "set output \"" + output_folder + "/" + ex_name + "_" + str(i+1) + "/Collected_Data.csv\"\n"
+                master_tcl += "set output \"" + output_folder + "/" + ex_name + "_" + str(i+1) + \
+                              "/Collected_Data.csv\"\n"
                 master_tcl += "set index " + str(i+1) + "\n"
                 for line in f.readlines():
                     if not done_sets:
@@ -132,7 +154,8 @@ class QueueRunner(Thread):
                                 val = words[1]
                                 for k in self.queue.get_ith_experiment(i).config_dict['Data'].keys():
                                     if k == val:
-                                        line = words[0]+" "+words[1]+" "+str(self.queue.get_ith_experiment(i).config_dict['Data'][k]) + "\n"
+                                        line = words[0]+" "+words[1]+" " + \
+                                               str(self.queue.get_ith_experiment(i).config_dict['Data'][k]) + "\n"
                     master_tcl += line
         target_location = output_folder + "/combined.tcl"
         # Save the combined Tcl script to be run
@@ -158,7 +181,9 @@ class QueueRunner(Thread):
         exp['Source'] = 'script.py'
         exp['Order'] = 1
         with open(pyLoc, "w") as f:
-            f.write(("import os\ndef main(data_map, experiment_result):\n\tos.system('C:\\Xilinx\\Vivado\\2017.4\\bin\\vivado -mode tcl < ' + '" + target_location + "')").replace('\\', '\\\\'))
+            f.write(("import os\ndef main(data_map, experiment_result):\n\t" + \
+                     "os.system('C:\\Xilinx\\Vivado\\2017.4\\bin\\vivado -mode tcl < ' + '" + target_location + "')")
+                    .replace('\\', '\\\\'))
         copyfile(pyLoc,output_folder + "/script.py")
         master_experiment.config_dict['Experiment'].append(exp)
         print "exporting to " + tmp_file_name
@@ -188,12 +213,16 @@ class QueueRunner(Thread):
         """
         return self.experiment_status[experiment]
 
-    def add_test_series(self, config_file, vary_param, start, end, step=1):
+    @staticmethod
+    def add_test_series(config_file, base_config_dict, vary_param, start, count, step=1):
         rqueue = []
-        for i in range(start, end, step):
+        i = start
+        for it in range(0, count):
             exp = Experiment(config_file)
-            exp['Data'][vary_param] = i
+            exp.config_dict = copy.deepcopy(base_config_dict)
+            exp.config_dict['Data'][vary_param] = i
             rqueue.append(exp)
+            i += step
         return rqueue
 
     def save_queue_to_file(self, folder_path):
@@ -215,7 +244,8 @@ class QueueRunner(Thread):
         with open(folder_path + "/Saved_Experiment_" + str(index), "w") as f:
             f.write(output)
 
-    def read_queue_from_file(self, file_path, config_root):
+    @staticmethod
+    def read_queue_from_file(file_path, config_root):
         """
         Construct a queue from a file
         :param file_path:
@@ -236,6 +266,29 @@ class QueueRunner(Thread):
                 else:
                     ind = line.find(' // ')
                     if ind > -1:
-                        exp.config_dict['Data'][line[ind+4:-1]] = line[:ind]
+                        val = line[:ind]
+                        if '0' <= val[0] <= '9' or val[0] == '.':
+                            try:
+                                val = int(val)
+                            except ValueError:
+                                ux = 0
+                                while val[ux] in ' .0123456789':
+                                    ux += 1
+                                uv = QueueRunner.parse_units(line[ux:])
+                                val = float(line[:ux].replace(" ", ""))*uv
+                        if float(int(val)) == val:
+                            val = int(val)
+                        exp.config_dict['Data'][line[ind+4:-1]] = val
             rqueue.append(exp)
         return rqueue
+
+    @staticmethod
+    def parse_units(s):
+        units = {"T": 1000000000000, "G": 1000000000, "M": 1000000, "K": 1000, "k": 1000,
+                 "m": .001, "u": .000001, "n": .000000001, "p": .000000000001}
+        if len(s) > 1:
+            for u in units:
+                if s.startswith(u):
+                    return units[u]
+        return 1
+
