@@ -45,8 +45,8 @@ class GPIBtoUSBAdapter(IEEE_488_2):
     def query_autoread_status(self):
         return self.device.query("++auto")
 
-    # def prepare_write(self):
-    #     self.device.write("++auto 0")
-    #
-    # def prepare_query(self):
-    #     self.device.write("++auto 1")
+    def turn_off_read_after_write(self):
+        self.device.write("++auto 0")
+
+    def turn_on_read_after_write(self):
+        self.device.write("++auto 1")

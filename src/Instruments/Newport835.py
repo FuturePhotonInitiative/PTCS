@@ -5,29 +5,30 @@ from src.Instruments.GPIBtoUSBAdapter import GPIBtoUSBAdapter
 class Newport835(GPIBtoUSBAdapter):
     """
     This class models a Newport 835 Optical Power Meter
-    """
 
-    # You can write these to the instrument and they will let you include units or not.
-    # I have not been able to get them working though
-    INCLUDE_UNITS = "G0"
-    SUPPRESS_UNITS = "G1"
+    Please use the send_to_opm and send_and_receive_from_opm instead of device.write and query for this device. Weird
+    things happen with the fact that the GPIB to USB converter has a read-after-write setting that does not always
+    work well with device.read and device.query
+
+    Dont forget that if the attenuator cap is screwed on the detector, you should run the command
+    to let the instrument know that it is on. This is not the default when turned on.
+    """
 
     def __init__(self, device):
         GPIBtoUSBAdapter.__init__(self, device, "Newport 835 Optical Power Meter")
 
-        #self.set_gpib_address(1)
+        # Make sure this is set with the same binary number of the back of the instrument
+        self.set_gpib_address(1)
 
-        # Each command needs to end with a 'X' to be executed and for the device to be ready for another command.
-        # More than one command per command string is possible, but it is cleaner to not.
-        self.device.write_termination = 'X' + self.device.write_termination
+        # The instrument naturally outputs a \r\n. This can be changed if you want but I just did this instead
+        self.device.read_termination = "\r\n"
 
-        # Every time device.write("X") is done, the instrument will return one power reading.
-        #self.device.write("T5")
+        # just a random query before running. This burns the first talk command given from setup
+        # which makes the instrument want to give a reading, but we may not want that yet
+        self.run_get_wavelength()
 
-        # The attenuator (the cap placed on the light sensor) is on.
-        # If you want to take the attenuator off, than this should be changed to "A0".
-        # Taking the attenuator off is only helpful in low light scenarios.
-        self.device.write("A0")
+        # Every time an "X" is sent alone to the instrument it will give back a power reading
+        self.send_to_opm("T4")
 
         # Used for setting the reading units. one can set these discrete watt ranges. nano, micro, milli.
         # "auto" sets a good range depending on the amount of light detected. This is the default.
@@ -46,28 +47,56 @@ class Newport835(GPIBtoUSBAdapter):
             "20W": "R11"
         }
 
-    # ✓
     def run_get_wavelength(self):
         """
         :return: the wavelength being detected in the form WAVE[n]nnn
         """
-        return self.device.query("U1")
+        return self.send_and_receive_from_opm("U1")
+
+    def run_turn_off_attenuator(self):
+        self.send_to_opm("A0")
+
+    def run_turn_on_attenuator(self):
+        """
+        Lets the instrument know that the attenuator cap is on the light sensor so readings are correct
+        """
+        self.send_to_opm("A1")
 
     def run_set_wavelength(self, wavelength):
         """
-        :param wavelength: the 4 digit wavelength in nm. This value is rounded to the nearest power of 10
+        :param wavelength: the wavelength in nm. This value is rounded to the nearest power of 10
         """
-        self.device.write("W+" + wavelength)
+        self.send_to_opm("W+" + str(wavelength))
 
-    def run_get_power(self):
+    def run_get_power_reading(self):
         """
         :return: a power reading from the instrument at the time called
         """
-        return self.device.query("X")
+        return self.send_and_receive_from_opm("X")
 
     def run_change_reading_units(self, how_many_watts):
         """
         :param how_many_watts: the amount of watts to set the unit to detect.
         This could be auto, (2, 20, 200) nW, (2, 20, 200) uW, (2, 20, 200) mW, (2, 20) W
         """
-        self.device.write(self.unit_switch[how_many_watts])
+        self.send_to_opm(self.unit_switch[how_many_watts])
+
+    def run_make_outputs_verbose(self):
+        self.send_to_opm("G0")
+
+    def run_make_outputs_unverbose(self):
+        self.send_to_opm("G1")
+
+    def send_and_receive_from_opm(self, query):
+        """
+        The GPIB to USB adapter needs to know that it is expecting a response from the instrument.
+        Also, an X needs to be appended to the message command
+        :param query:
+        :return:
+        """
+        self.turn_on_read_after_write()
+        return self.device.query(query + "X")
+
+    def send_to_opm(self, query):
+        self.turn_off_read_after_write()
+        self.device.write(query + "X")
