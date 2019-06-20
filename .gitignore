@@ -4,3 +4,4 @@ Results/
 *.bak
 venv/
 System/ResultsConfiguration
+System/temp
