@@ -1,12 +1,12 @@
 {
-  "Name": "Base Test",
+  "Name": "Newport Optical Power Meter Test",
   "Devices":[
-    "BERT Analyzer"
+    "Newport OPM"
   ],
   "Experiment": [
     {
       "Type": "PY_SCRIPT",
-      "Source": "BERTWaveEyescan.py",
+      "Source": "NewportOPM.py",
       "Order": 1
     }
   ],

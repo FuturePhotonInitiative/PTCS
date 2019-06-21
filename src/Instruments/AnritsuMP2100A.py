@@ -310,8 +310,4 @@ class AnritsuMP2100A(IEEE_488_2):
         in front of any class member name that you want to be for internal use only. That seems like a more sustainable
         option, so this class is going to be the change.
         """
-        methods = []
-        for method in inspect.getmembers(self, inspect.ismethod):
-            if re.match('^[^_].+', method[0]):
-                methods.append(method)
-        return methods
+        return [method[0] for method in inspect.getmembers(self, inspect.ismethod) if re.match('^[^_].+', method[0])]
