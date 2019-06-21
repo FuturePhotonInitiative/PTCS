@@ -3,15 +3,16 @@ def main(data_map, experiment_result):
     print
     opm = data_map["Devices"]["Newport OPM"]
 
-    print(opm.run_get_wavelength())
+    print(opm.what_can_i())
 
-    opm.run_turn_on_attenuator()
-    opm.run_set_wavelength(890)
+    print(opm.get_wavelength())
+    opm.turn_on_attenuator()
+    opm.set_wavelength(890)
 
-    opm.run_make_outputs_verbose()
-    reading = opm.run_get_power_reading()
+    opm.make_outputs_verbose()
+    reading = opm.get_power_reading()
     print(reading)
-    opm.run_change_reading_units("200nW")
-    print(opm.run_get_power_reading())
+    opm.change_reading_units("200nW")
+    print(opm.get_power_reading())
 
     print
