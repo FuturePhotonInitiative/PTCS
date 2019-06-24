@@ -9,6 +9,8 @@ from src.GUI.Util.Functions import clean_name_for_file
 
 from src.GUI.Model.ExperimentModel import Experiment
 
+from src.GUI.Util.GUI_CONSTANTS import TIMESTAMP_FORMAT
+
 
 class QueueRunner(Thread):
     """
@@ -105,7 +107,7 @@ class QueueRunner(Thread):
                 """
         # Create the main results directory for this test series
         self.queue.schedule_experiments()
-        now = datetime.datetime.today()
+        now = datetime.datetime.today().strftime(TIMESTAMP_FORMAT)
         name = "Tcl_Experiment" + str(now)
         name = clean_name_for_file(name)
         self.queue_result.time = now

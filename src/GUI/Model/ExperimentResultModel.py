@@ -2,8 +2,8 @@ import datetime
 import json
 import os
 from shutil import copyfile
-from matplotlib.colors import LinearSegmentedColormap
 import matplotlib.pyplot as plt
+from src.GUI.Util.GUI_CONSTANTS import TIMESTAMP_FORMAT
 
 
 class ExperimentResultsModel:
@@ -11,8 +11,8 @@ class ExperimentResultsModel:
                  experiment_results_directory,
                  experiment_config_location=None,
                  experiments_results_files=None,
-                 start_datetime=datetime.datetime.today(),
-                 end_datetime=datetime.datetime.today(),
+                 start_datetime=datetime.datetime.today().strftime(TIMESTAMP_FORMAT),
+                 end_datetime=datetime.datetime.today().strftime(TIMESTAMP_FORMAT),
                  experiment_result_config=None):
         self.experiment_results_directory = experiment_results_directory
         if experiment_result_config is None:
@@ -54,8 +54,8 @@ class ExperimentResultsModel:
         config_dict = json.load(open(filename))
         self.experiment_results_directory = config_dict["experiment_results_directory"]
         self.experiment_config_location = config_dict["experiment_config_location"]
-        self.start_datetime = datetime.datetime.strptime(config_dict["start_datetime"], '%Y-%m-%d %H:%M:%S.%f')
-        self.end_datetime = datetime.datetime.strptime(config_dict["end_datetime"], '%Y-%m-%d %H:%M:%S.%f')
+        self.start_datetime = datetime.datetime.strptime(config_dict["start_datetime"], TIMESTAMP_FORMAT)
+        self.end_datetime = datetime.datetime.strptime(config_dict["end_datetime"], TIMESTAMP_FORMAT)
         self.experiments_results_files = config_dict["experiments_results_files"]
 
     def export_to_json(self, filename, pretty_print=True):
@@ -226,10 +226,10 @@ class ExperimentResultsModel:
     #     self.experiments_results_files.append(out_file_name)
 
     def start_experiment(self):
-        self.start_datetime = datetime.datetime.today()
+        self.start_datetime = datetime.datetime.today().strftime(TIMESTAMP_FORMAT)
 
     def end_experiment(self):
-        self.end_datetime = datetime.datetime.today()
+        self.end_datetime = datetime.datetime.today().strftime(TIMESTAMP_FORMAT)
 
     def set_start(self, start_datetime):
         self.start_datetime = start_datetime
