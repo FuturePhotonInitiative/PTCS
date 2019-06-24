@@ -16,7 +16,9 @@ class BOSA400(PyVisaDriver):
         """
         Constructor method
         """
-        PyVisaDriver.__init__(self, device, "Aragon BOSA 400")
+        PyVisaDriver.__init__(self)
+        self.name += "Aragon BOSA 400"
+        self.device = device
 
         self.max_wavelength = 1579.9
         self.min_wavelength = 1520

@@ -9,7 +9,8 @@ class PM500(PyVisaDriver):
     """
 
     def __init__(self, device):
-        PyVisaDriver.__init__(self, device, "Newport PM500")
+        PyVisaDriver.__init__(self)
+        self.name += "Newport PM500"
         self.device = device
         self.velocity = 0
 

@@ -8,7 +8,9 @@ from src.Instruments.PyVisaDriver import PyVisaDriver
 class Motor_KST_ZST(PyVisaDriver):
 
     def __init__(self, device):
-        PyVisaDriver.__init__(self, device, "KST_Z812B")
+        PyVisaDriver.__init__(self)
+        self.name += "KST_Z812B"
+        self.device = device
 
         self.device.values_format.is_binary = True
         self.device.values_format.datatype = 'd'

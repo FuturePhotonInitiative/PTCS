@@ -15,7 +15,9 @@ class AgilentDSO7000A(IEEE_488_2):
         :param device: device from PyVisa open_resource object
         :type: PyVisa open_resource object
         """
-        IEEE_488_2.__init__(self, device, "Agilent DSO7000A Oscilloscope")
+        IEEE_488_2.__init__(self)
+        self.name += "Agilent DSO7000A Oscilloscope"
+        self.device = device
 
     def run_measure_set_source(self, channel_num):
         """

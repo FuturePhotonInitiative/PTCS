@@ -19,7 +19,9 @@ class AQ4321(PyVisaDriver):
         Constructor method
         standard address='GPIB0::24::INSTR'
         """
-        PyVisaDriver.__init__(self, device, "Ando AQ4321 laser")
+        PyVisaDriver.__init__(self)
+        self.name += "Ando AQ4321 laser"
+        self.device = device
         self.max_wavelength = 1579.9
         self.min_wavelength = 1520
 #

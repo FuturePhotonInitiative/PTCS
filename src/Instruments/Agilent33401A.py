@@ -19,7 +19,9 @@ class Agilent34401A(PyVisaDriver):
         Constructor method
         standard address='GPIB::22::INSTR'
         """
-        PyVisaDriver.__init__(self, device, "Agilent 34401A Multimeter")
+        PyVisaDriver.__init__(self)
+        self.name += "Agilent 34401A Multimeter"
+        self.device = device
         self.scaling_factor = scaling_factor
 
     def run_get_voltage(self, scaled=False, query_range=10, resolution=0.01):

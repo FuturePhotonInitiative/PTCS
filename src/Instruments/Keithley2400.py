@@ -7,7 +7,9 @@ class Keithley2400(PyVisaDriver):
     """
 
     def __init__(self, device):
-        PyVisaDriver.__init__(self, device, "Keithley 2400 Source Meter")
+        PyVisaDriver.__init__(self)
+        self.name += "Keithley 2400 Source Meter"
+        self.device = device
 
     def run_get_voltage(self, query_range=10, resolution=0.01):
         query_range = str(query_range)

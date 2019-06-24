@@ -17,7 +17,9 @@ class AgilentE3643A(IEEE_488_2):
         :param device: device from PyVisa open_resource object
         :type: PyVisa open_resource object
         """
-        IEEE_488_2.__init__(self, device, "Agilent E3643A Power Supply")
+        IEEE_488_2.__init__(self)
+        self.name += "Agilent E3643A Power Supply"
+        self.device = device
 
     def run_get_voltage(self):
         """

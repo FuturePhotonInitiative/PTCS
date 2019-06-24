@@ -1,4 +1,4 @@
-from src.Instruments.IEEE_488_2 import IEEE_488_2
+from src.Instruments.PyVisaDriver import PyVisaDriver
 
 TERM_STRING_MAP = ["\r\n", "\r", "\n", ""]
 
@@ -7,10 +7,11 @@ TERM_STRING_MAP = ["\r\n", "\r", "\n", ""]
 
 # WARNING: all commands sent through this adapter to an instrument
 # should escape all '+' characters with an ESC ASCII character
-class GPIBtoUSBAdapter(IEEE_488_2):
+class GPIBtoUSBAdapter(PyVisaDriver):
 
-    def __init__(self, device, name="GPIB to USB Adapter"):
-        IEEE_488_2.__init__(self, device, name)
+    def __init__(self):
+        PyVisaDriver.__init__(self)
+        self.name += " that is connected using a GPIB to USB Adapter - "
 
     def query_usb_send_eos_state(self):
         return TERM_STRING_MAP[int(self.device.query("++eos")[0])]

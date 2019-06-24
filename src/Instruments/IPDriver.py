@@ -3,9 +3,10 @@ from src.Instruments.EVTDriver import EVTDriver
 
 class IPDriver(EVTDriver):
 
-    def __init__(self, device, name, IP):
+    def __init__(self, IP):
         self.IP = IP
-        EVTDriver.__init__(self, device, name)
+        EVTDriver.__init__(self)
+        self.name += "A device that does not use PyVisa to connect: " + self.name
 
     def __enter__(self):
         """
@@ -15,7 +16,6 @@ class IPDriver(EVTDriver):
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
-        # no closing needs to be done
         pass
 
     def who_am_i(self):

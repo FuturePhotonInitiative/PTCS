@@ -10,7 +10,10 @@ class VCU108(PyVisaDriver):
     """
 
     def __init__(self, device):
-        PyVisaDriver.__init__(self, device, "VCU108")
+        PyVisaDriver.__init__(self)
+        self.device = device
+        self.name += "VCU108"
+
         self._locked = False
 
     def read_data(self):

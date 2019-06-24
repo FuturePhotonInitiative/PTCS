@@ -7,7 +7,9 @@ class MS2667C(PyVisaDriver):
     """
 
     def __init__(self, device):
-        PyVisaDriver.__init__(self, device, "Anritsu MS2667C Spectrum Analyzer")
+        PyVisaDriver.__init__(self)
+        self.name += "Anritsu MS2667C Spectrum Analyzer"
+        self.device = device
 
     def run_waveform_read_central(self, central, span, resolution_step=1):
         self.device.write('CF %dMHZ' % central)
