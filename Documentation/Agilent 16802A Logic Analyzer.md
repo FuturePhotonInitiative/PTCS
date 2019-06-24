@@ -1,0 +1,1 @@
+This instrument is a logic analyzer that used to work on hawk, but it currently does not work on Blackdog. That is all the information I was given and we currently cannot get into it because there is not a user where we know the password of, so yeah.
