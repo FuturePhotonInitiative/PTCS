@@ -105,7 +105,7 @@ class QueueManager:
         output = ""
         for i in range(len(self.experiment_queue)):
             exp = self.experiment_queue.get_ith_experiment(i)
-            output += "*" + exp.config_file_name[24:-5] + "\n"
+            output += "*" + exp.config_file_name.split("/")[-1][:-5] + "\n"
             for field in exp.config_dict.get('Data', dict()).keys():
                 output += str(exp.config_dict['Data'][field]) + " // " + str(field) + "\n"
 

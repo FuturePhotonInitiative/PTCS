@@ -41,10 +41,12 @@ class QueuePanel(DisplayPanel):
         self.save_sizer = wx.BoxSizer(wx.HORIZONTAL)
         self.save_sizer.Add(self.clear_button, 1, wx.EXPAND | wx.ALL)
         self.save_sizer.Add(self.save_button, 1, wx.EXPAND | wx.ALL)
-        self.save_sizer.Add(self.load_button, 1, wx.EXPAND | wx.ALL)
-        self.save_sizer.Add(self.load_exp, 1, wx.EXPAND | wx.ALL)
+        self.load_sizer = wx.BoxSizer(wx.HORIZONTAL)
+        self.load_sizer.Add(self.load_button, 1, wx.EXPAND | wx.ALL)
+        self.load_sizer.Add(self.load_exp, 1, wx.EXPAND | wx.ALL)
         self.sizer.Add(self.save_sizer, 0.5, wx.EXPAND | wx.ALL)
-        self.sizer.Add(self.run_button, 2.5, wx.EXPAND | wx.ALL)
+        self.sizer.Add(self.load_sizer, 0.5, wx.EXPAND | wx.ALL)
+        self.sizer.Add(self.run_button, 2, wx.EXPAND | wx.ALL)
 
         # Sets up the colors display Constants are in Util.CONSTANTS
         self.list_box.SetBackgroundColour(GUI_CONSTANTS.LIST_PANEL_COLOR)

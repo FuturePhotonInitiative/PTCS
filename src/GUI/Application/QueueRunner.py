@@ -3,10 +3,12 @@ import datetime
 from shutil import copyfile
 from threading import Thread
 import copy
+import contextlib2
 
 from src import Prober
 from src.GUI.Util import Globals
 from src.GUI.Util.Functions import clean_name_for_file
+from src.Probe.DeviceSetup import DeviceSetup
 
 from src.GUI.Model.ExperimentModel import Experiment
 
@@ -40,6 +42,10 @@ class QueueRunner(Thread):
         :return:
             Nothing
         """
+        print "Verifying devices..."
+        if not self.verify_devices():
+            print "\nA device was not connected properly. Aborting experiment.\n"
+            return
         print "\n====================\nStarting the Queue\n====================\n"
         self.queue_result.start_queue()
         # TODO catch any exceptions run by prober and try to continue, but only if a flag in the __init__ has been
@@ -47,6 +53,11 @@ class QueueRunner(Thread):
         self.queue.schedule_experiments()
         i = 0
         while i < len(self.queue):
+            if self.queue.get_ith_experiment(i).config_dict.get('Data', None) is not None:
+                rt = self.queue.get_ith_experiment(i).config_dict['Data'].get('Results', None)
+                if rt is not None:
+                    if rt != "":
+                        Globals.systemConfigManager.get_results_manager().results_root = rt
             if self.queue.get_ith_experiment(i).get_name() == 'Load Queue':
                 index = self.queue.get_ith_experiment(i).config_dict['Data']['Queue']
                 rq = self.read_queue_from_file("../../Saved_Experiments/Saved_Experiment_" + str(index), "../../Configs")
@@ -181,7 +192,7 @@ class QueueRunner(Thread):
         exp['Source'] = 'script.py'
         exp['Order'] = 1
         with open(pyLoc, "w") as f:
-            f.write(("import os\ndef main(data_map, experiment_result):\n\t" + \
+            f.write(("import os\ndef main(data_map, experiment_result):\n\t" +
                      "os.system('C:\\Xilinx\\Vivado\\2017.4\\bin\\vivado -mode tcl < ' + '" + target_location + "')")
                     .replace('\\', '\\\\'))
         copyfile(pyLoc,output_folder + "/script.py")
@@ -212,6 +223,25 @@ class QueueRunner(Thread):
             The current run status of the provided experiment in the currently running queue
         """
         return self.experiment_status[experiment]
+
+    def verify_devices(self):
+        device_list = []
+        for test in self.queue.queue:
+            d = test.config_dict.get('Devices', None)
+            if d is not None:
+                for dev in d:
+                    if dev not in device_list:
+                        device_list.append(dev)
+        with contextlib2.ExitStack() as stack:
+            device_setup = DeviceSetup()
+            try:
+                devs = device_setup.connect_devices(
+                    device_list,
+                    Globals.systemConfigManager.file_locations,
+                    stack)
+            except Exception:
+                return False
+        return True
 
     @staticmethod
     def add_test_series(config_file, base_config_dict, vary_param, start, count, step=1):
