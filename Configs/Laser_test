@@ -1,0 +1,15 @@
+{
+  "Name": "Laser Test",
+  "Devices":[
+    "Laser Source"
+  ],
+  "Experiment": [
+    {
+      "Type": "PY_SCRIPT",
+      "Source": "AndoAQ4321DLaserTesting.py",
+      "Order": 1
+    }
+  ],
+  "Data": {
+  }
+}

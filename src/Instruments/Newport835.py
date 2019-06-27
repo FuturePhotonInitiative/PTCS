@@ -18,10 +18,12 @@ class Newport835(GPIBtoUSBAdapter):
         self.name += "Newport 835 Optical Power Meter"
         self.device = device
 
+        self.become_controller()
+
         # Make sure this is set with the same binary number of the back of the instrument
         self.set_gpib_address(1)
 
-        # The instrument naturally outputs a \r\n. This can be changed if you want but I just did this instead
+        # The instrument naturally outputs a \r\n, so lets make VISA think that is part of the termination char sequence
         self.device.read_termination = "\r\n"
 
         # just a random query before running. This burns the first talk command given from setup
