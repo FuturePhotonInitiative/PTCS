@@ -11,9 +11,12 @@ class Agilent16802A(IPDriver):
     """
 
     def __init__(self, IP):
+        IPDriver.__init__(self, IP)
+        self.name += "Agilent 16802A Logic Analyzer"
+
         self.connect = win32com.client.Dispatch("AgtLA.Connect")
         device = self.connect.GetInstrument(IP)
-        IPDriver.__init__(self, device, "Agilent 16802A Logic Analyzer", IP)
+        self.device = device
         self.module = None
         self.busSignals = None
 

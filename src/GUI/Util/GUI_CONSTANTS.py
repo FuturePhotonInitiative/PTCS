@@ -34,3 +34,5 @@ WORKING_DIRECTORY = "/".join(os.getcwd().split("\\")[:-2]) + "/System"
 EXPERIMENT_QUEUE_RESULT_ROOT = "Experiment Queues"
 
 QUEUE_FILE_TITLE = "queue_result"
+
+TIMESTAMP_FORMAT = "%Y-%m-%d %H:%M:%S.%f"

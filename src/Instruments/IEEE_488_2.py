@@ -5,8 +5,9 @@ from PyVisaDriver import PyVisaDriver
 
 class IEEE_488_2(PyVisaDriver):
 
-    def __init__(self, device, name="A PyVisa Device that contains IEEE-488.2 common commands"):
-        PyVisaDriver.__init__(self, device, name)
+    def __init__(self):
+        PyVisaDriver.__init__(self)
+        self.name += " that can communicate using IEEE 488.2 common commands - "
 
     def run_identify(self):
         """

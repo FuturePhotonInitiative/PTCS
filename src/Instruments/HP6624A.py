@@ -7,7 +7,9 @@ class HP6624A(PyVisaDriver):
     """
 
     def __init__(self, device):
-        PyVisaDriver.__init__(self, device, "Keysight HP6624A Power Supply")
+        PyVisaDriver.__init__(self)
+        self.name += "Keysight HP6624A Power Supply"
+        self.device = device
 
         self.active = False
         self.run_set_voltage(0, 1)

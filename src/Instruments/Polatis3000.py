@@ -11,7 +11,9 @@ class Polatis3000(PyVisaDriver):
     """
 
     def __init__(self, device):
-        PyVisaDriver.__init__(self, device, "Polatis 3000 Switch")
+        PyVisaDriver.__init__(self)
+        self.name += "Polatis 3000 Switch"
+        self.device = device
 
     def run_get_all_connections(self):
         return str(self.device.query(':oxo:swit:conn:stat?'))[:-2]

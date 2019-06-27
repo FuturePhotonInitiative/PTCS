@@ -7,7 +7,9 @@ class CSA8000(PyVisaDriver):
     """
 
     def __init__(self, device):
-        PyVisaDriver.__init__(self, device, "Tektronix CSA8000")
+        PyVisaDriver.__init__(self)
+        self.name += "Tektronix CSA8000"
+        self.device = device
 
     def run_get_acquisition_param(self):
         return self.device.query('ACQuire?')

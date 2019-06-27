@@ -9,7 +9,9 @@ class Keithley2280S(PyVisaDriver):
     """
 
     def __init__(self, device):
-        PyVisaDriver.__init__(self, device, "Keithley 2280S Power Supply")
+        PyVisaDriver.__init__(self)
+        self.name += "Keithley 2280S Power Supply"
+        self.device = device
 
     def run_get_voltage(self, channel=1):
         channel = str(channel)

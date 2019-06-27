@@ -9,7 +9,9 @@ class TSL_210H(PyVisaDriver):
     """
 
     def __init__(self, device):
-        PyVisaDriver.__init__(self, device, "Santec TSL-201H Laser")
+        PyVisaDriver.__init__(self)
+        self.name += "Santec TSL-201H Laser"
+        self.device = device
 
         self.max_wavelength = 1580
         self.min_wavelength = 1510

@@ -33,5 +33,10 @@
     "Driver": "Newport835",
     "Type": "VISA",
     "Default": "COM16"
+  },
+  "Laser Source": {
+    "Driver": "AQ4321D",
+    "Type": "VISA",
+    "Default": "COM16"
   }
 }

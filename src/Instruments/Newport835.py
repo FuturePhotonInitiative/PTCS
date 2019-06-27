@@ -1,6 +1,4 @@
 from src.Instruments.GPIBtoUSBAdapter import GPIBtoUSBAdapter
-import re
-import inspect
 
 
 class Newport835(GPIBtoUSBAdapter):
@@ -16,12 +14,16 @@ class Newport835(GPIBtoUSBAdapter):
     """
 
     def __init__(self, device):
-        GPIBtoUSBAdapter.__init__(self, device, "Newport 835 Optical Power Meter")
+        GPIBtoUSBAdapter.__init__(self)
+        self.name += "Newport 835 Optical Power Meter"
+        self.device = device
+
+        self.become_controller()
 
         # Make sure this is set with the same binary number of the back of the instrument
         self.set_gpib_address(1)
 
-        # The instrument naturally outputs a \r\n. This can be changed if you want but I just did this instead
+        # The instrument naturally outputs a \r\n, so lets make VISA think that is part of the termination char sequence
         self.device.read_termination = "\r\n"
 
         # just a random query before running. This burns the first talk command given from setup
@@ -106,12 +108,3 @@ class Newport835(GPIBtoUSBAdapter):
     def _send_to_opm(self, query):
         self.turn_off_read_after_write()
         self.device.write(query + "X")
-
-    def what_can_i(self):
-        """
-        This overrides the base class implementation. Why are we sticking "" in front of every method name that we
-        want to be run externally when there is already a python standard that says that you can put an underscore
-        in front of any class member name that you want to be for internal use only. That seems like a more sustainable
-        option, so this class is going to be the change.
-        """
-        return [method[0] for method in inspect.getmembers(self, inspect.ismethod) if re.match('^[^_].+', method[0])]

@@ -9,7 +9,10 @@ class HP8163A(IEEE_488_2):
     """
 
     def __init__(self, device):
-        IEEE_488_2.__init__(self, device, "Agilent HP8163A Lightwave Multimeter")
+        IEEE_488_2.__init__(self)
+        self.name += "Agilent HP8163A Lightwave Multimeter"
+        self.device = device
+
         self.__channel = None
         self.__port = None
 

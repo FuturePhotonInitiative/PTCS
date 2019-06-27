@@ -10,7 +10,9 @@ class AEDFA_IL_23_B_FA(PyVisaDriver):
     """
 
     def __init__(self, device):
-        PyVisaDriver.__init__(self, device, "Amonics EDFA-IL-23-B-FA")
+        PyVisaDriver.__init__(self)
+        self.device = device
+        self.name += "Amonics EDFA-IL-23-B-FA"
 
     def set_mode(self, mode):
         """

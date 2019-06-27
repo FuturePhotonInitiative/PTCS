@@ -9,9 +9,9 @@ class EVTDriver:
 
     __metaclass__ = abc.ABCMeta
 
-    def __init__(self, device, name):
-        self.device = device
-        self.name = name
+    def __init__(self):
+        self.device = None  # your driver should set self.device after calling the super class constructor(s)
+        self.name = ""
 
     @abc.abstractmethod
     def __enter__(self):
@@ -30,8 +30,4 @@ class EVTDriver:
         pass
 
     def what_can_i(self):
-        methods = []
-        for method in inspect.getmembers(self, inspect.ismethod):
-            if re.match('^run_.+', method[0]):
-                methods.append(method)
-        return methods
+        return [method[0] for method in inspect.getmembers(self, inspect.ismethod) if re.match('^[^_].+', method[0])]

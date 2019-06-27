@@ -4,8 +4,10 @@ import pyvisa
 
 class PyVisaDriver(EVTDriver):
 
-    def __init__(self, device, name):
-        EVTDriver.__init__(self, device, name)
+    def __init__(self):
+        EVTDriver.__init__(self)
+        if "PyVisa" not in self.name:
+            self.name = "A PyVisa Driver "
 
     def __enter__(self):
         """

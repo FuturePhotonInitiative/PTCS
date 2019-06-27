@@ -17,7 +17,9 @@ class ELL8(PyVisaDriver):
         """
             Constructor
         """
-        PyVisaDriver.__init__(self, device, "ELL8")
+        PyVisaDriver.__init__(self)
+        self.name += "ELL8"
+        self.device = device
 
         self.position = 0
         self.zeros_position = 0

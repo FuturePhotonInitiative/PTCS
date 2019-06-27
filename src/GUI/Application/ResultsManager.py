@@ -6,6 +6,7 @@ from src.GUI.Model.ExperimentModel import Experiment
 from src.GUI.Model.ExperimentResultModel import ExperimentResultsModel
 from src.GUI.Util.Functions import clean_name_for_file
 from src.GUI.Util.GUI_CONSTANTS import QUEUE_FILE_TITLE
+from src.GUI.Util.GUI_CONSTANTS import TIMESTAMP_FORMAT
 
 
 class ResultsManager:
@@ -35,7 +36,7 @@ class ResultsManager:
         return self.experiment_result_dict.keys()
 
     def make_new_experiment_result(self, exeriment_config_location, queue_result):
-        now = datetime.datetime.today()
+        now = datetime.datetime.today().strftime(TIMESTAMP_FORMAT)
         if queue_result.time is not None:
             now = queue_result.time
         exp = Experiment(exeriment_config_location)

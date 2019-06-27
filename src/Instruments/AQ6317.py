@@ -21,7 +21,9 @@ class AQ6317(PyVisaDriver):
         :param device: device from PyVisa open_resource object
         :type: PyVisa open_resource object
         """
-        PyVisaDriver.__init__(self, device, "Ando AQ6317 optical spectrum analyzer")
+        PyVisaDriver.__init__(self)
+        self.name += "Ando AQ6317 optical spectrum analyzer"
+        self.device = device
 
     def run_get_o_spectrum(self, start, stop, step):
 

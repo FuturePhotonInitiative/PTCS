@@ -1,7 +1,5 @@
 from src.Instruments.IEEE_488_2 import IEEE_488_2
 import time
-import re
-import inspect
 
 # channel numbers
 PPG_ED_CH1 = 1
@@ -20,7 +18,9 @@ SINGLE = "SING"
 class AnritsuMP2100A(IEEE_488_2):
 
     def __init__(self, device):
-        IEEE_488_2.__init__(self, device, "Anritsu MP2100A BERT Analyzer")
+        IEEE_488_2.__init__(self)
+        self.name += "Anritsu MP2100A BERT Analyzer"
+        self.device = device
         self.device.read_termination = TERMINATION_CHARACTER
 
     def run_all_measurements(self):
@@ -302,12 +302,3 @@ class AnritsuMP2100A(IEEE_488_2):
         :param module_number: the module to let the instrument know that said module has a query coming its way
         """
         self.device.write(":MODule:ID " + str(module_number))
-
-    def what_can_i(self):
-        """
-        This overrides the base class implementation. Why are we sticking "run_" in front of every method name that we
-        want to be run externally when there is already a python standard that says that you can put an underscore
-        in front of any class member name that you want to be for internal use only. That seems like a more sustainable
-        option, so this class is going to be the change.
-        """
-        return [method[0] for method in inspect.getmembers(self, inspect.ismethod) if re.match('^[^_].+', method[0])]
