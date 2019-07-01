@@ -93,7 +93,7 @@ class QueueManager:
     def clear_queue(self):
         self.experiment_queue.clear_queue()
 
-    def save_queue_to_file(self, folder_path):
+    def save_queue_to_file(self, folder_path, name):
         """
         Save the queue to a file
         :param folder_path:
@@ -109,7 +109,7 @@ class QueueManager:
             for field in exp.config_dict.get('Data', dict()).keys():
                 output += str(exp.config_dict['Data'][field]) + " // " + str(field) + "\n"
 
-        with open(folder_path + "/Saved_Experiment_" + str(index), "w") as f:
+        with open(folder_path + "/Saved_Experiment_" + name, "w") as f:
             f.write(output)
         return index
 
@@ -124,6 +124,8 @@ class QueueManager:
             The constructed queue.
         """
         rqueue = []
+        if not os.path.isfile(file_path):
+            return False
         with open(file_path) as f:
             exp = None
             for line in f.readlines():
@@ -135,7 +137,7 @@ class QueueManager:
                     ind = line.find(' // ')
                     if ind > -1:
                         val = line[:ind]
-                        if '0' <= val[0] <= '9' or val[0] == '.':
+                        if len(val) > 0 and ('0' <= val[0] <= '9' or val[0] == '.'):
                             try:
                                 val = int(val)
                             except ValueError:
@@ -146,14 +148,20 @@ class QueueManager:
                                 if exp.config_dict['Data'].get('Units', None) is not None:
                                     uv /= QueueManager.parse_units(exp.config_dict['Data']['Units'])
                                 val = float(line[:ux].replace(" ", ""))*uv
-                        if float(int(val)) == val:
-                            val = int(val)
+                            if float(int(val)) == val:
+                                val = int(val)
                         exp.config_dict['Data'][line[ind+4:-1]] = val
             rqueue.append(exp)
         self.experiment_queue.queue.extend(rqueue)
+        return True
 
     @staticmethod
     def parse_units(s):
+        """
+        Determine the multiplier for a given unit string.
+        :param s: Unit string.
+        :return: Multiplier.
+        """
         units = {"T": 1000000000000, "G": 1000000000, "M": 1000000, "K": 1000, "k": 1000,
                  "m": .001, "u": .000001, "n": .000000001, "p": .000000000001}
         if len(s) > 1:

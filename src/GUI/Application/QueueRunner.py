@@ -58,14 +58,7 @@ class QueueRunner(Thread):
                 if rt is not None:
                     if rt != "":
                         Globals.systemConfigManager.get_results_manager().results_root = rt
-            if self.queue.get_ith_experiment(i).get_name() == 'Load Queue':
-                index = self.queue.get_ith_experiment(i).config_dict['Data']['Queue']
-                rq = self.read_queue_from_file("../../Saved_Experiments/Saved_Experiment_" + str(index), "../../Configs")
-                tq = self.queue.queue[:i]
-                tq.extend(rq)
-                tq.extend(self.queue.queue[i+1:])
-                self.queue.queue = tq
-            elif self.queue.get_ith_experiment(i).get_name() == 'Repeat Experiment':
+            if self.queue.get_ith_experiment(i).get_name() == 'Repeat Experiment':
                 if i > 0:
                     ex = self.queue.get_ith_experiment(i)
                     vary_param = ex.config_dict['Data']['Parameter']
@@ -91,19 +84,7 @@ class QueueRunner(Thread):
         while i < len(self.queue):
             self.current_experiment = self.queue.get_ith_experiment(i)
             print(self.current_experiment.get_name())
-            if self.current_experiment.get_name() == 'Save Queue':
-                # Save the queue in the Saved Experiments folder
-                self.queue.queue.pop(i)
-                self.save_queue_to_file("../../Saved_Experiments")
-            elif self.current_experiment.get_name() == 'Load Queue':
-                # Load a queue from the Saved Experiments folder
-                index = self.current_experiment.config_dict['Data']['Queue']
-                rq = self.read_queue_from_file("../../Saved_Experiments/Saved_Experiment_" + str(index), "../../Configs")
-                tq = self.queue.queue[:i]
-                tq.extend(rq)
-                tq.extend(self.queue.queue[i+1:])
-                self.queue.queue = tq
-            elif self.current_experiment.get_name()[-5:] == '(Tcl)':
+            if self.current_experiment.get_name()[-5:] == '(Tcl)':
                 # Run a contiguous sequence of Tcl tests
                 tcl_end = i + 1
                 while tcl_end < len(self.queue) and self.queue.get_ith_experiment(tcl_end).get_name()[-5:] == '(Tcl)':
@@ -206,6 +187,9 @@ class QueueRunner(Thread):
             ex_name = clean_name_for_file(self.queue.get_ith_experiment(i).get_name())
             if len(os.listdir(result_dir + "/" + name + "/" + ex_name + "_" + str(i+1))) == 0:
                 os.rmdir(result_dir + "/" + name + "/" + ex_name + "_" + str(i+1))
+        for fl in os.listdir("."):
+            if fl.endswith(".jou") or fl.endswith(".log"):
+                os.remove(fl)
 
     def get_current_experiment(self):
         """
@@ -225,6 +209,10 @@ class QueueRunner(Thread):
         return self.experiment_status[experiment]
 
     def verify_devices(self):
+        """
+        Verify that all the devices in the tests are connected.
+        :return: If all the selected devices are connected.
+        """
         device_list = []
         for test in self.queue.queue:
             d = test.config_dict.get('Devices', None)
@@ -245,6 +233,16 @@ class QueueRunner(Thread):
 
     @staticmethod
     def add_test_series(config_file, base_config_dict, vary_param, start, count, step=1):
+        """
+        Create a series of tests to add to the queue the at runtime.
+        :param config_file: The config file for the test in question.
+        :param base_config_dict: The base config dictionary.
+        :param vary_param: The name of the parameter to vary.
+        :param start: The starting value of vary_param.
+        :param count: The number of tests to add.
+        :param step: The amount to change vary_param by each time.
+        :return: The created test series.
+        """
         rqueue = []
         i = start
         for it in range(0, count):
@@ -255,70 +253,4 @@ class QueueRunner(Thread):
             i += step
         return rqueue
 
-    def save_queue_to_file(self, folder_path):
-        """
-        Save the queue to a file
-        :param folder_path:
-            The folder to save it in.
-        :return:
-            Nothing
-        """
-        index = len(os.listdir(folder_path)) + 1
-        output = ""
-        for i in range(len(self.queue)):
-            exp = self.queue.get_ith_experiment(i)
-            output += "*" + exp.config_file_name[24:-5] + "\n"
-            for field in exp.config_dict.get('Data', dict()).keys():
-                output += str(exp.config_dict['Data'][field]) + " // " + str(field) + "\n"
-
-        with open(folder_path + "/Saved_Experiment_" + str(index), "w") as f:
-            f.write(output)
-
-    @staticmethod
-    def read_queue_from_file(file_path, config_root):
-        """
-        Construct a queue from a file
-        :param file_path:
-            The file to read from.
-        :param config_root:
-            The folder to read config files from.
-        :return:
-            The constructed queue.
-        """
-        rqueue = []
-        with open(file_path) as f:
-            exp = None
-            for line in f.readlines():
-                if line.startswith('*'):
-                    if exp is not None:
-                        rqueue.append(exp)
-                    exp = Experiment(config_root + "/" + line[1:-1] + ".json")
-                else:
-                    ind = line.find(' // ')
-                    if ind > -1:
-                        val = line[:ind]
-                        if '0' <= val[0] <= '9' or val[0] == '.':
-                            try:
-                                val = int(val)
-                            except ValueError:
-                                ux = 0
-                                while val[ux] in ' .0123456789':
-                                    ux += 1
-                                uv = QueueRunner.parse_units(line[ux:])
-                                val = float(line[:ux].replace(" ", ""))*uv
-                        if float(int(val)) == val:
-                            val = int(val)
-                        exp.config_dict['Data'][line[ind+4:-1]] = val
-            rqueue.append(exp)
-        return rqueue
-
-    @staticmethod
-    def parse_units(s):
-        units = {"T": 1000000000000, "G": 1000000000, "M": 1000000, "K": 1000, "k": 1000,
-                 "m": .001, "u": .000001, "n": .000000001, "p": .000000000001}
-        if len(s) > 1:
-            for u in units:
-                if s.startswith(u):
-                    return units[u]
-        return 1
 

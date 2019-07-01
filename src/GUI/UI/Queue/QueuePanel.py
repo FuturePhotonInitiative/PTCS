@@ -1,4 +1,5 @@
 import wx
+import os
 
 from src.GUI.UI.DisplayPanel import DisplayPanel
 from src.GUI.Util import GUI_CONSTANTS
@@ -33,19 +34,29 @@ class QueuePanel(DisplayPanel):
         self.load_button = wx.Button(self)
         self.load_button.SetLabelText("Load Queue")
 
-        self.load_exp = wx.TextCtrl(self, value="1")
+        self.save_exp = wx.TextCtrl(self)
+
+        self.load_exp = wx.Choice(self, choices=self.get_loadable_experiments())
 
         self.sizer = wx.BoxSizer(wx.VERTICAL)
         self.SetSizer(self.sizer)
         self.sizer.Add(self.list_box, 5, wx.EXPAND | wx.ALL)
-        self.save_sizer = wx.BoxSizer(wx.HORIZONTAL)
-        self.save_sizer.Add(self.clear_button, 1, wx.EXPAND | wx.ALL)
-        self.save_sizer.Add(self.save_button, 1, wx.EXPAND | wx.ALL)
-        self.load_sizer = wx.BoxSizer(wx.HORIZONTAL)
-        self.load_sizer.Add(self.load_button, 1, wx.EXPAND | wx.ALL)
-        self.load_sizer.Add(self.load_exp, 1, wx.EXPAND | wx.ALL)
-        self.sizer.Add(self.save_sizer, 0.5, wx.EXPAND | wx.ALL)
-        self.sizer.Add(self.load_sizer, 0.5, wx.EXPAND | wx.ALL)
+
+        self.midbar = wx.BoxSizer(wx.HORIZONTAL)
+        self.midbar.Add(self.clear_button, 1, wx.EXPAND | wx.ALL)
+
+        self.btn_sizer = wx.BoxSizer(wx.VERTICAL)
+        self.btn_sizer.Add(self.save_button, 1, wx.EXPAND | wx.ALL)
+        self.btn_sizer.Add(self.load_button, 1, wx.EXPAND | wx.ALL)
+
+        self.input_sizer = wx.BoxSizer(wx.VERTICAL)
+        self.input_sizer.Add(self.save_exp, 1, wx.EXPAND | wx.ALL)
+        self.input_sizer.Add(self.load_exp, 1, wx.EXPAND | wx.ALL)
+
+        self.midbar.Add(self.btn_sizer, 0.5, wx.EXPAND | wx.ALL)
+        self.midbar.Add(self.input_sizer, 0.5, wx.EXPAND | wx.ALL)
+
+        self.sizer.Add(self.midbar, 1, wx.EXPAND | wx.ALL)
         self.sizer.Add(self.run_button, 2, wx.EXPAND | wx.ALL)
 
         # Sets up the colors display Constants are in Util.CONSTANTS
@@ -116,10 +127,20 @@ class QueuePanel(DisplayPanel):
         Globals.systemConfigManager.get_queue_manager().clear_queue()
 
     def save_queue(self, event):
-        i = Globals.systemConfigManager.get_queue_manager().save_queue_to_file("../../Saved_Experiments")
-        print("Queue saved: " + str(i))
+        st = self.save_exp.GetValue().replace(" ", "_")
+        while os.path.isfile("../../Saved_Experiments/Saved_Experiment_" + st):
+            st += "-"
+        Globals.systemConfigManager.get_queue_manager().save_queue_to_file("../../Saved_Experiments", st)
+        print("Queue saved: " + st)
+        self.load_exp.Append(st.replace("_", " "))
 
     def load_queue(self, event):
-        num = self.load_exp.GetValue()
+        nm = self.load_exp.GetString(self.load_exp.GetSelection()).replace(" ", "_")
         mgr = Globals.systemConfigManager.get_queue_manager()
-        mgr.read_queue_from_file("../../Saved_Experiments/Saved_Experiment_" + str(num), "../../Configs")
+        mgr.read_queue_from_file("../../Saved_Experiments/Saved_Experiment_" + nm, "../../Configs")
+
+    def get_loadable_experiments(self):
+        res = []
+        for fl in os.listdir("../../Saved_Experiments"):
+            res.append(fl[17:].replace("_", " "))
+        return res
