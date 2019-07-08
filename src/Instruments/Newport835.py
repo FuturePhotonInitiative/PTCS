@@ -1,11 +1,14 @@
 from src.Instruments.GPIBtoUSBAdapter import GPIBtoUSBAdapter
 
+# the termination character sequence necessary for an instrument to read a command
+TERM_SEQUENCE = "X"
+
 
 class Newport835(GPIBtoUSBAdapter):
     """
     This class models a Newport 835 Optical Power Meter
 
-    Please use the _send_to_opm and _query_opm instead of device.write and query for this device. Weird
+    Please use the _send_to_device and _query_device instead of device.write and query for this device. Weird
     things happen with the fact that the GPIB to USB converter has a read-after-write setting that does not always
     work well with device.read and device.query
 
@@ -17,20 +20,13 @@ class Newport835(GPIBtoUSBAdapter):
         GPIBtoUSBAdapter.__init__(self)
         self.name += "Newport 835 Optical Power Meter"
         self.device = device
-
         self.become_controller()
 
         # Make sure this is set with the same binary number of the back of the instrument
-        self.set_gpib_address(1)
+        self.instrument_gpib_address = 1
 
         # The instrument naturally outputs a \r\n, so lets make VISA think that is part of the termination char sequence
         self.device.read_termination = "\r\n"
-
-        # just a random query before running. This burns the first talk command given from setup
-        # which makes the instrument want to give a reading, but we may not want that yet
-        self.get_wavelength()
-
-        self.set_get_power_reading_on_x()
 
         # Used for setting the reading units. one can set these discrete watt ranges. nano, micro, milli.
         # "auto" sets a good range depending on the amount of light detected. This is the default.
@@ -53,58 +49,48 @@ class Newport835(GPIBtoUSBAdapter):
         """
         :return: the wavelength being detected in the form WAVE[n]nnn
         """
-        return self._query_opm("U1")
+        return self._query_device("U1", TERM_SEQUENCE)
 
     def turn_off_attenuator(self):
-        self._send_to_opm("A0")
+        self._send_to_device("A0", TERM_SEQUENCE)
 
     def turn_on_attenuator(self):
         """
         Lets the instrument know that the attenuator cap is on the light sensor so readings are correct
         """
-        self._send_to_opm("A1")
+        self._send_to_device("A1", TERM_SEQUENCE)
 
     def set_wavelength(self, wavelength):
         """
         :param wavelength: the wavelength in nm. This value is rounded to the nearest power of 10
         """
-        self._send_to_opm("W+" + str(wavelength))
+        self._send_to_device("W+{}".format(wavelength), TERM_SEQUENCE)
 
     def set_get_power_reading_on_x(self):
         """
         :return: Every time an "X" is sent alone to the instrument it will give back a power reading
         """
-        self._send_to_opm("T4")
+        self._send_to_device("T4", TERM_SEQUENCE)
 
     def get_power_reading(self):
         """
         :return: a power reading from the instrument at the time called
         """
-        return self._query_opm("X")
+        return self.read()
 
     def change_reading_units(self, how_many_watts):
         """
         :param how_many_watts: the amount of watts to set the unit to detect.
         This could be auto, (2, 20, 200) nW, (2, 20, 200) uW, (2, 20, 200) mW, (2, 20) W
         """
-        self._send_to_opm(self.unit_switch[how_many_watts])
+        self._send_to_device(self.unit_switch[how_many_watts], TERM_SEQUENCE)
 
     def make_outputs_verbose(self):
-        self._send_to_opm("G0")
+        self._send_to_device("G0", TERM_SEQUENCE)
 
     def make_outputs_unverbose(self):
-        self._send_to_opm("G1")
+        self._send_to_device("G1", TERM_SEQUENCE)
 
-    def _query_opm(self, query):
-        """
-        The GPIB to USB adapter needs to know that it is expecting a response from the instrument.
-        Also, an X needs to be appended to the message command
-        :param query:
-        :return:
-        """
-        self.turn_on_read_after_write()
-        return self.device.query(query + "X")
-
-    def _send_to_opm(self, query):
-        self.turn_off_read_after_write()
-        self.device.write(query + "X")
+    @staticmethod
+    def _print(message):
+        print("Newport OPM> " + message)

@@ -27,7 +27,8 @@ class AQ4321D(GPIBtoUSBAdapter):
         self.name += "Ando AQ4321D laser"
 
         self.become_controller()
-        self.set_gpib_address(24)
+
+        self.instrument_gpib_address = 24
 
         # Reading data will hang with PyVisa if this is not set
         self.turn_message_delimiters_on()
@@ -87,6 +88,7 @@ class AQ4321D(GPIBtoUSBAdapter):
     def set_power(self, power):
         """
         :param power: The power to set. -20.0 to 10.0 inclusive, up to the tenths place.
+        I had issues setting the power to 10 remotely though.
         """
         self._check_float(power, MIN_POWER, MAX_POWER, TENTHS)
         self._send_to_device("TPDB{}".format(power))
@@ -135,15 +137,10 @@ class AQ4321D(GPIBtoUSBAdapter):
         self.set_step_time_sweep(time_step)
         self.turn_laser_on()
         self.start_sweep()
-        # aparently the instrument freezes for about 6 seconds right after the laser is
+        # aparently the instrument freezes for some seconds right after the laser is
         # turned on and the start sweep command is issued
-        time.sleep(6)
+        time.sleep(3.5)
         self._print("Step sweeping in progress...")
-        while self.sweep_in_progress():
-            self._print("sweep in progress")
-            time.sleep(1)
-        self.turn_laser_off()
-        self._print("Sweeping Done!")
 
     def set_cont_time_sweep(self, time):
         """
@@ -166,9 +163,9 @@ class AQ4321D(GPIBtoUSBAdapter):
         self.set_cont_time_sweep(time_length)
         self.turn_laser_on()
         self.start_sweep()
-        # aparently the instrument freezes for about 6 seconds right after the laser is
+        # aparently the instrument freezes for some seconds right after the laser is
         # turned on and the start sweep command is issued
-        time.sleep(6)
+        time.sleep(3.5)
         self._print("Continuous sweeping in progress for {} seconds...".format(time_length))
         while self.sweep_in_progress():
             time.sleep(1)
@@ -233,22 +230,6 @@ class AQ4321D(GPIBtoUSBAdapter):
         """
         if num is None or not min <= num <= max or not (num * (1/precision)).is_integer():
             raise Exception("Value: {} out of allotted range: {} to {} or too precise".format(num, min, max))
-
-    def _query_device(self, query):
-        """
-        The GPIB to USB adapter needs to know that it is expecting a response from the instrument.
-        :param query: the query string to ask the instrument
-        :return: the response string
-        """
-        self.turn_on_read_after_write()
-        return self.device.query(query)
-
-    def _send_to_device(self, query):
-        """
-        :param query: the query string to ask the instrument
-        """
-        self.turn_off_read_after_write()
-        self.device.write(query)
 
     @staticmethod
     def _print(string):

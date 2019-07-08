@@ -79,7 +79,7 @@ class ExperimentResultsModel:
             json.dump(config_dict, config_file, indent=4 if pretty_print else None, default=str)
 
     def add_result_file(self, file_name):
-        path_of_file = os.path.dirname(file)
+        path_of_file = os.path.dirname(file_name)
         if path_of_file != self.experiment_results_directory:
             file_name = file_name.replace(path_of_file, "")
             copyfile(file_name, self.experiment_results_directory + file_name)

@@ -33,12 +33,12 @@ class AnritsuMP2100A(IEEE_488_2):
         return self.device.query("*OPT?")
 
     def measurement_is_running(self):
-        return self.device.query(":SENSe:MEASure:ASTate?") == 1
+        return self.device.query(":SENSe:MEASure:ASTate?") == "1"
 
     def set_bitrate(self, bitrate):
         self._channel(PPG_ED_CH1)
         self.device.write(":SENSe:PARam:TRACking 1")
-        self.device.write(":OUTPut:BITRate:STANdard " + bitrate)
+        self.device.write(":OUTPut:BITRate:STANdard " + str(bitrate))
 
     def get_bitrate(self):
         self._channel(PPG_ED_CH1)
@@ -148,7 +148,7 @@ class AnritsuMP2100A(IEEE_488_2):
         return self.device.query(":INPut:CHA?") == ON
 
     def get_channel_a_off(self):
-        return not self.run_get_channel_a_on()
+        return not self.get_channel_a_on()
 
     def set_channel_b_on(self):
         self._channel(EYE_PULSE_SCOPE)
@@ -163,7 +163,7 @@ class AnritsuMP2100A(IEEE_488_2):
         return self.device.query(":INPut:CHB?") == ON
 
     def get_channel_b_off(self):
-        return not self.run_get_channel_b_on()
+        return not self.get_channel_b_on()
 
     def turn_on_data_clock_tracking_rate(self):
         self._channel(EYE_PULSE_SCOPE)

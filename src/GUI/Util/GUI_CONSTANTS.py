@@ -29,7 +29,7 @@ CONTROL_PANEL_FOREGROUND_COLOR = wx.BLACK#wx.Colour(100, 100, 100)
 
 LABEL_PROPORTION = .1
 
-WORKING_DIRECTORY = "/".join(os.getcwd().split("\\")[:-2]) + "/System"
+WORKING_DIRECTORY = os.path.join(os.path.dirname(os.path.dirname(os.getcwd())), "System")
 
 EXPERIMENT_QUEUE_RESULT_ROOT = "Experiment Queues"
 
