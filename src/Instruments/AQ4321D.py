@@ -137,7 +137,7 @@ class AQ4321D(GPIBtoUSBAdapter):
         self.set_step_time_sweep(time_step)
         self.turn_laser_on()
         self.start_sweep()
-        # aparently the instrument freezes for some seconds right after the laser is
+        # apparently the instrument freezes for some seconds right after the laser is
         # turned on and the start sweep command is issued
         time.sleep(3.5)
         self._print("Step sweeping in progress...")
@@ -163,7 +163,7 @@ class AQ4321D(GPIBtoUSBAdapter):
         self.set_cont_time_sweep(time_length)
         self.turn_laser_on()
         self.start_sweep()
-        # aparently the instrument freezes for some seconds right after the laser is
+        # apparently the instrument freezes for some seconds right after the laser is
         # turned on and the start sweep command is issued
         time.sleep(3.5)
         self._print("Continuous sweeping in progress for {} seconds...".format(time_length))
