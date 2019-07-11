@@ -73,9 +73,9 @@ class ConfigFileManipulation:
 
         scripts = {}
         for item in [i for i in self.config['Experiment'] if i['Type'] == "PY_SCRIPT"]:
-
             if str(item['Source']) not in available_scripts:
-                sys.exit("Required script \'" + item['Source'] + "\' not found")
+                print("Required script \'" + item['Source'] + "\' not found")
+                sys.exit(1)
 
             if item['Order'] in scripts.keys():
                 scripts[item['Order']].append(item['Source'])
