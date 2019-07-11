@@ -3,6 +3,7 @@ from src.GUI.UI.ExperimentResults.ExperimentResultsPage import ExperimentResults
 from src.GUI.UI.Hardware.HardwarePage import HardwarePage
 from src.GUI.UI.BuildExperiment.BuildExperimentPage import BuildExperimentsPage
 from src.GUI.UI.Queue.QueuePage import QueuePage
+from src.GUI.UI.TestBuild.TestBuildPage import TestBuildPage
 import src.GUI.Util.GUI_CONSTANTS as CONSTANTS
 from src.GUI.Util import Globals
 
@@ -19,10 +20,12 @@ class MainFrame(wx.Frame):
         self.hardware_page = HardwarePage(self.notebook)
         # self.build_experiments_page = BuildExperimentsPage(self.notebook)
         self.experiment_results_page = ExperimentResultsPage(self.notebook)
+        self.test_build_page = TestBuildPage(self.notebook)
 
         self.notebook.AddPage(self.queue_page, CONSTANTS.QUEUE_PAGE_NAME)
         self.notebook.AddPage(self.experiment_results_page, CONSTANTS.RESULTS_PAGE_NAME)
         self.notebook.AddPage(self.hardware_page, CONSTANTS.HARDWARE_PAGE_NAME)
+        self.notebook.AddPage(self.test_build_page, CONSTANTS.TEST_BUILD_PAGE_NAME)
         # self.notebook.AddPage(self.build_experiments_page, CONSTANTS.BUILD_EXPERIMENTS_PAGE_NAME)
 
 
@@ -42,8 +45,8 @@ class MainFrame(wx.Frame):
         dc.SetFont(f)
         width, height = dc.GetTextExtent(CONSTANTS.QUEUE_PAGE_NAME +
                                          CONSTANTS.HARDWARE_PAGE_NAME +
-                                         CONSTANTS.BUILD_EXPERIMENTS_PAGE_NAME +
-                                         CONSTANTS.RESULTS_PAGE_NAME)
+                                         CONSTANTS.RESULTS_PAGE_NAME +
+                                         CONSTANTS.TEST_BUILD_PAGE_NAME)
         size = (self.GetSize()[0] - width - CONSTANTS.SPACE_SIZE * (self.notebook.GetPageCount() + 1) ) / (self.notebook.GetPageCount() * 2)
         self.notebook.SetPadding(wx.Size(size, 3))
 
