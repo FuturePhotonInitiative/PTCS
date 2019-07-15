@@ -1,0 +1,12 @@
+{
+  "Name": "wom",
+  "Devices": [
+  ],
+  "Experiment": [
+    {
+      "Type": "PY_SCRIPT",
+      "Source": "Wait1Minute.py",
+      "Order": 1
+    }
+  ]
+}

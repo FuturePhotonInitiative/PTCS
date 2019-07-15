@@ -116,7 +116,7 @@ class AQ4321D(GPIBtoUSBAdapter):
 
     def set_step_time_sweep(self, time):
         """
-        :param time: The time that each step should take
+        :param time: The time that each step should take in seconds
         """
         self._check_float(time, MIN_STEP_TIME, MAX_STEP_TIME, TENTHS)
         self._send_to_device("TSTET{}".format(time))
@@ -128,7 +128,7 @@ class AQ4321D(GPIBtoUSBAdapter):
         :param start: The wavelength the sweep should start at
         :param stop: The wavelength the sweep should end at
         :param wavelength_step: The amount of wavelength the sweep should traverse each step
-        :param time_step: The time that each step should take
+        :param time_step: The time that each step should take in seconds
         """
         self._send_to_device("TSWM{}".format(SWEEP_MODE_STEP))  # this is the step version of a sweep
         self.set_start_sweep_wavelength(start)

@@ -1,0 +1,32 @@
+{
+  "Name": "Sweep Test",
+  "Devices":[
+    "Newport OPM",
+    "Laser Source"
+  ],
+  "Experiment": [
+    {
+      "Type": "PY_SCRIPT",
+      "Source": "SweepTestCollect.py",
+      "Order": 1
+    },
+    {
+      "Type": "PY_SCRIPT",
+      "Source": "SweepTestReduce.py",
+      "Order": 2
+    },
+    {
+      "Type": "PY_SCRIPT",
+      "Source": "SweepTestExport.py",
+      "Order": 3
+    }
+  ],
+  "Data": {
+    "opm_wavelength": 1100,
+    "reading_units": "auto",
+    "sweep_wavelen_start": 1520,
+    "sweep_wavelen_stop": 1530,
+    "sweep_wavelen_step": 1,
+    "time_per_step": 1
+  }
+}
