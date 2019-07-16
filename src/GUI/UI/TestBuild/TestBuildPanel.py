@@ -88,7 +88,6 @@ class TestBuildPanel(DisplayPanel):
         i = self.list_box.GetSelection()
         output = self.load_symbol(self.lines[i])
 
-
     def get_load_output(self, pattern):
         output = ""
         for i in range(0, len(pattern)):
@@ -117,6 +116,14 @@ class TestBuildPanel(DisplayPanel):
             elif symbol == "[OP]":
                 b = wx.Choice(self)
                 b.Append(["==", "/=", "<", ">", "<=", ">="])
+                si = b.FindString(patterns[0][i])
+                if si > -1:
+                    b.SetSelection(si)
+                items.append(b)
+                output += patterns[0][i] + " "
+            elif symbol == "[DEV]":
+                b = wx.Choice(self)
+                b.Append(Globals.systemConfigManager.get_hardware_manager().get_all_hardware_names())
                 si = b.FindString(patterns[0][i])
                 if si > -1:
                     b.SetSelection(si)
@@ -177,7 +184,10 @@ class TestBuildPanel(DisplayPanel):
         elif type(item) == wx.Choice:
             i = item.GetSelection()
             if i == -1:
-                s = "-?-"
+                if item.GetCount() > 0 and item.GetString(0) == "==":
+                    s = "-?-"
+                else:
+                    s = "[DEV]"
             else:
                 s = item.GetString(i)
         elif type(item) == wx.StaticText:

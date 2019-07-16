@@ -1,6 +1,6 @@
-functions = [("set voltage", 1, "set_voltage"),
+functions = [("set voltage", 1, "run_set_voltage"),
              ("set output switch", 1, "set_output_switch"),
-             ("measure average", 0, "get_average")]
+             ("measure average", 0, "run_measure_vaverage")]
 
 
 def parse_file(filename, output_file):
@@ -157,6 +157,9 @@ def parse_input(lines):
         elif iden == "GET TIMER AS":
             rv += line[1] + " = get timer"
         elif iden == "FROM":
-            rv += line[1] + ";" + line[3] + " " + line[4]
+            if line[2] == "CALL":
+                rv += line[1] + ";" + line[3]
+            elif line[2] == "READ":
+                rv += line[5] + " = " + line[1] + ";" + line[3]
         ret.append(rv)
     return ret

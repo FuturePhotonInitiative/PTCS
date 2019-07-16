@@ -16,7 +16,7 @@ class TestButtonPanel(ControlPanel):
         self.sizer = wx.BoxSizer(wx.VERTICAL)
 
         names = ["IF", "ELSE", "END", "LOOP", "PARAMETER", "SET", "PRINT",
-                 "DEVICE", "SAVE", "START TIMER", "GET TIMER", "DEVICE FUNCTION"]
+                 "DEVICE", "SAVE", "START TIMER", "GET TIMER", "DEVICE CALL", "DEVICE READ"]
 
         patterns = [["IF", "[STR]", "[OP]", "[STR]"],
                     ["ELSE"],
@@ -25,11 +25,12 @@ class TestButtonPanel(ControlPanel):
                     ["PARAMETER", "[STR]", "[STR]"],
                     ["SET", "[STR]", "=", "[STR]"],
                     ["PRINT", "[STR]"],
-                    ["IMPORT", "[STR]", "AS", "[STR]"],
+                    ["IMPORT", "[DEV]", "AS", "[STR]"],
                     ["SAVE", "[STR]", ",", "[STR]"],
                     ["START TIMER"],
                     ["GET TIMER AS", "[STR]"],
-                    ["FROM", "[STR]", "CALL", "[STR]", "[STR]"]]
+                    ["FROM", "[STR]", "CALL", "[STR]"],
+                    ["FROM", "[STR]", "READ", "[STR]", "AS", "[STR]"]]
 
         self.buttons = self.add_buttons(self.sizer, names, 4)
 
