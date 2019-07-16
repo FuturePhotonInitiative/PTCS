@@ -3,7 +3,7 @@ import json
 import os
 from shutil import copyfile
 import matplotlib.pyplot as plt
-from src.GUI.Util.GUI_CONSTANTS import TIMESTAMP_FORMAT
+from src.GUI.Util.CONSTANTS import TIMESTAMP_FORMAT
 
 
 class ExperimentResultsModel:

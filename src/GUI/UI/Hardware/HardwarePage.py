@@ -1,8 +1,7 @@
 from src.GUI.UI.ControlPanel import ControlPanel
 from src.GUI.UI.Page import Page
 from HardwareListPanel import HardwareListPanel
-import src.GUI.Util.GUI_CONSTANTS as CONSTANTS
-
+import src.GUI.Util.CONSTANTS as CONSTANTS
 
 
 class HardwarePage(Page):

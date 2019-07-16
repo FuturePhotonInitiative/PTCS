@@ -28,15 +28,6 @@ class HardwareManager:
                 self.hardware_objects[hardware_item] = obj
         self.drivers = os.listdir(driver_root)
 
-    def get_hardware_object(self, name):
-        """
-        :param name:
-            The name of the hardware in the configuration file
-        :return:
-            A Hardware object representing the configuration of the hardware with the given name
-        """
-        return self.hardware_objects[name]
-
     def get_all_hardware_names(self):
         """
         :return:

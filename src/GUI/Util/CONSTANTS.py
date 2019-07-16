@@ -29,7 +29,15 @@ CONTROL_PANEL_FOREGROUND_COLOR = wx.BLACK#wx.Colour(100, 100, 100)
 
 LABEL_PROPORTION = .1
 
-WORKING_DIRECTORY = os.path.join(os.path.dirname(os.path.dirname(os.getcwd())), "System")
+# directories of interest
+PROJ_DIR = os.path.dirname(os.path.dirname(os.getcwd()))
+WORKING_DIRECTORY = os.path.join(PROJ_DIR, "System")
+CONFIGS = os.path.join(PROJ_DIR, "Configs")
+SCRIPTS_DIR = os.path.join(os.path.join(PROJ_DIR, "src"), "Scripts")
+DRIVERS_DIR = os.path.join(os.path.join(PROJ_DIR, "src"), "Instruments")
+RESULTS_DIR = os.path.join(PROJ_DIR, "Results")
+DEVICES_CONFIG = os.path.join(os.path.join(PROJ_DIR, "System"), "Devices.json")
+RESULTS_CONFIG_DIR = os.path.join(os.path.join(PROJ_DIR, "System"), "ResultsConfiguration")
 
 EXPERIMENT_QUEUE_RESULT_ROOT = "Experiment Queues"
 

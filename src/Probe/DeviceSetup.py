@@ -6,6 +6,8 @@ import inspect
 import imp
 import types
 
+from src.GUI.Util import CONSTANTS
+
 
 class DeviceSetup:
 
@@ -26,9 +28,9 @@ class DeviceSetup:
                           [i.alias for i in self.available_instruments if i.alias is not None] or \
                     default[-6:] == "SOCKET":
                 return self.visa_rm.open_resource(default)
-            print("'Default' connection string for " + name + " is invalid.",)
+            print "'Default' connection string: " + default + " for " + name + " is invalid.",
         else:
-            print("The default port for " + name + " was not specified.",)
+            print "The default port for " + name + " was not specified.",
         print(" Do you mean one of these?:")
 
         print("*****Connected Devices*****")
@@ -41,23 +43,21 @@ class DeviceSetup:
         instr = raw_input("Choose instrument to connect to: ")
         return self.visa_rm.open_resource(instr)
 
-    def connect_devices(self, config_file_devices, file_locations, exit_stack):
+    def connect_devices(self, config_file_devices, exit_stack):
         """
         Initializes all devices specified in the device list. this will also dynamically import the drivers
         specified if one hasn't been imported already
         :param config_file_devices: The list of devices to be used
-        :param file_locations: The JSON Files object with standard file directories
         :param exit_stack: A Exit Stack that will close all devices when the program exits
         :return: A dict of device names mapping to their objects
         """
-        driver_root = str(file_locations['Driver_Root'])
-        drivers = os.listdir(driver_root)
+        drivers = os.listdir(CONSTANTS.DRIVERS_DIR)
         drivers = [i[:-3] for i in drivers if not (i == '__init__.py' or i[-3:] != '.py')]
         connected_devices = {}
 
         print "Finding Devices...."
 
-        with open(file_locations["Hardware_Config"]) as d:
+        with open(CONSTANTS.DEVICES_CONFIG) as d:
             hardware_manager = json.load(d)
         for device_key in config_file_devices:
             if device_key not in hardware_manager.keys():
@@ -78,11 +78,14 @@ class DeviceSetup:
                 # instantiate a class based on the name of the file it is in.
                 if driver_file_name in drivers:
                     if driver_file_name not in [i[0] for i in globals().items() if isinstance(i[1], types.ModuleType)]:
-                        globals()[driver_file_name] = imp.load_source(driver_file_name,
-                                                                      driver_root + '\\' + driver_file_name + '.py')
+                        globals()[driver_file_name] = imp.load_source(
+                                driver_file_name, os.path.join(CONSTANTS.DRIVERS_DIR, driver_file_name + '.py'))
                     DriverClass = [i for i in inspect.getmembers(globals()[driver_file_name], inspect.isclass)
                                    if i[0] == driver_file_name][0][1]
                     connected_devices[device_key] = exit_stack.enter_context(DriverClass(connection))
                 else:
-                    sys.exit("Driver file for \'" + driver_file_name + "\' not found in Driver Root: \'" + driver_root)
+                    print("ting")
+                    print("Error: Driver file '{}' for '{}' not found in the Driver Root directory '{}'".format(
+                            driver_file_name, device_key, CONSTANTS.DRIVERS_DIR))
+                    sys.exit(1)
         return connected_devices

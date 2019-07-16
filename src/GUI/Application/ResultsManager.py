@@ -5,8 +5,8 @@ from src.GUI.Model import QueueResultModel
 from src.GUI.Model.ExperimentModel import Experiment
 from src.GUI.Model.ExperimentResultModel import ExperimentResultsModel
 from src.GUI.Util.Functions import clean_name_for_file
-from src.GUI.Util.GUI_CONSTANTS import QUEUE_FILE_TITLE
-from src.GUI.Util.GUI_CONSTANTS import TIMESTAMP_FORMAT
+from src.GUI.Util.CONSTANTS import QUEUE_FILE_TITLE
+from src.GUI.Util.CONSTANTS import TIMESTAMP_FORMAT
 
 
 class ResultsManager:

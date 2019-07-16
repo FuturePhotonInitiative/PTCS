@@ -1,6 +1,6 @@
 import wx
 from src.GUI.UI.DisplayPanel import DisplayPanel
-from src.GUI.Util import GUI_CONSTANTS
+from src.GUI.Util import CONSTANTS
 import src.GUI.Util.Globals as Globals
 
 
@@ -22,8 +22,8 @@ class ExperimentListPanel(DisplayPanel):
         # self.list_box_sizer.Add(self.list_box, 5)
 
         # Sets up the colors display Constants are in Util.CONSTANTS
-        self.tree_box.SetBackgroundColour(GUI_CONSTANTS.LIST_PANEL_COLOR)
-        self.tree_box.SetForegroundColour(GUI_CONSTANTS.LIST_PANEL_FOREGROUND_COLOR)
+        self.tree_box.SetBackgroundColour(CONSTANTS.LIST_PANEL_COLOR)
+        self.tree_box.SetForegroundColour(CONSTANTS.LIST_PANEL_FOREGROUND_COLOR)
 
         # Adds all the experiments in the application queue to the display list
 
@@ -62,7 +62,7 @@ class ExperimentListPanel(DisplayPanel):
         """
         # print "RELOADING", self.root, self, event
         if not self.root:
-            self.root = self.tree_box.AddRoot(GUI_CONSTANTS.EXPERIMENT_QUEUE_RESULT_ROOT)
+            self.root = self.tree_box.AddRoot(CONSTANTS.EXPERIMENT_QUEUE_RESULT_ROOT)
         # print self.tree_box.GetChildrenCount(self.root, recursively=False), len(Globals.systemConfigManager.get_results_manager().get_queue_results())
         if self.tree_box.GetChildrenCount(self.root, recursively=False) != len(Globals.systemConfigManager.get_results_manager().get_queue_results()):
 

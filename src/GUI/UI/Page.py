@@ -1,5 +1,5 @@
 import wx
-import src.GUI.Util.GUI_CONSTANTS as CONSTANTS
+from src.GUI.Util import CONSTANTS
 
 
 class Page(wx.Panel):

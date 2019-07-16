@@ -105,28 +105,6 @@ class Experiment:
         """
         return self.config_dict['Requires']['Files']
 
-    def get_script_root(self):
-        """
-        :return:
-            The value of "Script_Root" defined in the configuration.
-        """
-        return self.get_required_files()['Script_Root']
-
-    # TODO this value should be moved to the system configuration rather than on an experiment by experiment basis
-    def get_driver_root(self):
-        """
-        :return:
-            The value of "Driver_Root" as defined in the configuration.
-        """
-        return self.get_required_files()['Driver_Root']
-
-    def get_results_root(self):
-        """
-        :return:
-            The value of "Results_Root" as defined in the configuration.
-        """
-        return self.get_required_files()['Results_Root']
-
     """ 
     TODO this will almost certainly be moved out of the experiment configuration files
     and into the system configuration files

@@ -2,32 +2,27 @@ import json
 import os
 import sys
 
+from src.GUI.Util import CONSTANTS
 
-class ConfigFileManipulation:
+
+class ConfigFile:
     def __init__(self, file_name):
         with open(file_name) as f:
             self.config = json.load(f)
 
-    def check_validity(self, file_locations):
+    def check_validity(self):
         """
         Checks the config file to ensure that information is properly input in json configuration
         This is specific to the current configuration file and will need to change when the file changes
-        :param file_locations, locations for specific directories
         :return: problems, array of things wrong with the configuration file
         """
         problems = []
         devices = self.config["Devices"]
         experiments = self.config["Experiment"]
-        with open(file_locations["Hardware_Config"]) as d:
+        with open(CONSTANTS.DEVICES_CONFIG) as d:
             hardware_manager = json.load(d)
         if "Name" not in self.config.keys():
             problems.append("Name : does not exist in configuration file")
-        for fil in ["Script_Root", "Driver_Root"]:
-            if fil not in file_locations.keys():
-                problems.append("Files-" + fil + " : does not exist in configuration file")
-            else:
-                if not os.path.exists(file_locations[fil]):
-                    problems.append("Files-" + fil + " : path does not exist")
         for device in devices:
             if device not in hardware_manager.keys():
                 problems.append("Devices-" + device + " : device not found in hardware manager. Check spelling.")
@@ -60,15 +55,13 @@ class ConfigFileManipulation:
             data_map['Data']['Initial'][key] = data_section[key]
         return
 
-    def extract_scripts(self, file_locations):
+    def extract_scripts(self):
         """
         Extracts the scripts from the JSON config and stages them for execution. This will put the scripts in an ordered
             list where each element is a list of tasks to be spawned in parallel
-        :param file_locations: The JSON Files object with standard file directories
         :return: The list of staged task lists
         """
-        scripts_root = str(file_locations['Script_Root'])
-        available_scripts = os.listdir(scripts_root)
+        available_scripts = os.listdir(CONSTANTS.SCRIPTS_DIR)
         available_scripts = [i for i in available_scripts if not (i == '__init__.py' or i[-3:] != '.py')]
 
         scripts = {}

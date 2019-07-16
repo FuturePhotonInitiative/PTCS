@@ -1,8 +1,0 @@
-{
-  "Script_Root": "../src/Scripts",
-  "Driver_Root": "../src/Instruments",
-  "Results_Root": "../Results",
-  "Hardware_Config": "./Devices.json",
-  "Results_Config_Root": "./ResultsConfiguration",
-  "Experiment_Roots": ["../Configs"]
-}
