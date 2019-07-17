@@ -1,5 +1,5 @@
 import wx
-import src.GUI.Model.ExperimentModel
+
 import src.GUI.Util.Globals as Globals
 from src.GUI.UI.ControlPanel import ControlPanel
 from src.GUI.Util import CONSTANTS
@@ -21,15 +21,15 @@ class ExperimentOutputPanel(ControlPanel):
         self.UI_control = Globals.systemConfigManager.get_ui_controller()
 
         # Sets up the colors display Constants are in Util.CONSTANTS
-        self.SetBackgroundColour(src.GUI.Util.CONSTANTS.CONTROL_PANEL_COLOR)
-        self.SetForegroundColour(src.GUI.Util.CONSTANTS.CONTROL_PANEL_FOREGROUND_COLOR)
+        self.SetBackgroundColour(CONSTANTS.CONTROL_PANEL_COLOR)
+        self.SetForegroundColour(CONSTANTS.CONTROL_PANEL_FOREGROUND_COLOR)
 
         # Sets up the vertical sizer
         self.sizer = wx.BoxSizer(wx.VERTICAL)
         self.SetSizer(self.sizer)
 
         style = wx.TE_MULTILINE | wx.TE_READONLY | wx.HSCROLL
-        self.out_text_field = wx.TextCtrl(self, style = style)
+        self.out_text_field = wx.TextCtrl(self, style=style)
         self.stop_button = wx.Button(self)
         self.stop_button.SetLabelText("Exit")
 

@@ -122,14 +122,5 @@ class Experiment:
         :return:
         None
         """
-        with open(filename, 'w') as file:
-            json.dump(self.config_dict, file, indent=4 if pretty_print else None)
-
-
-if __name__ == "__main__":
-    test = Experiment("../../Configs/Threshold_With_Hardware.json", None, 12)
-    print (test.get_data_value("Start_Voltage"))
-    print (test.get_data_value("Final_Voltage"))
-    print (test.get_data_value("Step_Voltage"))
-    test.set_data_value("Start_Voltage", 10.0)
-    test.export_to_json("tmp.json", True)
+        with open(filename, 'w') as f:
+            json.dump(self.config_dict, f, indent=4 if pretty_print else None)

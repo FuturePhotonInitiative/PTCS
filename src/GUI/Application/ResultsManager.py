@@ -10,21 +10,24 @@ from src.GUI.Util.CONSTANTS import TIMESTAMP_FORMAT
 
 
 class ResultsManager:
-    def __init__(self, results_root, results_config_root, results_config_manager):
+    def __init__(self, results_directory, results_config_directory, results_config_manager):
         self.results_config_manager = results_config_manager
-        self.results_root = results_root
-        self.results_config_root = results_config_root
         self.queue_result_list = []
         self.experiment_result_dict = {}
-        if not os.path.exists(results_config_root):
-            os.mkdir(results_config_root)
-        for config in os.listdir(results_config_root):
+        self.results_directory = results_directory
+        self.results_config_directory = results_config_directory
+        if not os.path.exists(results_config_directory):
+            os.mkdir(results_config_directory)
+        for config in os.listdir(results_config_directory):
             if QUEUE_FILE_TITLE in config:
-                self.queue_result_list.append(QueueResultModel.QueueResultsModel(results_config_root,queue_result_config=results_config_root + "/" + config))
+                self.queue_result_list.append(QueueResultModel.QueueResultsModel(
+                    queue_result_config=os.path.join(results_config_directory, config))
+                )
             else:
-                self.experiment_result_dict[config.replace(".json", "")] = (ExperimentResultsModel(results_root,
-                                                                              experiment_result_config=results_config_root + "/" + config))
-
+                self.experiment_result_dict[config.replace(".json", "")] = (ExperimentResultsModel(
+                    results_directory,
+                    experiment_result_config=os.path.join(results_config_directory, config))
+                )
 
     def get_list_of_queue_results(self):
         pass
@@ -44,12 +47,13 @@ class ResultsManager:
         name = exp.get_name() + str(now)
         name = clean_name_for_file(name)
 
-        if not os.path.exists(self.results_root):
-            os.mkdir(self.results_root)
-        if not os.path.exists(self.results_root + "/" + name):
-            os.mkdir(self.results_root + "/" + name)
+        if not os.path.exists(self.results_directory):
+            os.mkdir(self.results_directory)
+        this_result_folder = os.path.join(self.results_directory, name)
+        if not os.path.exists(this_result_folder):
+            os.mkdir(this_result_folder)
 
-        result = ExperimentResultsModel(self.results_root + "/" + name, exeriment_config_location)
+        result = ExperimentResultsModel(os.path.join(self.results_directory, name), exeriment_config_location)
         result.set_start(now)
         self.experiment_result_dict[name] = result
         if queue_result:
@@ -57,7 +61,7 @@ class ResultsManager:
         return [result, name]
 
     def make_new_queue_result(self):
-        result = QueueResultModel.QueueResultsModel(self.results_config_root)
+        result = QueueResultModel.QueueResultsModel()
         self.queue_result_list.append(result)
         # print "STUFF HAPPENS HERE", len(self.queue_result_list)
         return result
@@ -71,7 +75,7 @@ class ResultsManager:
             queue_result.save()
 
     def save_experiment_result(self, name, experiment_result):
-        experiment_result.export_to_json(self.results_config_root + "/" + name + ".json")
+        experiment_result.export_to_json(os.path.join(self.results_config_directory, name + ".json"))
 
     def get_queue_results(self):
         return self.queue_result_list

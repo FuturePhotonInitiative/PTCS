@@ -57,7 +57,7 @@ class SystemConfigManager:
             A new QueueManager object if one has not already been created by this class, an existing on otherwise.
         """
         if self.queue_manager is None:
-            self.queue_manager = QueueManager(CONSTANTS.WORKING_DIRECTORY, self)
+            self.queue_manager = QueueManager(CONSTANTS.TEMP_DIR, self)
         return self.queue_manager
 
     def get_results_manager(self):

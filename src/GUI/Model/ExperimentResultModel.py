@@ -101,7 +101,7 @@ class ExperimentResultsModel:
         axes.scatter(x_axis, y_axis)
 
         os.chdir(self.experiment_results_directory)
-        text = os.getcwd() + "//" + file_name + ".png"
+        text = os.path.join(os.getcwd(), file_name + ".png")
 
         self.experiments_results_files.append(text)
 
@@ -173,7 +173,7 @@ class ExperimentResultsModel:
                     out_data += surround_character + str(data[i]) + surround_character
                 # out_data += separator.join(map(lambda s: surround_character + str(s) + surround_character, data[i]))
                 out_data += new_line
-        out_file_name = self.experiment_results_directory + "//" + file_name + ".csv"
+        out_file_name = os.path.join(self.experiment_results_directory, file_name + ".csv")
         with open(out_file_name, "w") as out_file:
             out_file.write(out_data)
         self.experiments_results_files.append(out_file_name)
@@ -195,25 +195,25 @@ class ExperimentResultsModel:
                 else:
                     out_data += surround_character + str(data_dict[key]) + surround_character
                 out_data += new_line
-        out_file_name = self.experiment_results_directory + "//" + file_name + ".csv"
+        out_file_name = os.path.join(self.experiment_results_directory, file_name + ".csv")
         with open(out_file_name, "w") as out_file:
             out_file.write(out_data)
         self.experiments_results_files.append(out_file_name)
 
     def add_text_file(self, file_name, data):
-        out_file_name = self.experiment_results_directory + "//" + file_name + ".txt"
+        out_file_name = os.path.join(self.experiment_results_directory, file_name + ".txt")
         with open(out_file_name, "w") as out_file:
             out_file.write(data)
         self.experiments_results_files.append(out_file_name)
 
     def add_json_file(self, file_name, data):
-        out_file_name = self.experiment_results_directory + "//" + file_name + ".json"
+        out_file_name = os.path.join(self.experiment_results_directory, file_name + ".json")
         with open(out_file_name, "w") as out_file:
             out_file.write(data)
         self.experiments_results_files.append(out_file_name)
 
     def add_json_file_dict(self, file_name, data_dict):
-        out_file_name = self.experiment_results_directory + "//" + file_name + ".json"
+        out_file_name = os.path.join(self.experiment_results_directory, file_name + ".json")
 
         with open(out_file_name, 'w') as out_file:
             json.dump(data_dict, out_file, separators=(',', ": "), indent=4)

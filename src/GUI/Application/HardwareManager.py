@@ -1,7 +1,6 @@
 import json
 import os
 
-# from src.GUI.Util.Globals import Hardware
 from src.GUI.Model.HardwareModel import HardwareModel
 
 

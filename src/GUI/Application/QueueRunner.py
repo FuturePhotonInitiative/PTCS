@@ -10,6 +10,9 @@ from src.GUI.Util.Functions import clean_name_for_file
 from src.GUI.Model.ExperimentModel import Experiment
 
 from src.GUI.Util.CONSTANTS import TIMESTAMP_FORMAT
+from src.GUI.Util.CONSTANTS import TEMP_DIR
+from src.GUI.Util.CONSTANTS import CONFIGS
+from src.GUI.Util.CONSTANTS import SCRIPTS_DIR
 
 
 class QueueRunner(Thread):
@@ -17,18 +20,17 @@ class QueueRunner(Thread):
     Thread class to run a provided queue
     """
 
-    def __init__(self, queue, working_directory, queue_result):
+    def __init__(self, queue, queue_result):
         """
         Create a new QueueRunner that will run the provided queue using the provided temporary directory
         :param queue:
             The queue to run with Prober
-        :param working_directory:
+        :param temp_directory:
             The directory to store the temporary json file for the experiment on which we will call Prober
         """
         Thread.__init__(self)
         self.queue = queue
         self.queue_result = queue_result
-        self.tmp_dir = working_directory
         # Initialize the status of all of the experiments in the queue to "not yet run"
         self.experiment_status = {}
         for i in range(len(queue)):
@@ -50,7 +52,7 @@ class QueueRunner(Thread):
         while i < len(self.queue):
             if self.queue.get_ith_experiment(i).get_name() == 'Load Queue':
                 index = self.queue.get_ith_experiment(i).config_dict['Data']['Queue']
-                rq = self.read_queue_from_file("../../Saved_Experiments/Saved_Experiment_" + str(index), "../../Configs")
+                rq = self.read_queue_from_file("../../Saved_Experiments/Saved_Experiment_" + str(index), CONFIGS)
                 tq = self.queue.queue[:i]
                 tq.extend(rq)
                 tq.extend(self.queue.queue[i+1:])
@@ -68,7 +70,7 @@ class QueueRunner(Thread):
             elif self.current_experiment.get_name() == 'Load Queue':
                 # Load a queue from the Saved Experiments folder
                 index = self.current_experiment.config_dict['Data']['Queue']
-                rq = self.read_queue_from_file("../../Saved_Experiments/Saved_Experiment_" + str(index), "../../Configs")
+                rq = self.read_queue_from_file("../../Saved_Experiments/Saved_Experiment_" + str(index), CONFIGS)
                 tq = self.queue.queue[:i]
                 tq.extend(rq)
                 tq.extend(self.queue.queue[i+1:])
@@ -84,7 +86,7 @@ class QueueRunner(Thread):
                 self.experiment_status[self.current_experiment] = 0
                 # The file to store the json to call prober on to run the experiment
 
-                tmp_file_name = self.tmp_dir + "/tmp" + self.current_experiment.get_name().replace(" ", "_") + ".json"
+                tmp_file_name = os.path.join(TEMP_DIR, "tmp" + self.current_experiment.get_name().replace(" ", "_") + ".json")
                 self.current_experiment.export_to_json(tmp_file_name)
                 Prober.main(["Prober.py", "-c", tmp_file_name], config_manager=Globals.systemConfigManager, queue_result=self.queue_result)
                 self.experiment_status[self.current_experiment] = 1
@@ -113,7 +115,7 @@ class QueueRunner(Thread):
         self.queue_result.time = now
         result_dir = Globals.systemConfigManager.get_results_manager().results_root
         master_tcl = ""
-        output_folder = result_dir + "/" + name
+        output_folder = os.path.join(result_dir, name)
         os.mkdir(output_folder)
         for i in range(start_index, tcl_end):
             with open(self.queue.get_ith_experiment(i).tcl_file, "r") as f:
@@ -121,7 +123,7 @@ class QueueRunner(Thread):
                 done_sets = False
                 ex_name = clean_name_for_file(self.queue.get_ith_experiment(i).get_name())
                 # Create a subdirectory for results from this specific test
-                os.mkdir(output_folder + "/" + ex_name + "_" + str(i+1))
+                os.mkdir(os.path.join(output_folder, ex_name + "_" + str(i+1)))
                 master_tcl += "set output \"" + output_folder + "/" + ex_name + "_" + str(i+1) + "/Collected_Data.csv\"\n"
                 master_tcl += "set index " + str(i+1) + "\n"
                 for line in f.readlines():
@@ -136,7 +138,7 @@ class QueueRunner(Thread):
                                     if k == val:
                                         line = words[0]+" "+words[1]+" "+str(self.queue.get_ith_experiment(i).config_dict['Data'][k]) + "\n"
                     master_tcl += line
-        target_location = output_folder + "/combined.tcl"
+        target_location = os.path.join(output_folder, "combined.tcl")
         # Save the combined Tcl script to be run
         with open(target_location, "w") as f:
             f.writelines(master_tcl)
@@ -153,15 +155,15 @@ class QueueRunner(Thread):
                     if key not in master_experiment.config_dict['Experiment']:
                         master_experiment.config_dict['Experiment'].append(key)
         # Generate the script to run the Tcl script through the Vivado command line
-        tmp_file_name = self.tmp_dir + "\\tmp\\" + master_experiment.get_name().replace(" ", "_") + ".json"
-        pyLoc = "../../src/Scripts/script.py"
+        tmp_file_name = TEMP_DIR + "\\tmp\\" + master_experiment.get_name().replace(" ", "_") + ".json"
+        pyLoc = os.path.join(SCRIPTS_DIR, "script.py")
         exp = dict()
         exp['Type'] = 'PY_SCRIPT'
         exp['Source'] = 'script.py'
         exp['Order'] = 1
         with open(pyLoc, "w") as f:
             f.write(("import os\ndef main(data_map, experiment_result):\n\tos.system('C:\\Xilinx\\Vivado\\2017.4\\bin\\vivado -mode tcl < ' + '" + target_location + "')").replace('\\', '\\\\'))
-        copyfile(pyLoc,output_folder + "/script.py")
+        copyfile(pyLoc, os.path.join(output_folder, "script.py"))
         master_experiment.config_dict['Experiment'].append(exp)
         print "exporting to " + tmp_file_name
         master_experiment.export_to_json(tmp_file_name)
@@ -170,8 +172,8 @@ class QueueRunner(Thread):
                     queue_result=self.queue_result)
         for i in range(start_index, tcl_end):
             ex_name = clean_name_for_file(self.queue.get_ith_experiment(i).get_name())
-            if len(os.listdir(result_dir + "/" + name + "/" + ex_name + "_" + str(i+1))) == 0:
-                os.rmdir(result_dir + "/" + name + "/" + ex_name + "_" + str(i+1))
+            if len(os.listdir(os.path.join(result_dir, name, ex_name + "_" + str(i+1)))) == 0:
+                os.rmdir(os.path.join(result_dir, name, ex_name + "_" + str(i+1)))
 
     def get_current_experiment(self):
         """
@@ -234,7 +236,7 @@ class QueueRunner(Thread):
                 if line.startswith('*'):
                     if exp is not None:
                         rqueue.append(exp)
-                    exp = Experiment(config_root + "/" + line[1:-1] + ".json")
+                    exp = Experiment(os.path.join(config_root, line[1:-1] + ".json"))
                 else:
                     ind = line.find(' // ')
                     if ind > -1:

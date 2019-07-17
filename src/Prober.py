@@ -8,7 +8,7 @@ import os
 from Probe.Args import Args
 from Probe.ConfigFile import ConfigFile
 from Probe.DeviceSetup import DeviceSetup
-from src.GUI.Util import CONSTANTS
+from src.GUI.Util.CONSTANTS import SCRIPTS_DIR
 
 
 def spawn_scripts(scripts, data_map, experiment_result):
@@ -24,7 +24,7 @@ def spawn_scripts(scripts, data_map, experiment_result):
         for task in frame:  # todo # dd Multi-Threading support here
             module = str(task)[:-3]
             if module not in [i[0] for i in globals().items() if isinstance(i[1], types.ModuleType)]:
-                globals()[module] = imp.load_source(module, os.path.join(CONSTANTS.SCRIPTS_DIR, module + '.py'))
+                globals()[module] = imp.load_source(module, os.path.join(SCRIPTS_DIR, module + '.py'))
             [i[1] for i in inspect.getmembers(globals()[module], inspect.isfunction) if i[0] is 'main'][0](data_map, experiment_result)
     print "Scripts Completed"
     return

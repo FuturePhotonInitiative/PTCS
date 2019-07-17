@@ -1,5 +1,5 @@
 import wx
-from src.GUI.Util import CONSTANTS
+from src.GUI.Util.CONSTANTS import LABEL_PROPORTION
 
 
 class Page(wx.Panel):
@@ -27,12 +27,12 @@ class Page(wx.Panel):
 
         # sets up right sub-panel
         if self.display_title is not None:
-            self.right_side.Add(wx.StaticText(self, label=self.display_title), CONSTANTS.LABEL_PROPORTION, wx.TOP)
+            self.right_side.Add(wx.StaticText(self, label=self.display_title), LABEL_PROPORTION, wx.TOP)
         self.right_side.Add(self.display_panel, 1, wx.EXPAND | wx.ALL)
 
         # sets up left sub-panel
         if self.control_title is not None:
-            self.left_side.Add(wx.StaticText(self, label=self.control_title), CONSTANTS.LABEL_PROPORTION, wx.TOP)
+            self.left_side.Add(wx.StaticText(self, label=self.control_title), LABEL_PROPORTION, wx.TOP)
         self.left_side.Add(self.control_panel, 1, wx.EXPAND | wx.ALL)
 
         sizer.Add(self.right_side, self.display_propotion, wx.EXPAND | wx.ALL)
@@ -65,7 +65,7 @@ class Page(wx.Panel):
 
         self.right_side.Clear(delete_windows=True)
         if self.display_title is not None:
-            self.right_side.Add(wx.StaticText(self, label=self.display_title), CONSTANTS.LABEL_PROPORTION, wx.TOP)
+            self.right_side.Add(wx.StaticText(self, label=self.display_title), LABEL_PROPORTION, wx.TOP)
         self.right_side.Add(self.display_panel, 1, wx.EXPAND | wx.ALL)
 
         self.GetSizer().Layout()
@@ -84,7 +84,7 @@ class Page(wx.Panel):
 
         self.left_side.Clear(delete_windows=True)
         if self.control_title is not None:
-            self.left_side.Add(wx.StaticText(self, label=self.control_title), CONSTANTS.LABEL_PROPORTION, wx.TOP)
+            self.left_side.Add(wx.StaticText(self, label=self.control_title), LABEL_PROPORTION, wx.TOP)
         self.left_side.Add(self.control_panel, 1, wx.EXPAND | wx.ALL)
 
         self.GetSizer().Layout()

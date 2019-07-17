@@ -84,7 +84,6 @@ class DeviceSetup:
                                    if i[0] == driver_file_name][0][1]
                     connected_devices[device_key] = exit_stack.enter_context(DriverClass(connection))
                 else:
-                    print("ting")
                     print("Error: Driver file '{}' for '{}' not found in the Driver Root directory '{}'".format(
                             driver_file_name, device_key, CONSTANTS.DRIVERS_DIR))
                     sys.exit(1)
