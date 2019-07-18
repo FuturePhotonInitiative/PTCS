@@ -164,9 +164,9 @@ class QueueRunner(Thread):
         tmp_file_name = TEMP_DIR + "\\tmp\\" + master_experiment.get_name().replace(" ", "_") + ".json"
         pyLoc = os.path.join(SCRIPTS_DIR, "script.py")
         exp = dict()
-        exp['Type'] = 'PY_SCRIPT'
-        exp['Source'] = 'script.py'
-        exp['Order'] = 1
+        exp['type'] = 'PY_SCRIPT'
+        exp['source'] = 'script.py'
+        exp['order'] = 1
         with open(pyLoc, "w") as f:
             f.write(("import os\ndef main(data_map, experiment_result):\n\tos.system('C:\\Xilinx\\Vivado\\2017.4\\bin\\vivado -mode tcl < ' + '" + target_location + "')").replace('\\', '\\\\'))
         copyfile(pyLoc, os.path.join(output_folder, "script.py"))

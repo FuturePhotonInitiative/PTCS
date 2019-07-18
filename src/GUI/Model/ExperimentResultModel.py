@@ -212,11 +212,11 @@ class ExperimentResultsModel:
             out_file.write(data)
         self.experiments_results_files.append(out_file_name)
 
-    def add_json_file_dict(self, file_name, data_dict):
+    def add_json_file_dict(self, file_name, config):
         out_file_name = os.path.join(self.experiment_results_directory, file_name + ".json")
 
         with open(out_file_name, 'w') as out_file:
-            json.dump(data_dict, out_file, separators=(',', ": "), indent=4)
+            json.dump(config, out_file, separators=(',', ": "), indent=4)
         self.experiments_results_files.append(out_file_name)
     #
     # def add_binary_data_file(self, data, file_name):

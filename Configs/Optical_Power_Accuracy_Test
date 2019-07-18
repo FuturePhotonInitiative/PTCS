@@ -1,27 +1,27 @@
 {
-  "Name": "Power Test",
-  "Devices":[
+  "name": "Power Test",
+  "devices":[
     "Newport OPM",
     "Laser Source"
   ],
-  "Experiment": [
+  "experiment": [
     {
-      "Type": "PY_SCRIPT",
-      "Source": "OPATCollect.py",
-      "Order": 1
+      "type": "PY_SCRIPT",
+      "source": "OPATCollect.py",
+      "order": 1
     },
     {
-      "Type": "PY_SCRIPT",
-      "Source": "OPATReduce.py",
-      "Order": 2
+      "type": "PY_SCRIPT",
+      "source": "OPATReduce.py",
+      "order": 2
     },
     {
-      "Type": "PY_SCRIPT",
-      "Source": "OPATExport.py",
-      "Order": 3
+      "type": "PY_SCRIPT",
+      "source": "OPATExport.py",
+      "order": 3
     }
   ],
-  "Data": {
+  "data": {
     "opm_wavelength": 1100,
     "laser_wavelength": 1520,
     "reading_units": "auto",

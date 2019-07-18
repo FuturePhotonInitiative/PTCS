@@ -1,18 +1,18 @@
 {
-  "Name": "New Eye Scan Test",
-  "Devices":
+  "name": "New Eye Scan Test",
+  "devices":
               [
                 "VCU 108"
               ],
-  "Experiment" :
+  "experiment" :
               [
                 {
-                  "Type":"PY_SCRIPT",
-                  "Source": "EyescanTcl.py",
-                  "Order":  1
+                  "type":"PY_SCRIPT",
+                  "source": "EyescanTcl.py",
+                  "order":  1
                 }
               ],
-  "Data" :
+  "data" :
           {
             "Range": 0,
             "Scale": 0,

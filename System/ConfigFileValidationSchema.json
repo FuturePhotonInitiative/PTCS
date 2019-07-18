@@ -1,0 +1,49 @@
+{
+  "type": "object",
+  "properties": {
+
+    "name": {
+      "type": "string"
+    },
+
+    "devices": {
+      "type": ["array", "null"],
+      "items": {
+        "type": "string"
+      }
+    },
+
+    "experiment": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+
+          "type": {
+            "type": "string",
+            "enum": [
+              "PY_SCRIPT"
+            ]
+          },
+
+          "source": {
+            "type": "string"
+          },
+
+          "order": {
+            "type": "number"
+          }
+
+        },
+        "required": ["type", "source", "order"],
+        "minItems": 1
+      }
+    },
+
+    "data": {
+      "type": ["object", "null"],
+      "additionalItems": { "type": "string" }
+    }
+  },
+  "required": ["name", "experiment"]
+}

@@ -1,12 +1,12 @@
 {
-  "Name": "wom",
-  "Devices": [
+  "name": "wom",
+  "devices": [
   ],
-  "Experiment": [
+  "experiment": [
     {
-      "Type": "PY_SCRIPT",
-      "Source": "Wait1Minute.py",
-      "Order": 1
+      "type": "PY_SCRIPT",
+      "source": "Wait1Minute.py",
+      "order": 1
     }
   ]
 }

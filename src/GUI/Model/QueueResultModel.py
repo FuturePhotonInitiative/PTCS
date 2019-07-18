@@ -28,11 +28,7 @@ class QueueResultsModel:
         """
         Write the configuration stored in this Experiment object to a json formatted file
         :param filename:
-            The name of the file to write to.  WARNING: The specified file will be overwritten
-        :param pretty_print:
-            If true, print the json with indentation, otherwise keep the JSON compact
-        :return:
-        None
+            The name of the file to read from.  WARNING: The specified file will be overwritten
         """
         config_dict = json.load(open(filename))
         self.start_datetime = datetime.datetime.strptime(config_dict["start_datetime"], TIMESTAMP_FORMAT)
