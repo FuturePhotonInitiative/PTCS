@@ -1,6 +1,7 @@
 import wx
 import json
-import os
+import imp
+import inspect
 
 from src.GUI.UI.DisplayPanel import DisplayPanel
 from src.GUI.Util import GUI_CONSTANTS
@@ -54,12 +55,29 @@ class TestBuildPanel(DisplayPanel):
 
         self.Bind(wx.EVT_LISTBOX_DCLICK, self.deselected)
 
+        self.device_functions = {}
+        self.fcs = []
+
+        hwm = Globals.systemConfigManager.get_hardware_manager()
+        for dev in hwm.get_all_hardware_names():
+            drv = hwm.get_hardware_object(dev).driver
+            drvcls = imp.load_source("drvcls", "../../src/Instruments/" + drv + ".py")
+            classes = inspect.getmembers(drvcls, inspect.isclass)
+            funcs = []
+            for c in classes:
+                if str(c[0]) == drv:
+                    funcs = [m for m in inspect.getmembers(c[1], inspect.ismethod) if m[0][0] != "_"]
+            self.device_functions[dev] = funcs
+            for func in funcs:
+                if func[0] not in [f[0] for f in self.fcs]:
+                    self.fcs.append((func[0], len(inspect.getargspec(func[1])[0]) - 1, func[0]))
+
     def save(self, event):
         ip = build.parse_input([p[0] for p in self.lines])
         test_name = self.save_field.GetLineText(0)
         test_v = test_name.replace(" ", "_")
         ip.insert(0, "Test- " + test_name)
-        config, script = build.parse_lines(ip, test_v)
+        config, script = build.parse_lines(ip, test_v, self.fcs)
         with open("../../Configs/" + test_v + ".json", "w") as f:
             json.dump(config, f)
         with open("../../src/Scripts/" + test_v + ".py", "w") as f:
@@ -129,6 +147,20 @@ class TestBuildPanel(DisplayPanel):
                     b.SetSelection(si)
                 items.append(b)
                 output += patterns[0][i] + " "
+            elif symbol == "[FNC]":
+                b = wx.Choice(self)
+                dev_alias = items[1].GetLabelText()
+                dev = ""
+                for ln in [l[0] for l in self.lines]:
+                    if ln[0] == "IMPORT" and ln[3] == dev_alias:
+                        dev = ln[1]
+                for fc in self.device_functions.get(dev, []):
+                    b.Append(fc[0])
+                si = b.FindString(patterns[0][i])
+                if si > -1:
+                    b.SetSelection(si)
+                items.append(b)
+                output += patterns[0][i] + " "
             else:
                 b = wx.StaticText(self)
                 b.SetLabelText(symbol)
@@ -145,9 +177,9 @@ class TestBuildPanel(DisplayPanel):
         i = self.list_box.GetSelection()
         if i > -1:
             self.update_valid = False
+            self.list_box.Deselect(i)
             self.list_box.Delete(i)
             self.lines.pop(i)
-            self.list_box.Deselect(i)
             self.load_input_line([])
             self.update_valid = True
 
@@ -164,8 +196,8 @@ class TestBuildPanel(DisplayPanel):
             ind = 0
             lind = self.list_box.GetSelection()
             if lind > -1 and len(self.lines[lind][0]) == len(self.items):
-                for i in self.items:
-                    s = self.get_text(i)
+                for i in range(len(self.items)):
+                    s = self.get_text(self.items[i], i)
                     output += s + " "
                     if lind > -1:
                         self.lines[lind][0][ind] = s
@@ -175,7 +207,7 @@ class TestBuildPanel(DisplayPanel):
                 if lind > -1:
                     self.list_box.SetString(lind, output)
 
-    def get_text(self, item):
+    def get_text(self, item, index):
         s = ""
         if type(item) == wx.TextCtrl:
             s = item.GetLineText(0)
@@ -186,8 +218,10 @@ class TestBuildPanel(DisplayPanel):
             if i == -1:
                 if item.GetCount() > 0 and item.GetString(0) == "==":
                     s = "-?-"
-                else:
+                elif index == 1:
                     s = "[DEV]"
+                else:
+                    s = "[FNC]"
             else:
                 s = item.GetString(i)
         elif type(item) == wx.StaticText:

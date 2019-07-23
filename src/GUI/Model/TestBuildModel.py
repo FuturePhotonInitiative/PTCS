@@ -1,18 +1,9 @@
-functions = [("set voltage", 1, "run_set_voltage"),
-             ("set output switch", 1, "set_output_switch"),
-             ("measure average", 0, "run_measure_vaverage")]
-
-
-def parse_file(filename, output_file):
-    with open(filename) as f:
-        return parse_lines(f.readlines(), output_file)
-
-
-def parse_lines(lines, output_file):
+def parse_lines(lines, output_file, functions):
     """
     Parse a test description file and produce a JSON config and a Python script.
     :param lines: The lines to be parsed.
     :param output_file: The output file name.
+    :param functions: The function names.
     :return: A corresponding JSON config and Python script.
     """
     config = dict()
@@ -22,7 +13,13 @@ def parse_lines(lines, output_file):
                   "Type": "PY_SCRIPT",
                   "Source": output_file + ".py",
                   "Order":  1
-                }]
+                },
+                {
+                    "Type": "PY_SCRIPT",
+                    "Source": "CustomTestReduce.py",
+                    "Order": 2
+                }
+    ]
     config['Data'] = {}
     script = "import time\n" + \
         "def main(data_map, experiment_result):\n" + \
@@ -161,5 +158,6 @@ def parse_input(lines):
                 rv += line[1] + ";" + line[3]
             elif line[2] == "READ":
                 rv += line[5] + " = " + line[1] + ";" + line[3]
+        rv = rv.replace(" ???", "")
         ret.append(rv)
     return ret

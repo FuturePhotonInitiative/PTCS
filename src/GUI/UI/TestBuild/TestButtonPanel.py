@@ -29,8 +29,8 @@ class TestButtonPanel(ControlPanel):
                     ["SAVE", "[STR]", ",", "[STR]"],
                     ["START TIMER"],
                     ["GET TIMER AS", "[STR]"],
-                    ["FROM", "[STR]", "CALL", "[STR]"],
-                    ["FROM", "[STR]", "READ", "[STR]", "AS", "[STR]"]]
+                    ["FROM", "[STR]", "CALL", "[FNC]", "[STR]"],
+                    ["FROM", "[STR]", "READ", "[FNC]", "[STR]", "AS", "[STR]"]]
 
         self.buttons = self.add_buttons(self.sizer, names, 4)
 
