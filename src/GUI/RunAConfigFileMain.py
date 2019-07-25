@@ -42,6 +42,9 @@ def main(args, config_manager=None, queue_result=None):
     from Application.SystemConfigManager import SystemConfigManager
     if config_manager is None:
         config_manager = SystemConfigManager()
+    from Model.QueueResultModel import QueueResultsModel
+    if queue_result is None:
+        queue_result = QueueResultsModel()
 
     print('Starting PTCS...')
 
