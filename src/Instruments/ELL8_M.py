@@ -31,9 +31,9 @@ class ELL8(PyVisaDriver):
         # extra class info - for logger
         # self.ext = {'com_port': self.ser.port, 'ClassName': 'Rot_Motor'}
 
-        self.run_home()
+        self.home()
 
-    def run_delta_move(self, steps):
+    def delta_move(self, steps):
         """
             rotate the stage by specified # of steps
         """
@@ -49,7 +49,7 @@ class ELL8(PyVisaDriver):
         # wait for ell8 position message
         self.device.read(termination='0pO')
 
-    def run_abs_move(self, steps):
+    def abs_move(self, steps):
         """
             rotate the stage by specified # of steps
         """
@@ -67,7 +67,7 @@ class ELL8(PyVisaDriver):
         # wait for ell8 position message
         self.device.read(termination='0pO')
 
-    def run_home(self):
+    def home(self):
         """
             homes the stage
         """
@@ -75,14 +75,14 @@ class ELL8(PyVisaDriver):
         self.device.write('0ho0')
         self.device.read(termination='0pO')
 
-    def run_get_position(self):
+    def get_position(self):
         """
          return the motors current position
         """
         # _HOSTREQ_HOME
         return self.position
 
-    def run_set_as_zero(self, zer_deg):
+    def set_as_zero(self, zer_deg):
         """
          change the origin (zero)
         """
@@ -92,7 +92,7 @@ class ELL8(PyVisaDriver):
         self.zeros_position = zer_deg
         self.position -= zer_deg
 
-    def run_set_vel_params(self, vel):
+    def set_vel_params(self, vel):
         """
          Set the velocity parameters for the motor in terms of percentage of max
         """
@@ -144,7 +144,7 @@ class ELL8_M(ELL8):
         self.deg_pos = 0  # position of motor, in degrees
         self.deg_zeros = 0  # the origin, in degrees
 
-    def run_delta_angle(self, deg):  # , m callback = None, params = ()):
+    def delta_angle(self, deg):  # , m callback = None, params = ()):
         """
          Relative rotation on the motor
 
@@ -155,12 +155,12 @@ class ELL8_M(ELL8):
         # convert degrees to steps
         steps = int(round(deg / DEG_PER_CNT))
 
-        super(self).run_delta_move(steps)
+        super(self).delta_move(steps)
         while self.deg_pos >= 360:
             self.deg_pos -= 360
         self.moving = False
 
-    def run_abs_angle(self, deg):
+    def abs_angle(self, deg):
         """
          Relative rotation on the motor
 
@@ -174,22 +174,22 @@ class ELL8_M(ELL8):
         # convert degrees to steps
         steps = int(round(d / DEG_PER_CNT))
 
-        super(self).run_abs_move(steps)
+        super(self).abs_move(steps)
         self.deg_pos = d
         self.moving = False
 
-    def run_get_angle(self):
+    def get_angle(self):
         """
          return the motors current position, in degrees
         """
         return self.deg_pos
 
-    def run_set_as_zero(self, zer_deg):
+    def set_as_zero(self, zer_deg):
         """
          change the origin (zero)
         """
         n_zero = int(round(zer_deg / DEG_PER_CNT))
-        super(self).run_set_as_zero(n_zero)
+        super(self).set_as_zero(n_zero)
 
         self.deg_zeros = zer_deg
         self.deg_pos -= zer_deg

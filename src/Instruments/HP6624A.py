@@ -12,19 +12,19 @@ class HP6624A(PyVisaDriver):
         self.device = device
 
         self.active = False
-        self.run_set_voltage(0, 1)
-        self.run_set_voltage(0, 2)
-        self.run_set_voltage(0, 3)
-        self.run_set_voltage(0, 4)
+        self.set_voltage(0, 1)
+        self.set_voltage(0, 2)
+        self.set_voltage(0, 3)
+        self.set_voltage(0, 4)
 
-    def run_change_state(self):
+    def change_state(self):
         # if self.active == True:
         # 	self.active = False
         # else:
         # 	self.active = True
         self.active = not self.active
 
-    def run_set_voltage(self, value=0, channel=1):
+    def set_voltage(self, value=0, channel=1):
         """
         Set the voltage
         :param value: Specified voltage to set channel to
@@ -34,7 +34,7 @@ class HP6624A(PyVisaDriver):
         """
         self.device.write('VSET ' + str(channel) + ',' + str(value))
 
-    def run_set_current(self, value=0, channel=1):
+    def set_current(self, value=0, channel=1):
         """
         Set the current
         :param value: Specified current to set channel to
@@ -44,7 +44,7 @@ class HP6624A(PyVisaDriver):
         """
         self.device.write('ISET ' + str(channel) + ',' + str(value))
 
-    def run_set_over_voltage(self, value=0, channel=1):
+    def set_over_voltage(self, value=0, channel=1):
         """
         Set the over-voltage
 
@@ -55,7 +55,7 @@ class HP6624A(PyVisaDriver):
         """
         self.device.write('OVSET ' + str(channel) + ',' + str(value))
 
-    def run_set_OC_switch(self, value=0, channel=1):
+    def set_OC_switch(self, value=0, channel=1):
         """
         Set the OC Switch
 
@@ -66,7 +66,7 @@ class HP6624A(PyVisaDriver):
         """
         self.device.write('OCP ' + str(channel) + ',' + str(value))
 
-    def run_set_output_switch(self, value=0, channel=1):
+    def set_output_switch(self, value=0, channel=1):
         """
         Set the output Switch
 
@@ -77,7 +77,7 @@ class HP6624A(PyVisaDriver):
         """
         self.device.write('OUT ' + str(channel) + ',' + str(value))
 
-    def run_get_set_voltage(self, channel=1):
+    def get_set_voltage(self, channel=1):
         """
         Queries the voltage of a specified channel
 
@@ -89,7 +89,7 @@ class HP6624A(PyVisaDriver):
         # return self.gpib.read()
         return self.device.query('VSET? ' + str(channel))
 
-    def run_get_set_current(self, channel=1):
+    def get_set_current(self, channel=1):
         """
         Queries the current of a specified channel
 
@@ -101,7 +101,7 @@ class HP6624A(PyVisaDriver):
         # return self.gpib.read()
         return self.device('ISET? ' + str(channel))
 
-    def run_get_out_voltage(self, channel=1):
+    def get_out_voltage(self, channel=1):
         """
         Queries the voltage of a specified channel
 
@@ -113,7 +113,7 @@ class HP6624A(PyVisaDriver):
         # return self.gpib.read()
         return self.device.query('VOUT? ' + str(channel))
 
-    def run_get_out_current(self, channel=1):
+    def get_out_current(self, channel=1):
         """
         Queries the out-current of a specified channel
 
@@ -125,7 +125,7 @@ class HP6624A(PyVisaDriver):
         # return self.gpib.read()
         return self.device.query('IOUT? ' + str(channel))
 
-    def run_get_OC_switch(self, channel=1):
+    def get_OC_switch(self, channel=1):
         """
         Queries the OC switch of a specified channel
 
@@ -137,7 +137,7 @@ class HP6624A(PyVisaDriver):
         # return self.gpib.read()
         return self.device.query('OCP? ' + str(channel))
 
-    def run_get_out_switch(self, channel=1):
+    def get_out_switch(self, channel=1):
         """
         Queries the out switch of a specified channel
 
@@ -149,7 +149,7 @@ class HP6624A(PyVisaDriver):
         # return self.gpib.read()
         return self.device.query('OUT? ' + str(channel))
 
-    def run_save_state(self, mem=1):
+    def save_state(self, mem=1):
         """
         Stores state within non-volatile memory
 
@@ -158,7 +158,7 @@ class HP6624A(PyVisaDriver):
         """
         self.device.write('STO ' + str(mem))
 
-    def run_recall_state(self, mem=1):
+    def recall_state(self, mem=1):
         """
         Loads stored state from specified memory location
 

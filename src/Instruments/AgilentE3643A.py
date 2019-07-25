@@ -21,7 +21,7 @@ class AgilentE3643A(IEEE_488_2):
         self.name += "Agilent E3643A Power Supply"
         self.device = device
 
-    def run_get_voltage(self):
+    def get_voltage(self):
         """
         Gets the voltage.
         :return: the measured DC voltage
@@ -33,7 +33,7 @@ class AgilentE3643A(IEEE_488_2):
         else:
             raise Exception('Serial communication port is not open.')
 
-    def run_get_current(self):
+    def get_current(self):
         """
         Gets the current.
         :return: the measured DC current
@@ -45,7 +45,7 @@ class AgilentE3643A(IEEE_488_2):
         else:
             raise Exception('Serial communication port is not open.')
 
-    def run_set_voltage(self, value=0):
+    def set_voltage(self, value=0):
         """
         Sets the voltage.
 
@@ -59,7 +59,7 @@ class AgilentE3643A(IEEE_488_2):
         else:
             raise Exception('Serial communication port is not open.')
 
-    def run_set_current(self, value=0):
+    def set_current(self, value=0):
         """
         Sets the current.
 
@@ -73,7 +73,7 @@ class AgilentE3643A(IEEE_488_2):
         else:
             raise Exception('Serial communication port is not open.')
 
-    def run_set_over_voltage(self, value=0):
+    def set_over_voltage(self, value=0):
         """
         Sets the over voltage.
 
@@ -107,7 +107,7 @@ class AgilentE3643A(IEEE_488_2):
         else:
             raise Exception('Serial communication port is not open.')
 
-    def run_save_state(self, mem=1):
+    def save_state(self, mem=1):
         """
         Stores state within non-volatile memory
 
@@ -122,7 +122,7 @@ class AgilentE3643A(IEEE_488_2):
         else:
             raise Exception('Serial communication port is not open.')
 
-    def run_recall_state(self, mem=1):
+    def recall_state(self, mem=1):
         """
         Loads stored state from specified memory location
 

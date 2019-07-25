@@ -21,7 +21,7 @@ class Motor_KST_ZST(PyVisaDriver):
         self.zeros_position = 0
         self._steps = 0
 
-    def run_delta_move(self, steps):
+    def delta_move(self, steps):
         self.position += steps
 
         self.device.write_raw([0x48, 0x04, 0x06, 0x00, 0xD0, 0x01])
@@ -29,21 +29,21 @@ class Motor_KST_ZST(PyVisaDriver):
         self.device.write_binary_values('', [steps], datatype='i', is_big_endian=sys.byteorder != 'little')
         self.__move_complete__()
 
-    def run_abs_move(self, steps):
+    def abs_move(self, steps):
         self.device.write_raw([0x48, 0x04, 0x06, 0x00, 0xD0, 0x01])
         self.device.write_raw([0x01, 0x00])
         self.device.write_binary_values('', [steps - self.position], datatype='i', is_big_endian=sys.byteorder != 'little')
         self.position = steps
         self.__move_complete__()
 
-    def run_get_position(self):
+    def get_position(self):
         return self.position
 
-    def run_set_as_zero(self, new_zero):
+    def set_as_zero(self, new_zero):
         self.zeros_position = new_zero
         self.position -= new_zero
 
-    def run_set_vel_params(self, initial_velocity, acceleration, final_velocity):
+    def set_vel_params(self, initial_velocity, acceleration, final_velocity):
         self.device.write_raw([0x13, 0x04, 0x0E, 0x00, 0xD0, 0x01])
         self.device.write_raw([0x01, 0x00])
         self.device.write_binary_values('', [initial_velocity], datatype='i', is_big_endian=sys.byteorder != 'little')

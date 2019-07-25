@@ -11,7 +11,7 @@ class MS2667C(PyVisaDriver):
         self.name += "Anritsu MS2667C Spectrum Analyzer"
         self.device = device
 
-    def run_waveform_read_central(self, central, span, resolution_step=1):
+    def waveform_read_central(self, central, span, resolution_step=1):
         self.device.write('CF %dMHZ' % central)
         self.device.write('SP %dMHZ' % span)
         self.device.write('TS')
@@ -24,7 +24,7 @@ class MS2667C(PyVisaDriver):
 
         return values
 
-    def run_waveform_read_range(self, start, end, resolution_step=1):
+    def waveform_read_range(self, start, end, resolution_step=1):
         self.device.write('FA %dMHZ' % start)
         self.device.write('FB %dMHZ' % end)
         self.device.write('TS')
@@ -38,7 +38,7 @@ class MS2667C(PyVisaDriver):
 
         return values
 
-    def run_get_peak(self, central, span):
+    def get_peak(self, central, span):
         self.device.write('CF %dMHZ' % central)
         self.device.write('SP %dMHZ' % span)
         self.device.write('TS')

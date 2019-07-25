@@ -25,7 +25,7 @@ class AQ6317(PyVisaDriver):
         self.name += "Ando AQ6317 optical spectrum analyzer"
         self.device = device
 
-    def run_get_o_spectrum(self, start, stop, step):
+    def get_o_spectrum(self, start, stop, step):
 
         self.device.write('SNHD')  # Sets Sensitivity to Normal Range (HOLD)
         self.device.write('AVG1')  # Sets the number of averaging times for measurement to 1
@@ -67,7 +67,7 @@ class AQ6317(PyVisaDriver):
 
         self.device.write('SGL')  # Start Single Sweep
 
-        self.run_check_status()  # Checks if sweep is complete
+        self.check_status()  # Checks if sweep is complete
 
         print('[Sweep Done]')
         # time.sleep(60)
@@ -83,7 +83,7 @@ class AQ6317(PyVisaDriver):
 
         return data_list
 
-    def run_check_status(self):
+    def check_status(self):
         status = int(self.device.read_stb())
         print('Status: %d' % status)
         print('Scanning.'),

@@ -24,7 +24,7 @@ class BOSA400(PyVisaDriver):
         self.min_wavelength = 1520
 
     # LASER FUNCTION CALLS
-    def run_get_max_wavelength(self):
+    def get_max_wavelength(self):
         """
         Queries the maximum allowed wavelength
 
@@ -32,7 +32,7 @@ class BOSA400(PyVisaDriver):
         """
         return self.max_wavelength
 
-    def run_get_min_wavelength(self):
+    def get_min_wavelength(self):
         """
         Queries the minimum allowed wavelength
 
@@ -40,7 +40,7 @@ class BOSA400(PyVisaDriver):
         """
         return self.min_wavelength
 
-    def run_set_wavelength(self, wavelength):
+    def set_wavelength(self, wavelength):
         """
         Loads a single wavelength (in nanometers) and sets output high
 
@@ -51,13 +51,13 @@ class BOSA400(PyVisaDriver):
         response = self.device.query(command)
         check_response(command, response, OK)
 
-    def run_set_power(self, wavelength):
+    def set_power(self, wavelength):
         """
             BOSA cannot adjust output power - raise exception
         """
         raise BOSAException('Cannot adjust output power.')
 
-    def run_sweep_wavelengths_trigger_setup(self, start, end, step):
+    def sweep_wavelengths_trigger_setup(self, start, end, step):
         """
         Have to keep track of Triggers in main command, use Stop Sweep Command to end sweep.
         Extra triggers do not make the laser sweep outside of specified end wavelength.
@@ -70,9 +70,9 @@ class BOSA400(PyVisaDriver):
         :param step: Specified step in nm
         :type step: Float
         """
-        if not self.run_get_min_wavelength() < start < self.run_get_max_wavelength():
+        if not self.get_min_wavelength() < start < self.get_max_wavelength():
             raise BOSAException('start wavelength Out of Bounds.')
-        if not self.run_get_min_wavelength() < end < self.run_get_max_wavelength():
+        if not self.get_min_wavelength() < end < self.get_max_wavelength():
             raise BOSAException('end wavelength Out of Bounds.')
         if start > end:
             raise BOSAException('start wavelength must be smaller than end.')
@@ -94,7 +94,7 @@ class BOSA400(PyVisaDriver):
         response = self.device.query(command)
         check_response(command, response, OK)
 
-    def run_trigger(self):
+    def trigger(self):
         """
         Triggers laser - Now this just starts the sweep
         """
@@ -102,7 +102,7 @@ class BOSA400(PyVisaDriver):
         response = self.device.query(command)
         check_response(command, response, OK)
 
-    def run_stop_sweep(self):
+    def stop_sweep(self):
         """
         Stop sweep
         """
@@ -110,7 +110,7 @@ class BOSA400(PyVisaDriver):
         response = self.device.query(command)
         check_response(command, response, OK)
 
-    def run_output_off(self):
+    def output_off(self):
         """
         Turns output of laser source OFF
         """
@@ -118,7 +118,7 @@ class BOSA400(PyVisaDriver):
         response = self.device.query(command)
         check_response(command, response, OK)
 
-    def run_output_on(self):
+    def output_on(self):
         """
         Turns output of laser source OFF
         """
@@ -134,7 +134,7 @@ class BOSA400(PyVisaDriver):
             if response.lower().startswith('on'):
                 break
 
-    def run_get_wavelength(self):
+    def get_wavelength(self):
         """
         Queries wavelength of the laser
 
@@ -145,20 +145,20 @@ class BOSA400(PyVisaDriver):
         check_response(command, response)
         print response  # TODO finalize how to parse and return a number
 
-    def run_get_power(self):
+    def get_power(self):
         """
         Gets output power in dbm
         :returns: Float
         """
         pass
 
-    def run_get_feedback(self):
-        return self.run_get_power()
+    def get_feedback(self):
+        return self.get_power()
 
-    def run_get_aux_input_power(self):
+    def get_aux_input_power(self):
         pass
 
-    def run_sweep_wavelengths_continuous(self, start, end, time):
+    def sweep_wavelengths_continuous(self, start, end, time):
         """
         Executes a sweep with respect to a specified time
 
@@ -172,7 +172,7 @@ class BOSA400(PyVisaDriver):
         pass
 
     # Function Calls Component Analyzer
-    def run_get_il(self, start, end, step, polarization):
+    def get_il(self, start, end, step, polarization):
         """
         Executes a sweep with respect to a specified time and collect injection loss information
 
@@ -186,7 +186,7 @@ class BOSA400(PyVisaDriver):
         :type step: String
         """
 
-    def run_get_rl(self, start, end, step, polarization):
+    def get_rl(self, start, end, step, polarization):
         """
         Executes a sweep with respect to a specified time and collect reflection loss information
 
@@ -201,7 +201,7 @@ class BOSA400(PyVisaDriver):
         """
 
     # Function Calls OSA
-    def run_get_spectrum(self, start, end, step):
+    def get_spectrum(self, start, end, step):
         """
         Executes a sweep with respect to a specified time and collect reflection loss information
 
@@ -212,9 +212,9 @@ class BOSA400(PyVisaDriver):
         :param step: Specified step
         :type step: Float
         """
-        if not self.run_get_min_wavelength() < start < self.run_get_max_wavelength():
+        if not self.get_min_wavelength() < start < self.get_max_wavelength():
             raise BOSAException('start wavelength Out of Bounds.')
-        if not self.run_get_min_wavelength() < end < self.run_get_max_wavelength():
+        if not self.get_min_wavelength() < end < self.get_max_wavelength():
             raise BOSAException('end wavelength Out of Bounds.')
         if start > end:
             raise BOSAException('start wavelength must be smaller than end.')
@@ -305,7 +305,7 @@ class BOSAException(Exception):
 #
 # 	bosa = BOSA400(dev)
 #
-# 	spec = bosa.run_get_spectrum(1540.5, 1560, 0.01)
+# 	spec = bosa.get_spectrum(1540.5, 1560, 0.01)
 # 	print len(spec)
 #
 # 	plt.scatter(*zip(*spec))

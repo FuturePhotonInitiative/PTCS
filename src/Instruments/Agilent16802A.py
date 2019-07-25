@@ -20,7 +20,7 @@ class Agilent16802A(IPDriver):
         self.module = None
         self.busSignals = None
 
-    def run_load_config(self, path):
+    def load_config(self, path):
         """
         This will load a config file given a file path, NOTE: throws exception if config is already loaded
         :param path: The path on the logic analyzer to the config file
@@ -28,7 +28,7 @@ class Agilent16802A(IPDriver):
         """
         self.device.Open(path)
 
-    def run_open_module(self, module):
+    def open_module(self, module):
         """
         Opens one of the hardware modules on the logic analyzer
         :param module: The name or index of the module to open
@@ -39,7 +39,7 @@ class Agilent16802A(IPDriver):
         elif isinstance(module, int):
             self.module = self.device.Modules(module)
 
-    def run_start_capture(self, asynchronous=True, timeout=10):
+    def start_capture(self, asynchronous=True, timeout=10):
         """
         Starts a capture on the logic analyzer, can be told to wait for completion
         :param asynchronous: If True this will immediately return after starting the capture, otherwise it will wait for
@@ -52,7 +52,7 @@ class Agilent16802A(IPDriver):
             self.device.WaitComplete(timeout)
         self.busSignals = None
 
-    def run_get_bus(self, bus_name):
+    def get_bus(self, bus_name):
         """
         Retrieves a bus from the logic analyzer
         :param bus_name: The name of the bus to retrieve
@@ -64,7 +64,7 @@ class Agilent16802A(IPDriver):
             if self.busSignals.Item(index).Name == bus_name:
                 return self.busSignals.Item(index)
 
-    def run_get_bus_data(self, bus, output_chars=True):
+    def get_bus_data(self, bus, output_chars=True):
         """
         Gets the data associated with a bus from the last sample
         :param bus: The name or instance of the bus to get data from
@@ -73,7 +73,7 @@ class Agilent16802A(IPDriver):
         """
         inner_bus = bus
         if isinstance(bus, str):
-            inner_bus = self.run_get_bus(bus)
+            inner_bus = self.get_bus(bus)
         bus_data = inner_bus.BusSignalData
         bus_type = inner_bus.BusSignalType
         if bus_data.Type == "Sample":
@@ -83,7 +83,7 @@ class Agilent16802A(IPDriver):
                 result = [ord(i) for i in result]
             return result
 
-    def run_get_bus_info(self, bus):
+    def get_bus_info(self, bus):
         """
         Gets information associated with a bus from the last sample
         :param bus: The name or instance of the bus to get data from
@@ -91,7 +91,7 @@ class Agilent16802A(IPDriver):
         """
         inner_bus = bus
         if isinstance(bus, str):
-            inner_bus = self.run_get_bus(bus)
+            inner_bus = self.get_bus(bus)
         bus_data = inner_bus.BusSignalData
         if bus_data.Type == "Sample":
             sample_data = win32com.client.CastTo(bus_data, "ISampleBusSignalData")
@@ -117,7 +117,7 @@ class Agilent16802A(IPDriver):
             value += step
         return result
 
-    def run_attach_time_to_sample(self, bus, zipped=False, output_chars=True):
+    def attach_time_to_sample(self, bus, zipped=False, output_chars=True):
         """
         Attaches each sample to its corresponding time
         :param bus: The name or instance of the bus to get data from
@@ -127,10 +127,10 @@ class Agilent16802A(IPDriver):
         """
         inner_bus = bus
         if isinstance(bus, str):
-            inner_bus = self.run_get_bus(bus)
-        bus_info = self.run_get_bus_info(inner_bus)
+            inner_bus = self.get_bus(bus)
+        bus_info = self.get_bus_info(inner_bus)
         sample_rate = (abs(bus_info['Start_Time']) + abs(bus_info['End_Time'])) / (bus_info['Sample_Count'])
-        y_axis = self.run_get_bus_data(inner_bus, output_chars)
+        y_axis = self.get_bus_data(inner_bus, output_chars)
         x_axis = self.dec_range(bus_info['Start_Time'], bus_info['End_Time'], sample_rate)
 
         if zipped:
@@ -139,7 +139,7 @@ class Agilent16802A(IPDriver):
             temp = (x_axis, y_axis)
         return temp
 
-    def run_display_bus(self, bus):
+    def display_bus(self, bus):
         """
         Displays the data from a bus
         :param bus: The name or instance of the bus to get data from
@@ -147,8 +147,8 @@ class Agilent16802A(IPDriver):
         """
         inner_bus = bus
         if isinstance(bus, str):
-            inner_bus = self.run_get_bus(bus)
-        points = self.run_attach_time_to_sample(inner_bus, False)
+            inner_bus = self.get_bus(bus)
+        points = self.attach_time_to_sample(inner_bus, False)
 
         plt.plot(points[0], points[1])
 
