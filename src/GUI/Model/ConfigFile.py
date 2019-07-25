@@ -1,14 +1,17 @@
 import json
-import os
 
 from jsonschema import validate
 
 from src.GUI.Model.ExperimentScriptModel import ExperimentScript
-from src.GUI.Util import CONSTANTS
 from copy import deepcopy
 
 
 class ConfigFile:
+    """
+    This is the model for a config file. Whenever a config file is manipulated by the program,
+    it loads the config file into an object by calling from_json_file.
+    The object is then possibly manipulated and then possibly dumped to a file
+    """
 
     def __init__(self, name, experiment, devices=None, data=None, tcl=None):
         self.name = name
@@ -47,12 +50,3 @@ class ConfigFile:
             data_map['Data']['Initial'] = {}
             for key in self.data.keys():
                 data_map['Data']['Initial'][key] = self.data[key]
-
-
-if __name__ == "__main__":
-    # testing to make sure validation works out correctly
-    test2 = ConfigFile.from_json_file(os.path.join(CONSTANTS.CONFIGS, "test2"), CONSTANTS.JSON_SCHEMA_FILE_NAME)
-    print(test2.__dict__)
-
-
-

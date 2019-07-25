@@ -5,11 +5,11 @@ import contextlib2
 import imp
 import os
 
-from Probe.Args import Args
-from Probe.ConfigFile import ConfigFile
-from Probe.DeviceSetup import DeviceSetup
-from src.GUI.Util.CONSTANTS import SCRIPTS_DIR
-from src.GUI.Util.CONSTANTS import JSON_SCHEMA_FILE_NAME
+from RunAConfigFile.Args import Args
+from RunAConfigFile.DeviceSetup import DeviceSetup
+from Model.ConfigFile import ConfigFile
+from Util.CONSTANTS import SCRIPTS_DIR
+from Util.CONSTANTS import JSON_SCHEMA_FILE_NAME
 
 
 def spawn_scripts(scripts, data_map, experiment_result):
@@ -34,12 +34,12 @@ def main(args, config_manager=None, queue_result=None):
     """
     Entry point of PTCS.
     Loads config file, parses parameters, sets up the devices, and runs the scripts specified.
-    :param args: run Prober.py with no arguments to see the argument specification
+    :param args: run RunAConfigFileMain.py with no arguments to see the argument specification
     :param config_manager: the ConfigurationManager object to obtain configuration data for running the scripts
     :param queue_result: the QueueResult object to add run result data to
     :return: None
     """
-    from GUI.Application.SystemConfigManager import SystemConfigManager
+    from Application.SystemConfigManager import SystemConfigManager
     if config_manager is None:
         config_manager = SystemConfigManager()
 
@@ -71,11 +71,11 @@ def main(args, config_manager=None, queue_result=None):
         config_manager.get_results_manager().make_new_experiment_result(file_name, queue_result)
 
     with contextlib2.ExitStack() as stack:
-        device_setup = DeviceSetup()
-        data_map['Devices'] = device_setup.connect_devices(
-            config.devices,
-            stack
-        )
+        # if there are devices in the config file
+        if config.devices:
+            device_setup = DeviceSetup()
+            data_map['Devices'] = device_setup.connect_devices(config.devices, stack)
+
         # Create json file for Config used in experiment
         experiment_result.add_json_file_dict("Config", data_map['Config'])
         spawn_scripts(config.experiment, data_map, experiment_result)

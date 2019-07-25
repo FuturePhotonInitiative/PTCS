@@ -1,6 +1,5 @@
 import json
-from src.GUI.Model.ExperimentScriptModel import ExperimentScript
-from src.Probe.ConfigFile import ConfigFile
+from src.GUI.Model.ConfigFile import ConfigFile
 from src.GUI.Util.CONSTANTS import JSON_SCHEMA_FILE_NAME
 
 

@@ -3,7 +3,7 @@ import datetime
 from shutil import copyfile
 from threading import Thread
 
-from src import Prober
+from src.GUI import RunAConfigFileMain
 from src.GUI.Util import Globals
 from src.GUI.Util.Functions import clean_name_for_file
 
@@ -89,8 +89,8 @@ class QueueRunner(Thread):
                 tmp_file_name = os.path.join(TEMP_DIR, "tmp" + self.current_experiment.get_name().replace(" ", "_") + ".json")
                 self.current_experiment.export_to_json(tmp_file_name)
                 try:
-                    Prober.main(
-                        ["Prober.py", "-c", tmp_file_name],
+                    RunAConfigFileMain.main(
+                        ["RunAConfigFileMain.py", "-c", tmp_file_name],
                         config_manager=Globals.systemConfigManager,
                         queue_result=self.queue_result
                     )
@@ -154,12 +154,12 @@ class QueueRunner(Thread):
         for i in range(start_index, tcl_end):
             if self.queue.get_ith_experiment(i).config_dict.get('Devices', None) is not None:
                 for key in self.queue.get_ith_experiment(i).config_dict['Devices']:
-                    if key not in master_experiment.config_dict['Devices']:
-                        master_experiment.config_dict['Devices'].append(key)
+                    if key not in master_experiment.config.devices:
+                        master_experiment.config.devices.append(key)
             if self.queue.get_ith_experiment(i).config_dict.get('Experiment', None) is not None:
                 for key in self.queue.get_ith_experiment(i).config_dict['Experiment']:
-                    if key not in master_experiment.config_dict['Experiment']:
-                        master_experiment.config_dict['Experiment'].append(key)
+                    if key not in master_experiment.config.experiment:
+                        master_experiment.config.experiment.append(key)
         # Generate the script to run the Tcl script through the Vivado command line
         tmp_file_name = TEMP_DIR + "\\tmp\\" + master_experiment.get_name().replace(" ", "_") + ".json"
         pyLoc = os.path.join(SCRIPTS_DIR, "script.py")
@@ -170,12 +170,12 @@ class QueueRunner(Thread):
         with open(pyLoc, "w") as f:
             f.write(("import os\ndef main(data_map, experiment_result):\n\tos.system('C:\\Xilinx\\Vivado\\2017.4\\bin\\vivado -mode tcl < ' + '" + target_location + "')").replace('\\', '\\\\'))
         copyfile(pyLoc, os.path.join(output_folder, "script.py"))
-        master_experiment.config_dict['Experiment'].append(exp)
+        master_experiment.config.experiment.append(exp)
         print "exporting to " + tmp_file_name
         master_experiment.export_to_json(tmp_file_name)
         # Run the experiment
-        Prober.main(["Prober.py", "-c", tmp_file_name], config_manager=Globals.systemConfigManager,
-                    queue_result=self.queue_result)
+        RunAConfigFileMain.main(["RunAConfigFileMain.py", "-c", tmp_file_name], config_manager=Globals.systemConfigManager,
+                            queue_result=self.queue_result)
         for i in range(start_index, tcl_end):
             ex_name = clean_name_for_file(self.queue.get_ith_experiment(i).get_name())
             if len(os.listdir(os.path.join(result_dir, name, ex_name + "_" + str(i+1)))) == 0:
