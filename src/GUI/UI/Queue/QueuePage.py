@@ -1,5 +1,6 @@
-from src.GUI.UI.Queue.QueuePanel import QueuePanel
-from src.GUI.UI.Queue.ExperimentControlPanel import ExperimentControlPanel
+from QueuePanel import QueuePanel
+from ExperimentControlPanel import ExperimentControlPanel
+
 from src.GUI.UI.Page import Page
 from src.GUI.Util import CONSTANTS
 

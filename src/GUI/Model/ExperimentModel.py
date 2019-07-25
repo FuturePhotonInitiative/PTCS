@@ -5,26 +5,23 @@ from src.GUI.Util.CONSTANTS import JSON_SCHEMA_FILE_NAME
 
 class Experiment:
 
-    def __init__(self, config_file, dependencies=None, priority=1):
+    def __init__(self, config_file, priority=1):
         """
         Construct a new Experiment object.
         :param config_file:
             The experiment's configuration JSON file, from which its properties will be read
-        :param dependencies:
-            A list of experiment objects defining the experiments this experiment depends on
         :param priority:
             The integer priority of the experiment.  In general, higher priority experiments should run before lower
             priority experiments, but only after all of their dependencies have run.
         """
         self.config_file_name = config_file
         self.config = ConfigFile.from_json_file(config_file, JSON_SCHEMA_FILE_NAME)
-        self.dependencies = dependencies
         self.priority = priority
         if self.config.tcl:
             self.tcl_file = self.config.tcl
 
     def copy(self):
-        return Experiment(self.config_file_name, dependencies=self.dependencies, priority=self.priority)
+        return Experiment(self.config_file_name, priority=self.priority)
 
     def __str__(self):
         return self.get_name()

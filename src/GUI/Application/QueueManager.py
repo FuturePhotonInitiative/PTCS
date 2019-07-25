@@ -5,7 +5,6 @@ from src.GUI.Model.ExperimentQueue import ExperimentQueue
 
 
 class QueueManager:
-    # TODO temp dir needs to be in config
     def __init__(self, temp_dir, results_config_manager):
         self.results_config_manager = results_config_manager
         if not os.path.exists(temp_dir):

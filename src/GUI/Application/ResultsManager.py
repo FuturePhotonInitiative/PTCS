@@ -10,8 +10,7 @@ from src.GUI.Util.CONSTANTS import TIMESTAMP_FORMAT
 
 
 class ResultsManager:
-    def __init__(self, results_directory, results_config_directory, results_config_manager):
-        self.results_config_manager = results_config_manager
+    def __init__(self, results_directory, results_config_directory):
         self.queue_result_list = []
         self.experiment_result_dict = {}
         self.results_directory = results_directory
