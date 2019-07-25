@@ -1,7 +1,7 @@
 from ExperimentListPanel import ExperimentListPanel
 from ResultsFileListPanel import ResultsFileListPanel
 from src.GUI.UI.Page import Page
-import src.GUI.Util.GUI_CONSTANTS as CONSTANTS
+from src.GUI.Util import CONSTANTS
 
 
 class ExperimentResultsPage(Page):

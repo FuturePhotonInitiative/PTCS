@@ -3,33 +3,29 @@ import sys
 import types
 import contextlib2
 import imp
+import os
 
-from Probe.Args import Args
-from Probe.ConfigFileManipulation import ConfigFileManipulation
-from Probe.DeviceSetup import DeviceSetup
+from RunAConfigFile.Args import Args
+from RunAConfigFile.DeviceSetup import DeviceSetup
+from Model.ConfigFile import ConfigFile
+from Util.CONSTANTS import SCRIPTS_DIR
+from Util.CONSTANTS import JSON_SCHEMA_FILE_NAME
 
 
-def spawn_scripts(scripts, data_map, json_locations, experiment_result):
+def spawn_scripts(scripts, data_map, experiment_result):
     """
     Runs the scripts defined in the JSON config. The tasks are called based on the order specified in the config,
         two different tasks can have the same order, meaning they should be spawned at the same time.
     :param scripts: The scripts pulled from the config
     :param data_map: The dictionary to store data between tasks
-    :param json_locations: The JSON Files object with standard file directories
     :return: None
     """
-    script_root = str(json_locations['Script_Root'])
-    # if script_root[0] is '.':
-    #     script_root = os.path.join(os.path.dirname(__file__), script_root)
-
-    for frame in scripts:
-        threads = []
-        for task in frame:  # todo # dd Multi-Threading support here
-            module = str(task)[:-3]
-            if module not in [i[0] for i in globals().items() if isinstance(i[1], types.ModuleType)]:
-                print script_root + '\\' + module + '.py'
-                globals()[module] = imp.load_source(module, script_root + '\\' + module + '.py')
-            [i[1] for i in inspect.getmembers(globals()[module], inspect.isfunction) if i[0] is 'main'][0](data_map, experiment_result)
+    for script in scripts:
+        threads = []  # TODO add multithreading support here
+        module = script.source[:-3]
+        if module not in [i[0] for i in globals().items() if isinstance(i[1], types.ModuleType)]:
+            globals()[module] = imp.load_source(module, os.path.join(SCRIPTS_DIR, module + '.py'))
+        [i[1] for i in inspect.getmembers(globals()[module], inspect.isfunction) if i[0] is 'main'][0](data_map, experiment_result)
     print "Scripts Completed"
     return
 
@@ -38,14 +34,17 @@ def main(args, config_manager=None, queue_result=None):
     """
     Entry point of PTCS.
     Loads config file, parses parameters, sets up the devices, and runs the scripts specified.
-    :param args: run Prober.py with no arguments to see the argument specification
+    :param args: run RunAConfigFileMain.py with no arguments to see the argument specification
     :param config_manager: the ConfigurationManager object to obtain configuration data for running the scripts
     :param queue_result: the QueueResult object to add run result data to
     :return: None
     """
-    from GUI.Application.SystemConfigManager import SystemConfigManager
+    from Application.SystemConfigManager import SystemConfigManager
     if config_manager is None:
-        config_manager = SystemConfigManager('../System/Files.json')
+        config_manager = SystemConfigManager()
+    from Model.QueueResultModel import QueueResultsModel
+    if queue_result is None:
+        queue_result = QueueResultsModel()
 
     print('Starting PTCS...')
 
@@ -56,10 +55,9 @@ def main(args, config_manager=None, queue_result=None):
         print('Goodbye')
         sys.exit(1)
 
-    config = ConfigFileManipulation(file_name)
-    config.check_validity(config_manager.file_locations)
+    config = ConfigFile.from_json_file(file_name, JSON_SCHEMA_FILE_NAME)
 
-    data_map = {'Data': {}, 'Config': config.config}
+    data_map = {'Data': {}, 'Config': config.to_dict()}
 
     """
     Argument location precedence:
@@ -71,21 +69,19 @@ def main(args, config_manager=None, queue_result=None):
     config.initialize_data(data_map)
     arguments.add_parameters(data_map)
 
-    print("Running Experiment: " + config.config['Name'] + "\n\n")
+    print("Running Experiment: " + config.name + "\n\n")
     experiment_result, experiment_result_name = \
         config_manager.get_results_manager().make_new_experiment_result(file_name, queue_result)
 
-    scripts = config.extract_scripts(config_manager.file_locations)
-
     with contextlib2.ExitStack() as stack:
-        device_setup = DeviceSetup()
-        data_map['Devices'] = device_setup.connect_devices(
-            config.config["Devices"],
-            config_manager.file_locations,
-            stack)
+        # if there are devices in the config file
+        if config.devices:
+            device_setup = DeviceSetup()
+            data_map['Devices'] = device_setup.connect_devices(config.devices, stack)
+
         # Create json file for Config used in experiment
         experiment_result.add_json_file_dict("Config", data_map['Config'])
-        spawn_scripts(scripts, data_map, config_manager.file_locations, experiment_result)
+        spawn_scripts(config.experiment, data_map, experiment_result)
 
     experiment_result.end_experiment()
     config_manager.get_results_manager().save_experiment_result(experiment_result_name, experiment_result)

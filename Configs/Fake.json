@@ -1,0 +1,23 @@
+{
+  "name": "Fake Test",
+  "experiment": [
+    {
+      "type": "PY_SCRIPT",
+      "source": "DummyDataCollect.py",
+      "order": 1
+    },
+    {
+      "type": "PY_SCRIPT",
+      "source": "DummyDataReduce.py",
+      "order": 2
+    },
+    {
+      "type": "PY_SCRIPT",
+      "source": "DummyDataExport.py",
+      "order": 3
+    }
+  ],
+  "data": {
+    "Levels": 10
+  }
+}

@@ -1,16 +1,16 @@
 {
-  "Name": "Newport Optical Power Meter Test",
-  "Devices":[
+  "name": "Newport Optical Power Meter Test",
+  "devices":[
     "Newport OPM"
   ],
-  "Experiment": [
+  "experiment": [
     {
-      "Type": "PY_SCRIPT",
-      "Source": "NewportOPM.py",
-      "Order": 1
+      "type": "PY_SCRIPT",
+      "source": "NewportOPM.py",
+      "order": 1
     }
   ],
-  "Data": {
+  "data": {
     "Variable_1": 0.00,
     "Variable_2": 1.00
   }

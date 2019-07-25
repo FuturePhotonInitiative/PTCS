@@ -111,6 +111,8 @@ class GPIBtoUSBAdapter(PyVisaDriver):
         :param termination: the character string to end the message with
         :return: the response string
         """
+        if self.get_gpib_address() != self.instrument_gpib_address:
+            self.communicate_using_my_gpib_address()
         self.turn_on_read_after_write()
         return self.device.query(query + termination)
 

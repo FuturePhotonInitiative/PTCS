@@ -1,0 +1,12 @@
+{
+  "name": "wom",
+  "devices": [
+  ],
+  "experiment": [
+    {
+      "type": "PY_SCRIPT",
+      "source": "Wait1Minute.py",
+      "order": 1
+    }
+  ]
+}

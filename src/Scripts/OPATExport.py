@@ -19,10 +19,12 @@ def main(data_map, results):
     reduced1 = data_map["Data"]["Reduce"][laser_power1]
     reduced2 = data_map["Data"]["Reduce"][laser_power2]
 
-    raw1_name = op.join(results.experiment_results_directory, "Raw data {}dBm".format(laser_power1))
-    raw2_name = op.join(results.experiment_results_directory, "Raw data {}dBm".format(laser_power2))
-    reduced1_name = op.join(results.experiment_results_directory, "Reduced data {}dBm".format(laser_power1))
-    reduced2_name = op.join(results.experiment_results_directory, "Reduced data {}dBm".format(laser_power2))
+    save_dir = results.experiment_results_directory
+
+    raw1_name = op.join(save_dir, "Raw data {}dBm.txt".format(laser_power1))
+    raw2_name = op.join(save_dir, "Raw data {}dBm.txt".format(laser_power2))
+    reduced1_name = op.join(save_dir, "Reduced data {}dBm.txt".format(laser_power1))
+    reduced2_name = op.join(save_dir, "Reduced data {}dBm.txt".format(laser_power2))
 
     write_to_file(raw1_name, raw1)
     write_to_file(raw2_name, raw2)
@@ -34,7 +36,7 @@ def main(data_map, results):
     results.add_result_file(reduced1_name)
     results.add_result_file(reduced2_name)
 
-    plot_path = op.join(results.experiment_results_directory, "pyplot")
+    plot_path = op.join(save_dir, "pyplot.png")
 
     plt.figure(1)
     plt.plot(reduced1, color="y", label="{}dBm".format(laser_power1))

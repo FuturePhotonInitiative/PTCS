@@ -1,18 +1,15 @@
 import os
 
 from src.GUI.Application.QueueRunner import QueueRunner
-from src.GUI.Model import QueueResultModel
 from src.GUI.Model.ExperimentQueue import ExperimentQueue
-from src.GUI.Util import Globals
 
 
 class QueueManager:
     # TODO temp dir needs to be in config
-    def __init__(self, working_directory, results_config_manager):
+    def __init__(self, temp_dir, results_config_manager):
         self.results_config_manager = results_config_manager
-        self.working_directory = working_directory + "\\temp"
-        if not os.path.exists(self.working_directory):
-            os.makedirs(self.working_directory)
+        if not os.path.exists(temp_dir):
+            os.makedirs(temp_dir)
         self.runner = None
         self.experiment_queue = ExperimentQueue()
 
@@ -32,7 +29,7 @@ class QueueManager:
         """
         if self.runner is None:
             queue_result = self.results_config_manager.get_results_manager().make_new_queue_result()
-            runner = QueueRunner(to_run, self.working_directory, queue_result)
+            runner = QueueRunner(to_run, queue_result)
             runner.start()
 
     def queue_is_running(self):

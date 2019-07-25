@@ -1,9 +1,8 @@
 import wx
-import src.GUI.Util.GUI_CONSTANTS
-import src.GUI.Model.ExperimentModel
+
 import src.GUI.Util.Globals as Globals
 from src.GUI.UI.ControlPanel import ControlPanel
-from src.GUI.Util import GUI_CONSTANTS
+from src.GUI.Util import CONSTANTS
 
 
 class ExperimentOutputPanel(ControlPanel):
@@ -22,23 +21,23 @@ class ExperimentOutputPanel(ControlPanel):
         self.UI_control = Globals.systemConfigManager.get_ui_controller()
 
         # Sets up the colors display Constants are in Util.CONSTANTS
-        self.SetBackgroundColour(src.GUI.Util.GUI_CONSTANTS.CONTROL_PANEL_COLOR)
-        self.SetForegroundColour(src.GUI.Util.GUI_CONSTANTS.CONTROL_PANEL_FOREGROUND_COLOR)
+        self.SetBackgroundColour(CONSTANTS.CONTROL_PANEL_COLOR)
+        self.SetForegroundColour(CONSTANTS.CONTROL_PANEL_FOREGROUND_COLOR)
 
         # Sets up the vertical sizer
         self.sizer = wx.BoxSizer(wx.VERTICAL)
         self.SetSizer(self.sizer)
 
         style = wx.TE_MULTILINE | wx.TE_READONLY | wx.HSCROLL
-        self.out_text_field = wx.TextCtrl(self, style = style)
+        self.out_text_field = wx.TextCtrl(self, style=style)
         self.stop_button = wx.Button(self)
         self.stop_button.SetLabelText("Exit")
 
         self.sizer.Add(self.out_text_field, 5, wx.EXPAND | wx.ALL)
         self.sizer.Add(self.stop_button, 1, wx.EXPAND | wx.ALL)
 
-        self.out_text_field.SetBackgroundColour(GUI_CONSTANTS.LIST_PANEL_COLOR)
-        self.out_text_field.SetForegroundColour(GUI_CONSTANTS.LIST_PANEL_FOREGROUND_COLOR)
+        self.out_text_field.SetBackgroundColour(CONSTANTS.LIST_PANEL_COLOR)
+        self.out_text_field.SetForegroundColour(CONSTANTS.LIST_PANEL_FOREGROUND_COLOR)
 
         # Renders the panel with the given experiment
         self.Bind(wx.EVT_BUTTON, self.change_mode)

@@ -4,17 +4,16 @@ from src.GUI.Model.ExperimentModel import Experiment
 
 
 class ExperimentsManager:
-    def __init__(self, experiment_roots, script_root, results_config_manager):
+    def __init__(self, experiment_root, script_root, results_config_manager):
         self.results_config_manager = results_config_manager
-        self.experiment_roots = experiment_roots
+        self.experiment_root = experiment_root
         self.script_root = script_root
 
         self.available_experiments = {}
         self.available_scripts = []
-        for root in experiment_roots:
-            for experiment_file in os.listdir(root):
-                tmp = Experiment(root + "/" + experiment_file)
-                self.available_experiments[str(tmp)] = tmp
+        for experiment_file in os.listdir(self.experiment_root):
+            tmp = Experiment(os.path.join(self.experiment_root, experiment_file))
+            self.available_experiments[str(tmp)] = tmp
         for script in script_root:
             self.available_scripts.append(script)
         self.cache_is_valid = True
@@ -24,20 +23,10 @@ class ExperimentsManager:
         names.sort()
         return names
 
-    # def get_default_experiment_root(self):
-    #     return self.system_config['Files']['Experiment_Roots'][0]
-    #
-    # def get_experiment_roots(self):
-    #     return self.system_config['Files']['Experiment_Roots']
-    #
-    # def add_experiment_root(self, path_to_root):
-    #     self.system_config['Files']['Experiment_Roots'].append(path_to_root)
-    #     self.cache_is_valid = False
-
     def rebuild_available_experiments(self):
         self.available_experiments = {}
         self.available_scripts = []
-        for root in self.experiment_roots:
+        for root in self.experiment_root:
             for experiment_file in os.listdir(root):
                 tmp = Experiment(experiment_file)
                 self.available_experiments[str(tmp)] = tmp

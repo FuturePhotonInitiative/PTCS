@@ -6,9 +6,7 @@ import src.GUI.Util.Globals as Globals
 
 
 if __name__ == '__main__':
-    # TODO hardcoded config paths are bad and we can do better.
-    Globals.systemConfigManager = SystemConfigManager('../../System/Files.json')
-    # TODO temp testing code to make sure queue displays properly
+    Globals.systemConfigManager = SystemConfigManager()
     app = wx.App()
     frame = MainFrame(None, -1)
     Globals.systemConfigManager.mainframe = frame

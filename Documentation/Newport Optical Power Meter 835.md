@@ -1,5 +1,0 @@
-So, this instrument has an older computer interface but it still works. The only output port on the instrument is a GPIB port. it comes with a cable, but not many computers produced now adays accept GPIB. We bought a GPIB to USB adapter that we stuck on the instrument which then we were able to successfully interface with it. The only trick is that the adapter has its own specific commands that you can set that sometimes get in the way of interracting with the instrument, but there is a manual in the [Data Sheets](\\hawk\RIDL\internal\projects\EVT\internal documents\ProberControl Documentation\ProberControl-Summer2019) folder that will help with understanding it.
-
-The instrument's commands are pretty straight forward. most of the command specification PDF is about how the HP-85 computer works and what the GPIB protocol is. You do not need to worry about these pages. The command specification starts on page 29.
-
-There are some more intracacies to the connection of the instrument that are written in the comments of the __init__ method of the driver.

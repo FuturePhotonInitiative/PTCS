@@ -1,6 +1,6 @@
 import wx
-import src.GUI.Util.GUI_CONSTANTS
-import src.GUI.Model.ExperimentModel
+
+from src.GUI.Util import CONSTANTS
 import src.GUI.Util.Globals as Globals
 from src.GUI.UI.ControlPanel import ControlPanel
 
@@ -18,12 +18,11 @@ class ExperimentControlPanel(ControlPanel):
         """
         ControlPanel.__init__(self, parent)
 
-
         self.UI_control = Globals.systemConfigManager.get_ui_controller()
 
         # Sets up the colors display Constants are in Util.CONSTANTS
-        self.SetBackgroundColour(src.GUI.Util.GUI_CONSTANTS.CONTROL_PANEL_COLOR)
-        self.SetForegroundColour(src.GUI.Util.GUI_CONSTANTS.CONTROL_PANEL_FOREGROUND_COLOR)
+        self.SetBackgroundColour(CONSTANTS.CONTROL_PANEL_COLOR)
+        self.SetForegroundColour(CONSTANTS.CONTROL_PANEL_FOREGROUND_COLOR)
 
         # Sets up the vertical sizer
         self.sizer = wx.BoxSizer(wx.VERTICAL)
@@ -189,4 +188,3 @@ class ExperimentControlPanel(ControlPanel):
 
             ui_control = Globals.systemConfigManager.get_ui_controller()
             ui_control.rebuild_queue_page()
-

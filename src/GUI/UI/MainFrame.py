@@ -1,9 +1,8 @@
 import wx
 from src.GUI.UI.ExperimentResults.ExperimentResultsPage import ExperimentResultsPage
 from src.GUI.UI.Hardware.HardwarePage import HardwarePage
-from src.GUI.UI.BuildExperiment.BuildExperimentPage import BuildExperimentsPage
 from src.GUI.UI.Queue.QueuePage import QueuePage
-import src.GUI.Util.GUI_CONSTANTS as CONSTANTS
+from src.GUI.Util import CONSTANTS
 from src.GUI.Util import Globals
 
 

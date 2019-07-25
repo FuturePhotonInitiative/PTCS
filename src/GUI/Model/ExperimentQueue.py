@@ -97,61 +97,8 @@ class ExperimentQueue:
         # Method stub to be implemented if and when we decide to parallelize experiments
         pass
 
-
-
     def get_experiment_names(self):
         name_list = []
         for experiment in self.queue:
             name_list.append(experiment.get_name())
         return name_list
-
-if __name__ == '__main__':
-    model = ExperimentQueue(['../../System/Devices.json'])
-    # Add five experiments and make sure they are added to the queue in order
-    print "Testing experiment add order"
-    model.add_to_queue(Experiment('../../Configs/Dummy_Test1.json'))
-    model.add_to_queue(Experiment('../../Configs/Dummy_Test2.json'))
-    model.add_to_queue(Experiment('../../Configs/Dummy_Test3.json'))
-    model.add_to_queue(Experiment('../../Configs/Dummy_Test4.json'))
-    model.add_to_queue(Experiment('../../Configs/Dummy_Test5.json'))
-    print("Experiment 1: " + model.queue[0].get_name())
-    print("Experiment 2: " + model.queue[1].get_name())
-    print("Experiment 3: " + model.queue[2].get_name())
-    print("Experiment 4: " + model.queue[3].get_name())
-    print("Experiment 5: " + model.queue[4].get_name())
-    print ""
-
-    print "Testing experiment reorder (sift up)"
-    model.move_ith_experiment_up(4)
-    model.move_ith_experiment_up(3)
-    model.move_ith_experiment_up(2)
-    model.move_ith_experiment_up(1)
-    model.move_ith_experiment_up(0)
-    model.move_ith_experiment_up(-1)
-    print "Experiment 5: " + model.queue[0].get_name()
-    print "Experiment 1: " + model.queue[1].get_name()
-    print "Experiment 2: " + model.queue[2].get_name()
-    print "Experiment 3: " + model.queue[3].get_name()
-    print "Experiment 4: " + model.queue[4].get_name()
-    print ""
-
-    print "Testing experiment reorder (sift down)"
-    model.move_ith_experiment_down(0)
-    model.move_ith_experiment_down(1)
-    model.move_ith_experiment_down(2)
-    model.move_ith_experiment_down(3)
-    model.move_ith_experiment_down(4)
-    model.move_ith_experiment_down(5)
-    print("Experiment 1: " + model.queue[0].get_name())
-    print("Experiment 2: " + model.queue[1].get_name())
-    print("Experiment 3: " + model.queue[2].get_name())
-    print("Experiment 4: " + model.queue[3].get_name())
-    print("Experiment 5: " + model.queue[4].get_name())
-    print ''
-
-    print "Testing experiment remove order"
-    print("Experiment 1: " + model.get_next_experiment().get_name())
-    print("Experiment 2: " + model.get_next_experiment().get_name())
-    print("Experiment 3: " + model.get_next_experiment().get_name())
-    print("Experiment 4: " + model.get_next_experiment().get_name())
-    print("Experiment 5: " + model.get_next_experiment().get_name())

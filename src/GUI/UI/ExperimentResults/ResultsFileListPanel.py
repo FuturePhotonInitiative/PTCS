@@ -1,6 +1,6 @@
 import os
 import wx
-from src.GUI.Util import GUI_CONSTANTS
+from src.GUI.Util import CONSTANTS
 
 
 class ResultsFileListPanel(wx.StaticBox):
@@ -14,8 +14,8 @@ class ResultsFileListPanel(wx.StaticBox):
         self.result = None
 
         self.list_box = wx.ListBox(self)
-        self.list_box.SetBackgroundColour(GUI_CONSTANTS.LIST_PANEL_COLOR)
-        self.list_box.SetForegroundColour(GUI_CONSTANTS.LIST_PANEL_FOREGROUND_COLOR)
+        self.list_box.SetBackgroundColour(CONSTANTS.LIST_PANEL_COLOR)
+        self.list_box.SetForegroundColour(CONSTANTS.LIST_PANEL_FOREGROUND_COLOR)
 
         self.sizer = wx.BoxSizer(wx.VERTICAL)
         self.SetSizer(self.sizer)

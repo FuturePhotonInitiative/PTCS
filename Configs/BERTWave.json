@@ -1,16 +1,16 @@
 {
-  "Name": "BERTWave Anritsu MP2100A Test",
-  "Devices":[
+  "name": "BERTWave Anritsu MP2100A Test",
+  "devices":[
     "BERT Analyzer"
   ],
-  "Experiment": [
+  "experiment": [
     {
-      "Type": "PY_SCRIPT",
-      "Source": "BERTWaveEyescan.py",
-      "Order": 1
+      "type": "PY_SCRIPT",
+      "source": "BERTWaveEyescan.py",
+      "order": 1
     }
   ],
-  "Data": {
+  "data": {
     "Variable_1": 0.00,
     "Variable_2": 1.00
   }

@@ -1,19 +1,19 @@
 import datetime
 import json
+import os
 
 from src.GUI.Util.Functions import clean_name_for_file
-from src.GUI.Util.GUI_CONSTANTS import QUEUE_FILE_TITLE
-from src.GUI.Util.GUI_CONSTANTS import TIMESTAMP_FORMAT
+from src.GUI.Util.CONSTANTS import QUEUE_FILE_TITLE
+from src.GUI.Util.CONSTANTS import TIMESTAMP_FORMAT
+from src.GUI.Util.CONSTANTS import RESULTS_CONFIG_DIR
 
 
 class QueueResultsModel:
     def __init__(self,
-                 results_config_root,
                  start_datetime=datetime.datetime.today().strftime(TIMESTAMP_FORMAT),
                  end_datetime=datetime.datetime.today().strftime(TIMESTAMP_FORMAT),
                  experiments_results_locations=None,
                  queue_result_config=None):
-        self.results_config_root = results_config_root
         self.time = None
         if queue_result_config is None:
             if experiments_results_locations is None:
@@ -28,11 +28,7 @@ class QueueResultsModel:
         """
         Write the configuration stored in this Experiment object to a json formatted file
         :param filename:
-            The name of the file to write to.  WARNING: The specified file will be overwritten
-        :param pretty_print:
-            If true, print the json with indentation, otherwise keep the JSON compact
-        :return:
-        None
+            The name of the file to read from.  WARNING: The specified file will be overwritten
         """
         config_dict = json.load(open(filename))
         self.start_datetime = datetime.datetime.strptime(config_dict["start_datetime"], TIMESTAMP_FORMAT)
@@ -57,7 +53,7 @@ class QueueResultsModel:
             json.dump(config_dict, config_file, indent=4 if pretty_print else None, default=str)
 
     def save(self):
-        self.export_to_json(self.results_config_root + "/" + self.get_name() + ".json")
+        self.export_to_json(os.path.join(RESULTS_CONFIG_DIR, self.get_name() + ".json"))
 
     def get_name(self):
         now = self.start_datetime

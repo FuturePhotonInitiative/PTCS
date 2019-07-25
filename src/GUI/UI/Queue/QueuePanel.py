@@ -1,7 +1,7 @@
 import wx
 
 from src.GUI.UI.DisplayPanel import DisplayPanel
-from src.GUI.Util import GUI_CONSTANTS
+from src.GUI.Util import CONSTANTS
 import src.GUI.Util.Globals as Globals
 
 
@@ -30,8 +30,8 @@ class QueuePanel(DisplayPanel):
         self.sizer.Add(self.run_button, 1, wx.EXPAND | wx.ALL)
 
         # Sets up the colors display Constants are in Util.CONSTANTS
-        self.list_box.SetBackgroundColour(GUI_CONSTANTS.LIST_PANEL_COLOR)
-        self.list_box.SetForegroundColour(GUI_CONSTANTS.LIST_PANEL_FOREGROUND_COLOR)
+        self.list_box.SetBackgroundColour(CONSTANTS.LIST_PANEL_COLOR)
+        self.list_box.SetForegroundColour(CONSTANTS.LIST_PANEL_FOREGROUND_COLOR)
 
         # Adds all the experiments in the application queue to the display list
         self.reload()
@@ -82,10 +82,9 @@ class QueuePanel(DisplayPanel):
         self.GetParent().render_control_panel(selected_experiment)
         pass
 
-    def run_the_queue(self, event):
-        print "Running Queue"
+    @staticmethod
+    def run_the_queue(event):
         ui_control = Globals.systemConfigManager.get_ui_controller()
         if ui_control is not None:
-            print "Switching Queue Mode"
             ui_control.switch_queue_to_running()
         Globals.systemConfigManager.get_queue_manager().run()

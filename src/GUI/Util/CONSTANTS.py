@@ -1,5 +1,6 @@
 import wx
-import os
+from os.path import dirname, join
+from os import getcwd
 
 MAIN_PAGE_TITLE = "PIC Test Control Software"
 PAGE_SIZE = (900, 500)
@@ -29,7 +30,16 @@ CONTROL_PANEL_FOREGROUND_COLOR = wx.BLACK#wx.Colour(100, 100, 100)
 
 LABEL_PROPORTION = .1
 
-WORKING_DIRECTORY = os.path.join(os.path.dirname(os.path.dirname(os.getcwd())), "System")
+# directories of interest
+PROJ_DIR = dirname(dirname(getcwd()))
+TEMP_DIR = join(join(PROJ_DIR, "System"), "temp")
+CONFIGS = join(PROJ_DIR, "Configs")
+SCRIPTS_DIR = join(join(PROJ_DIR, "src"), "Scripts")
+DRIVERS_DIR = join(join(PROJ_DIR, "src"), "Instruments")
+RESULTS_DIR = join(PROJ_DIR, "Results")
+DEVICES_CONFIG = join(join(PROJ_DIR, "System"), "Devices.json")
+RESULTS_CONFIG_DIR = join(join(PROJ_DIR, "System"), "ResultsConfiguration")
+JSON_SCHEMA_FILE_NAME = join(join(PROJ_DIR, "System"), "ConfigFileValidationSchema.json")
 
 EXPERIMENT_QUEUE_RESULT_ROOT = "Experiment Queues"
 

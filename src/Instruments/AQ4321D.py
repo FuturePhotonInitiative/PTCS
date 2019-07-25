@@ -116,7 +116,7 @@ class AQ4321D(GPIBtoUSBAdapter):
 
     def set_step_time_sweep(self, time):
         """
-        :param time: The time that each step should take
+        :param time: The time that each step should take in seconds
         """
         self._check_float(time, MIN_STEP_TIME, MAX_STEP_TIME, TENTHS)
         self._send_to_device("TSTET{}".format(time))
@@ -128,7 +128,7 @@ class AQ4321D(GPIBtoUSBAdapter):
         :param start: The wavelength the sweep should start at
         :param stop: The wavelength the sweep should end at
         :param wavelength_step: The amount of wavelength the sweep should traverse each step
-        :param time_step: The time that each step should take
+        :param time_step: The time that each step should take in seconds
         """
         self._send_to_device("TSWM{}".format(SWEEP_MODE_STEP))  # this is the step version of a sweep
         self.set_start_sweep_wavelength(start)
@@ -137,7 +137,7 @@ class AQ4321D(GPIBtoUSBAdapter):
         self.set_step_time_sweep(time_step)
         self.turn_laser_on()
         self.start_sweep()
-        # aparently the instrument freezes for some seconds right after the laser is
+        # apparently the instrument freezes for some seconds right after the laser is
         # turned on and the start sweep command is issued
         time.sleep(3.5)
         self._print("Step sweeping in progress...")
@@ -163,7 +163,7 @@ class AQ4321D(GPIBtoUSBAdapter):
         self.set_cont_time_sweep(time_length)
         self.turn_laser_on()
         self.start_sweep()
-        # aparently the instrument freezes for some seconds right after the laser is
+        # apparently the instrument freezes for some seconds right after the laser is
         # turned on and the start sweep command is issued
         time.sleep(3.5)
         self._print("Continuous sweeping in progress for {} seconds...".format(time_length))
