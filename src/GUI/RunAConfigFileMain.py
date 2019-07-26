@@ -18,6 +18,7 @@ def spawn_scripts(scripts, data_map, experiment_result):
         two different tasks can have the same order, meaning they should be spawned at the same time.
     :param scripts: The scripts pulled from the config
     :param data_map: The dictionary to store data between tasks
+    :param experiment_result: The experiment result object to pass into the main class of the script(s) when called
     :return: None
     """
     for script in scripts:
