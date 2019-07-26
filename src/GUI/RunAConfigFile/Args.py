@@ -9,7 +9,7 @@ class Args:
         parser.add_argument("-c", "--configFile",
                             help="configuration json file")
         parser.add_argument("-p", "--paramFile", type=argparse.FileType('r'),
-                            help="configuration .txt file")
+                            help="parameter .txt file")
         parser.add_argument("additionalParams", nargs='*',
                             help="additional configuration data is able to be"
                                  " specified in the form \"variable=value\"")
@@ -106,7 +106,7 @@ class Args:
     def add_parameters(self, data_map):
         for item in self.parameters:
             # The config data is stored in two places in the data map
-            data_map['Config']['Data'][item[0]] = item[1]
+            data_map['Config']["data"][item[0]] = item[1]
             data_map['Data']['Initial'][item[0]] = item[1]
 
     def obtain_config_file(self):
@@ -118,3 +118,6 @@ class Args:
         if self.parsed.configFile is None:
             return raw_input("Enter config file name or nothing to exit: ")
         return self.parsed.configFile
+
+    def get_param_file(self):
+        return self.parsed.paramFile.name if self.parsed.paramFile else None

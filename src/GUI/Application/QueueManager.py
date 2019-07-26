@@ -1,6 +1,6 @@
 import os
 
-from src.GUI.Application.QueueRunner import QueueRunner
+from QueueRunner import QueueRunner
 from src.GUI.Model.ExperimentQueue import ExperimentQueue
 
 

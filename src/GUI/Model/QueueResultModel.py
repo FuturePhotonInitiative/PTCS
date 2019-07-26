@@ -61,8 +61,7 @@ class QueueResultsModel:
         name = clean_name_for_file(name)
         return name
 
-    def add_experiment_result(self,
-                              experiment_result_location):
+    def add_experiment_result(self, experiment_result_location):
         self.experiments_results_locations.append(experiment_result_location)
 
     def start_queue(self):
