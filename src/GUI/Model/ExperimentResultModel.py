@@ -227,12 +227,18 @@ class ExperimentResultsModel:
         with open(out_file_name, 'w') as out_file:
             json.dump(config, out_file, separators=(',', ": "), indent=4)
         self.experiments_results_files.append(out_file_name)
-    #
-    # def add_binary_data_file(self, data, file_name):
-    #     out_file_name = self.experiment_results_directory + "//" + file_name + ".data"
-    #     out_file = open(out_file_name, "wb")
-    #     out_file.write(data)
-    #     self.experiments_results_files.append(out_file_name)
+
+    def add_binary_data_file(self, data, file_name):
+        out_file_name = os.path.join(self.experiment_results_directory, file_name + ".data")
+        with open(out_file_name, "wb") as out_file:
+            out_file.write(data)
+        self.experiments_results_files.append(out_file_name)
+
+    def add_image_file(self, data, file_name):
+        out_file_name = os.path.join(self.experiment_results_directory, file_name)
+        with open(out_file_name, "wb") as out_file:
+            out_file.write(data)
+        self.experiments_results_files.append(out_file_name)
 
     def start_experiment(self):
         self.start_datetime = datetime.datetime.today().strftime(TIMESTAMP_FORMAT)
