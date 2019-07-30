@@ -1,6 +1,6 @@
 import wx
-from os.path import dirname, join
-from os import getcwd
+from os.path import dirname, join, abspath
+
 
 MAIN_PAGE_TITLE = "PIC Test Control Software"
 PAGE_SIZE = (900, 500)
@@ -31,7 +31,7 @@ CONTROL_PANEL_FOREGROUND_COLOR = wx.BLACK#wx.Colour(100, 100, 100)
 LABEL_PROPORTION = .1
 
 # directories of interest
-PROJ_DIR = dirname(dirname(getcwd()))
+PROJ_DIR = dirname(dirname(dirname(dirname(abspath(__file__)))))
 TEMP_DIR = join(join(PROJ_DIR, "System"), "temp")
 CONFIGS = join(PROJ_DIR, "Configs")
 SCRIPTS_DIR = join(join(PROJ_DIR, "src"), "Scripts")
