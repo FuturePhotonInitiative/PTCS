@@ -2,6 +2,7 @@ import wx
 import json
 import imp
 import inspect
+import os
 
 from src.GUI.UI.DisplayPanel import DisplayPanel
 from src.GUI.Util import CONSTANTS
@@ -70,7 +71,7 @@ class TestBuildPanel(DisplayPanel):
         hwm = Globals.systemConfigManager.get_hardware_manager()
         for dev in hwm.get_all_hardware_names():
             drv = hwm.get_hardware_object(dev).driver
-            drvcls = imp.load_source("drvcls", "../../src/Instruments/" + drv + ".py")
+            drvcls = imp.load_source("drvcls", os.path.join(CONSTANTS.DRIVERS_DIR, drv + ".py"))
             classes = inspect.getmembers(drvcls, inspect.isclass)
             funcs = []
             for c in classes:
@@ -89,11 +90,11 @@ class TestBuildPanel(DisplayPanel):
         test_v = test_name.replace(" ", "_")
         ip.insert(0, "Test- " + test_name)
         config, script = build.parse_lines(ip, test_v, self.fcs)
-        with open("../../Configs/" + test_v + ".json", "w") as f:
+        with open(os.path.join(CONSTANTS.CONFIGS, test_v + ".json"), "w") as f:
             json.dump(config, f)
-        with open("../../src/Scripts/" + test_v + ".py", "w") as f:
+        with open(os.path.join(CONSTANTS.SCRIPTS_DIR, test_v + ".py"), "w") as f:
             f.write(script)
-        with open("../../Custom_Tests/" + test_v + ".txt", "w") as f:
+        with open(os.path.join(CONSTANTS.CUSTOM_TESTS_DIR, test_v + ".txt"), "w") as f:
             f.writelines([l + "\n" for l in ip])
         self.save_field.Clear()
 

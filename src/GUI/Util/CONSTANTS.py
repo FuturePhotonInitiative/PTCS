@@ -48,6 +48,7 @@ RESULTS_DIR = join(PROJ_DIR, "Results")
 DEVICES_CONFIG = join(join(PROJ_DIR, "System"), "Devices.json")
 RESULTS_CONFIG_DIR = join(join(PROJ_DIR, "System"), "ResultsConfiguration")
 JSON_SCHEMA_FILE_NAME = join(join(PROJ_DIR, "System"), "ConfigFileValidationSchema.json")
+CUSTOM_TESTS_DIR = join(PROJ_DIR, "Custom_Tests")
 
 EXPERIMENT_QUEUE_RESULT_ROOT = "Experiment Queues"
 
