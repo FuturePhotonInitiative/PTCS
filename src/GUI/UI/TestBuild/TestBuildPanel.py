@@ -94,6 +94,8 @@ class TestBuildPanel(DisplayPanel):
             json.dump(config, f)
         with open(os.path.join(CONSTANTS.SCRIPTS_DIR, test_v + ".py"), "w") as f:
             f.write(script)
+        if not os.path.exists(CONSTANTS.CUSTOM_TESTS_DIR):
+            os.mkdir(CONSTANTS.CUSTOM_TESTS_DIR)
         with open(os.path.join(CONSTANTS.CUSTOM_TESTS_DIR, test_v + ".txt"), "w") as f:
             f.writelines([l + "\n" for l in ip])
         self.save_field.Clear()

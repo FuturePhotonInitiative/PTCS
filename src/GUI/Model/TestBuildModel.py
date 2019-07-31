@@ -7,20 +7,20 @@ def parse_lines(lines, output_file, functions):
     :return: A corresponding JSON config and Python script.
     """
     config = dict()
-    config['Name'] = output_file.replace("_", " ")
-    config['Devices'] = []
-    config['Experiment'] = [{
-                  "Type": "PY_SCRIPT",
-                  "Source": output_file + ".py",
-                  "Order":  1
+    config['name'] = output_file.replace("_", " ")
+    config['devices'] = []
+    config['experiment'] = [{
+                  "type": "PY_SCRIPT",
+                  "source": output_file + ".py",
+                  "order":  1
                 },
                 {
-                    "Type": "PY_SCRIPT",
-                    "Source": "CustomTestReduce.py",
-                    "Order": 2
+                    "type": "PY_SCRIPT",
+                    "source": "CustomTestReduce.py",
+                    "order": 2
                 }
     ]
-    config['Data'] = {}
+    config['data'] = {}
     script = "import time\n" + \
         "def main(data_map, experiment_result):\n" + \
         "\tdata_map['Data']['Collect'] = {}\n"
@@ -32,7 +32,7 @@ def parse_lines(lines, output_file, functions):
             line = line[:-1]
         # Special commands
         if line.startswith("Test- "):
-            config['Name'] = line[6:]
+            config['name'] = line[6:]
         elif line.startswith("parameter "):
             di = line.find("(default ")
             if di == -1:
@@ -48,18 +48,18 @@ def parse_lines(lines, output_file, functions):
                 else:
                     val = float(val)
                     script += "\t" + param + " = float(data_map['Data']['Initial']['" + param + "'])\n"
-            config['Data'][param] = val
+            config['data'][param] = val
         elif line.find(" as ") > -1:
             ai = line.find(" as ")
             device = line[0:ai]
             alias = line[ai+4:]
-            config['Devices'].append(device)
+            config['devices'].append(device)
             script += "\t" + alias + " = data_map['Devices']['" + device + "']\n"
             aliases[device] = alias
         else:
             # Replacements
             ret = line
-            for device in config['Devices']:
+            for device in config['devices']:
                 dev = aliases[device]
                 ind = 0
                 while ret.find(dev + ";", ind) > -1:
