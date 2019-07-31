@@ -1,18 +1,9 @@
-functions = [("set voltage", 1, "run_set_voltage"),
-             ("set output switch", 1, "set_output_switch"),
-             ("measure average", 0, "run_measure_vaverage")]
-
-
-def parse_file(filename, output_file):
-    with open(filename) as f:
-        return parse_lines(f.readlines(), output_file)
-
-
-def parse_lines(lines, output_file):
+def parse_lines(lines, output_file, functions):
     """
     Parse a test description file and produce a JSON config and a Python script.
     :param lines: The lines to be parsed.
     :param output_file: The output file name.
+    :param functions: The function names.
     :return: A corresponding JSON config and Python script.
     """
     config = dict()
@@ -22,7 +13,13 @@ def parse_lines(lines, output_file):
                   "Type": "PY_SCRIPT",
                   "Source": output_file + ".py",
                   "Order":  1
-                }]
+                },
+                {
+                    "Type": "PY_SCRIPT",
+                    "Source": "CustomTestReduce.py",
+                    "Order": 2
+                }
+    ]
     config['Data'] = {}
     script = "import time\n" + \
         "def main(data_map, experiment_result):\n" + \
@@ -64,7 +61,8 @@ def parse_lines(lines, output_file):
             ret = line
             for device in config['Devices']:
                 dev = aliases[device]
-                while ret.find(dev + ";") > -1:
+                ind = 0
+                while ret.find(dev + ";", ind) > -1:
                     ind = ret.find(dev + ";")
                     nxt = ret[ind+len(dev)+1:]
                     for fc in functions:
@@ -85,7 +83,11 @@ def parse_lines(lines, output_file):
                                 delim = ", "
                             func_call += ")"
                             ret = ret[:ind+len(dev)] + func_call + ret[ind+len(dev)+1+len(fc[0])+cont_index:]
+                            ind = 0
                             break
+                    else:
+                        ind += 1
+
             ret = ret.replace("start timer", "start_time = time.time()")
             ret = ret.replace("get timer", "(time.time() - start_time)")
             if ret.strip("\t").startswith("print "):
@@ -106,11 +108,13 @@ def parse_lines(lines, output_file):
                         in_q = not in_q
                     res += c
                     i += 1
+                if in_p:
+                    res += ")"
                 ret = res
             if ret.strip("\t").startswith("store "):
                 i = ret.find("store ") + 6
                 args = ret[i:].split(",")
-                ret = ret[:i-6] + "data_map['Data']['Collect'][str(" + args[0].strip() + ")] = " + args[1].strip()
+                ret = args[1].strip() + " = " + ret[:i-6] + "data_map['Data']['Collect'][str(" + args[0].strip() + ")]"
 
             script += "\t" + ret + "\n"
     return config, script
@@ -119,6 +123,7 @@ def parse_lines(lines, output_file):
 def parse_input(lines):
     ret = []
     indent_count = 0
+    imports = []
     for line in lines:
         iden = line[0]
         rv = ""
@@ -157,9 +162,14 @@ def parse_input(lines):
         elif iden == "GET TIMER AS":
             rv += line[1] + " = get timer"
         elif iden == "FROM":
+            if line[1] not in imports:
+                imports.append(line[1])
             if line[2] == "CALL":
-                rv += line[1] + ";" + line[3]
+                rv += line[1].replace(" ", "_") + ";" + line[3] + " " + line[4]
             elif line[2] == "READ":
-                rv += line[5] + " = " + line[1] + ";" + line[3]
+                rv += line[6] + " = " + line[1].replace(" ", "_") + ";" + line[3] + " " + line[4]
+        rv = rv.replace(" ???", "")
         ret.append(rv)
+    for dev in imports:
+        ret.insert(0, dev + " as " + dev.replace(" ", "_"))
     return ret

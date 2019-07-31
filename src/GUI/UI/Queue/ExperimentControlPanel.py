@@ -145,11 +145,16 @@ class ExperimentControlPanel(ControlPanel):
         self.variables_boxes = {}
 
         # Sets up default page
-        self.choice_box = wx.Choice(self, choices=Globals.systemConfigManager.get_experiments_manager().get_available_experiments_names())
+        self.label = wx.StaticText(self)
+        self.label.SetLabelText("Pre-Defined Tests")
+        self.label.SetFont(wx.Font(wx.FontInfo(30)))
+        self.choice_box = wx.Choice(self,
+                    choices=Globals.systemConfigManager.get_experiments_manager().get_available_experiments_names())
         # self.UI_control.add_control_to_text_list(self.choice_box)
         self.add_button = wx.Button(self, label="Add")
         # self.UI_control.add_control_to_text_list(self.add_button)
-        self.sizer.Add(self.choice_box, 1, wx.SHAPED | wx.ALL | wx.ALIGN_CENTRE)
+        self.sizer.Add(self.label, 1, wx.ALIGN_BOTTOM)
+        self.sizer.Add(self.choice_box, 1, wx.SHAPED | wx.ALL)
         self.sizer.Add(self.add_button, 1, wx.EXPAND | wx.ALL)
 
         self.add_button.Bind(wx.EVT_BUTTON, self.add_experiment)
