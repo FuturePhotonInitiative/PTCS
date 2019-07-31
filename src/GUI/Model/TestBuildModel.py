@@ -13,11 +13,6 @@ def parse_lines(lines, output_file, functions):
                   "Type": "PY_SCRIPT",
                   "Source": output_file + ".py",
                   "Order":  1
-                },
-                {
-                    "Type": "PY_SCRIPT",
-                    "Source": "CustomTestReduce.py",
-                    "Order": 2
                 }
     ]
     config['Data'] = {}
@@ -114,7 +109,7 @@ def parse_lines(lines, output_file, functions):
             if ret.strip("\t").startswith("store "):
                 i = ret.find("store ") + 6
                 args = ret[i:].split(",")
-                ret = args[1].strip() + " = " + ret[:i-6] + "data_map['Data']['Collect'][str(" + args[0].strip() + ")]"
+                ret = ret[:i-6] + "data_map['Data']['Collect'][str(" + args[0].strip() + ")]" + " = " + args[1].strip()
 
             script += "\t" + ret + "\n"
     return config, script

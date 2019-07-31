@@ -13,6 +13,45 @@ class TestBuildPanel(DisplayPanel):
     def __init__(self, parent):
         DisplayPanel.__init__(self, parent)
 
+        self.reduce_x_line = wx.BoxSizer(wx.HORIZONTAL)
+        self.reduce_checkbox_label = wx.StaticText(self)
+        self.reduce_checkbox_label.SetLabelText("Reduce?")
+        self.reduce_checkbox = wx.CheckBox(self)
+        self.reduce_x_label_text = wx.StaticText(self)
+        self.reduce_x_label_text.SetLabelText("X Label:")
+        self.reduce_x_label = wx.TextCtrl(self)
+        self.reduce_x_min = wx.TextCtrl(self)
+        self.reduce_x_range_text = wx.StaticText(self)
+        self.reduce_x_range_text.SetLabelText("< X <")
+        self.reduce_x_max = wx.TextCtrl(self)
+        self.reduce_x_line.AddMany([(self.reduce_checkbox_label),
+                                    (self.reduce_checkbox),
+                                    (self.reduce_x_label_text),
+                                    (self.reduce_x_label, wx.ALL),
+                                    (self.reduce_x_min, wx.ALL),
+                                    (self.reduce_x_range_text),
+                                    (self.reduce_x_max, wx.ALL)])
+
+        self.reduce_y_line = wx.BoxSizer(wx.HORIZONTAL)
+        self.reduce_title_label = wx.StaticText(self)
+        self.reduce_title_label.SetLabelText("Title:")
+        self.reduce_title = wx.TextCtrl(self)
+        self.reduce_y_label_text = wx.StaticText(self)
+        self.reduce_y_label_text.SetLabelText("Y Label:")
+        self.reduce_y_label = wx.TextCtrl(self)
+        self.reduce_y_min = wx.TextCtrl(self)
+        self.reduce_y_range_text = wx.StaticText(self)
+        self.reduce_y_range_text.SetLabelText("< Y <")
+        self.reduce_y_max = wx.TextCtrl(self)
+        self.reduce_y_line.AddMany([(self.reduce_title_label),
+                                    (self.reduce_title, wx.ALL),
+                                    (self.reduce_y_label_text),
+                                    (self.reduce_y_label, wx.ALL),
+                                    (self.reduce_y_min, wx.ALL),
+                                    (self.reduce_y_range_text),
+                                    (self.reduce_y_max, wx.ALL)])
+
+
         self.save_sizer = wx.BoxSizer(wx.HORIZONTAL)
         self.save_button = wx.Button(self)
         self.save_button.SetLabelText("Save As")
@@ -43,6 +82,8 @@ class TestBuildPanel(DisplayPanel):
         self.update_valid = True
 
         self.sizer = wx.BoxSizer(wx.VERTICAL)
+        self.sizer.Add(self.reduce_x_line, 1, wx.EXPAND | wx.ALL)
+        self.sizer.Add(self.reduce_y_line, 1, wx.EXPAND | wx.ALL)
         self.sizer.Add(self.save_sizer, 1, wx.EXPAND | wx.ALL)
         self.sizer.Add(self.list_box, 15, wx.EXPAND | wx.ALL)
         self.sizer.Add(self.delete_button, 1, wx.EXPAND | wx.ALL)
@@ -89,6 +130,19 @@ class TestBuildPanel(DisplayPanel):
         test_v = test_name.replace(" ", "_")
         ip.insert(0, "Test- " + test_name)
         config, script = build.parse_lines(ip, test_v, self.fcs)
+        if self.reduce_checkbox.GetValue():
+            config['Experiment'].append({
+                    "Type": "PY_SCRIPT",
+                    "Source": "CustomTestReduce.py",
+                    "Order": 2
+                })
+            config['Data']['Title'] = self.reduce_title.GetLineText(0)
+            config['Data']['X Label'] = self.reduce_x_label.GetLineText(0)
+            config['Data']['X Lower'] = float(self.reduce_x_min.GetLineText(0))
+            config['Data']['X Upper'] = float(self.reduce_x_max.GetLineText(0))
+            config['Data']['Y Label'] = self.reduce_y_label.GetLineText(0)
+            config['Data']['Y Lower'] = float(self.reduce_y_min.GetLineText(0))
+            config['Data']['Y Upper'] = float(self.reduce_y_max.GetLineText(0))
         with open("../../Configs/" + test_v + ".json", "w") as f:
             json.dump(config, f)
         with open("../../src/Scripts/" + test_v + ".py", "w") as f:
