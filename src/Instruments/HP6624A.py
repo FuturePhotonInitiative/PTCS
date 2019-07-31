@@ -24,15 +24,15 @@ class HP6624A(PyVisaDriver):
         # 	self.active = True
         self.active = not self.active
 
-    def set_voltage(self, value=0, channel=1):
+    def set_voltage(self, voltage=0, channel=1):
         """
         Set the voltage
-        :param value: Specified voltage to set channel to
-        :type value: Integer
+        :param voltage: Specified voltage to set channel to
+        :type voltage: Integer
         :param channel: Specified channel to set
         :type channel: Integer
         """
-        self.device.write('VSET ' + str(channel) + ',' + str(value))
+        self.device.write('VSET ' + str(channel) + ',' + str(voltage))
 
     def set_current(self, value=0, channel=1):
         """
@@ -44,18 +44,18 @@ class HP6624A(PyVisaDriver):
         """
         self.device.write('ISET ' + str(channel) + ',' + str(value))
 
-    def set_over_voltage(self, value=0, channel=1):
+    def set_over_voltage(self, voltage=0, channel=1):
         """
         Set the over-voltage
 
-        :param value: Specified over-voltage to set channel to
-        :type value: Integer
+        :param voltage: Specified over-voltage to set channel to
+        :type voltage: Integer
         :param channel: Specified channel to set
         :type channel: Integer
         """
-        self.device.write('OVSET ' + str(channel) + ',' + str(value))
+        self.device.write('OVSET ' + str(channel) + ',' + str(voltage))
 
-    def set_OC_switch(self, value=0, channel=1):
+    def set_oc_switch(self, value=0, channel=1):
         """
         Set the OC Switch
 
@@ -125,7 +125,7 @@ class HP6624A(PyVisaDriver):
         # return self.gpib.read()
         return self.device.query('IOUT? ' + str(channel))
 
-    def get_OC_switch(self, channel=1):
+    def get_oc_switch(self, channel=1):
         """
         Queries the OC switch of a specified channel
 

@@ -257,21 +257,21 @@ class AgilentDSO7000A(IEEE_488_2):
         # Return the saved file path and file name
         return self.device.query(":SAVE:PWD?")+self.device.query("SAVE:FIL?")
 
-    def time_range(self, time_val):
+    def time_range(self, time_ns):
         """
         Update the timebase to specified value
-        :param time_val: time to set, in ns
+        :param time_ns: time to set, in ns
         :return: None
         """
-        self.device.write(":TIM:RANG "+str(time_val))
+        self.device.write(":TIM:RANG "+str(time_ns))
 
-    def time_scale(self, time_val):
+    def time_scale(self, time_ps):
         """
         Update the time scale to specified value
-        :param time_val: time to set, in ps
+        :param time_ps: time to set, in ps
         :return: None
         """
-        self.device.write(":TIM:SCAL "+str(time_val))
+        self.device.write(":TIM:SCAL "+str(time_ps))
 
     def time_window_scale(self, time_val):
         """

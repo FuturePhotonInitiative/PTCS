@@ -20,13 +20,22 @@ class Newport835(GPIBtoUSBAdapter):
         GPIBtoUSBAdapter.__init__(self)
         self.name += "Newport 835 Optical Power Meter"
         self.device = device
-        self.become_controller()
+        self._become_controller()
 
         # Make sure this is set with the same binary number of the back of the instrument
         self.instrument_gpib_address = 1
 
         # The instrument naturally outputs a \r\n, so lets make VISA think that is part of the termination char sequence
         self.device.read_termination = "\r\n"
+
+        # The default setting is for the instrument to give back a power reading when the GPIB read command is sent
+        # this could be problematic because read commands are sent all the time and commands could get off and you can
+        # receive a power reading when you asked for something else accidentally. Making an 'X' be the command is more
+        # accurate at producing power readings when expected and not when not expected.
+        self.set_get_power_reading_on_x()
+
+        # I am not sure what the four characters before a power reading stand for, but they are annoying anyway
+        self.make_outputs_unverbose()
 
         # Used for setting the reading units. one can set these discrete watt ranges. nano, micro, milli.
         # "auto" sets a good range depending on the amount of light detected. This is the default.
@@ -76,7 +85,7 @@ class Newport835(GPIBtoUSBAdapter):
         """
         :return: a power reading from the instrument at the time called
         """
-        return self.read()
+        return self._query_device("", TERM_SEQUENCE)
 
     def change_reading_units(self, how_many_watts):
         """
@@ -90,7 +99,3 @@ class Newport835(GPIBtoUSBAdapter):
 
     def make_outputs_unverbose(self):
         self._send_to_device("G1", TERM_SEQUENCE)
-
-    @staticmethod
-    def _print(message):
-        print("Newport OPM> " + message)

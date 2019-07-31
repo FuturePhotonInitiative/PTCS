@@ -7,6 +7,8 @@ TERM_STRING_MAP = ["\r\n", "\r", "\n", ""]
 
 # WARNING: all commands sent through this adapter to an instrument
 # should escape all '+' characters with an ESC ASCII character
+
+# all of these methods are private because a user using the GUI should not need to call these directly
 class GPIBtoUSBAdapter(PyVisaDriver):
 
     def __init__(self):
@@ -16,33 +18,33 @@ class GPIBtoUSBAdapter(PyVisaDriver):
         PyVisaDriver.__init__(self)
         self.name += " that is connected using a GPIB to USB Adapter - "
 
-    def get_gpib_termination_string(self):
+    def _get_gpib_termination_string(self):
         """
         :return: the termination characters that will be added to every message sent to the instrument
         """
         return TERM_STRING_MAP[int(self.device.query("++eos")[0])]
 
-    def set_gpib_termination_string(self, term_string):
+    def _set_gpib_termination_string(self, term_string):
         """
         sets the termination characters that will be added to every message sent to the instrument
         :param term_string: should be one of four choices (given in the above static list)
         """
         self.device.write("++eos " + str(TERM_STRING_MAP.index(term_string)))
 
-    def get_gpib_address(self):
+    def _get_gpib_address(self):
         """
         :return: the GPIB address the adapter is set to interact with if in Controller mode. Make sure this matches the
         instrument's GPIB address or the adapter will fail to send commands correctly
         """
         return int(self.device.query("++addr"))
 
-    def communicate_using_my_gpib_address(self):
+    def _communicate_using_my_gpib_address(self):
         """
         Set the adapter to listen to the gpib address that the device extending this class is set to
         """
         self.device.write("++addr {}".format(self.instrument_gpib_address))
 
-    def become_controller_in_charge(self):
+    def _become_controller_in_charge(self):
         self.device.write("++ifc")
 
     def _query_current_mode(self):
@@ -51,16 +53,16 @@ class GPIBtoUSBAdapter(PyVisaDriver):
         """
         return self.device.query("++mode")
 
-    def i_am_controller(self):
+    def _i_am_controller(self):
         return self._query_current_mode() == "1"
 
-    def i_am_device(self):
+    def _i_am_device(self):
         return self._query_current_mode() == "0"
 
-    def become_controller(self):
+    def _become_controller(self):
         self.device.write("++mode 1")
 
-    def become_device(self):
+    def _become_device(self):
         self.device.write("++mode 0")
 
     def reset_adapter_factory_settings(self):
@@ -79,26 +81,26 @@ class GPIBtoUSBAdapter(PyVisaDriver):
         """
         self.device.write("++llo")
 
-    def read(self):
+    def _gpib_read(self):
         """
-        :return: the string sent from the instrument before EOI is asserted or timeout
+        send a read command to the GPIB connected instrument and read the data before EOI is asserted or timeout
         """
-        self.communicate_using_my_gpib_address()
+        self._communicate_using_my_gpib_address()
         return self.device.query("++read eoi")
 
-    def get_autoread_status(self):
+    def _get_autoread_status(self):
         """
         :return: 1 for read-after-write, 0 for just write
         """
         return self.device.query("++auto")
 
-    def turn_off_read_after_write(self):
+    def _turn_off_read_after_write(self):
         """
         do not have the adapter listen for a response automatically after sending a command
         """
         self.device.write("++auto 0")
 
-    def turn_on_read_after_write(self):
+    def _turn_on_read_after_write(self):
         """
         have the adapter listen for a response automatically after sending a command
         """
@@ -111,9 +113,9 @@ class GPIBtoUSBAdapter(PyVisaDriver):
         :param termination: the character string to end the message with
         :return: the response string
         """
-        if self.get_gpib_address() != self.instrument_gpib_address:
-            self.communicate_using_my_gpib_address()
-        self.turn_on_read_after_write()
+        if self._get_gpib_address() != self.instrument_gpib_address:
+            self._communicate_using_my_gpib_address()
+        self._turn_on_read_after_write()
         return self.device.query(query + termination)
 
     def _send_to_device(self, query, termination=""):
@@ -121,7 +123,7 @@ class GPIBtoUSBAdapter(PyVisaDriver):
         :param query: the query string to ask the instrument
         :param termination: the character string to end the message with
         """
-        if self.get_gpib_address() != self.instrument_gpib_address:
-            self.communicate_using_my_gpib_address()
-        self.turn_off_read_after_write()
+        if self._get_gpib_address() != self.instrument_gpib_address:
+            self._communicate_using_my_gpib_address()
+        self._turn_off_read_after_write()
         self.device.write(query + termination)

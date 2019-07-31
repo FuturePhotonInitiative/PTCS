@@ -33,9 +33,9 @@ def main(data_map, experiment_result):
 
     # Eye/Pulse Scope Graph Configuration
     device.set_scale(SCALE)
-    device.set_amplitude_offset(NO_OFFSET)
-    device.set_bit_view_number(BIT_VIEW_NUMBER)
-    device.set_time_offset(TIME_OFFSET)
+    device.set_vertical_offset(NO_OFFSET)
+    device.set_view_number_bits(BIT_VIEW_NUMBER)
+    device.set_time_ps_offset(TIME_OFFSET)
 
     # Eye/Pulse Scope Setup
     device.set_display_type(DISPLAY_TYPE)

@@ -26,9 +26,9 @@ def main(data_map, results):
     opm.change_reading_units(reading_units)
 
     laser.set_wavelength(laser_wavelength)
-    orij = str(laser.get_power())
-    laser.set_power(laser_power1)
-    print("switching power of the laser from " + orij + " to " + str(laser.get_power()))
+    orij = str(laser.get_optical_power())
+    laser.set_optical_power(laser_power1)
+    print("switching power of the laser from " + orij + " to " + str(laser.get_optical_power()))
 
     laser.turn_laser_on()
     time.sleep(3.5)  # necessary to make it not crash
@@ -38,9 +38,9 @@ def main(data_map, results):
         data_map["Data"]["Collect"][str(laser_power1)].append(opm.get_power_reading())
 
     laser.turn_laser_off()
-    orij = str(laser.get_power())
-    laser.set_power(laser_power2)
-    print("switching power of the laser from " + orij + " to " + str(laser.get_power()))
+    orij = str(laser.get_optical_power())
+    laser.set_optical_power(laser_power2)
+    print("switching power of the laser from " + orij + " to " + str(laser.get_optical_power()))
     laser.turn_laser_on()
     time.sleep(3.5)  # necessary to make it not crash
     print("running second part")
