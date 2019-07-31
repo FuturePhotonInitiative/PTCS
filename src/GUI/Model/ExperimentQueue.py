@@ -1,9 +1,3 @@
-import json
-import os
-
-from src.GUI.Model.ExperimentModel import Experiment
-
-
 class ExperimentQueue:
 
     def __init__(self):
@@ -47,6 +41,14 @@ class ExperimentQueue:
             None
         """
         self.queue.remove(experiment)
+
+    def clear_queue(self):
+        """
+        Clears the queue
+        :return:
+            None
+        """
+        self.queue = []
 
     def get_next_experiment(self):
         """

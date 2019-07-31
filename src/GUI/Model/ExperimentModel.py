@@ -1,6 +1,7 @@
 import json
 from src.GUI.Model.ConfigFile import ConfigFile
-from src.GUI.Util.CONSTANTS import JSON_SCHEMA_FILE_NAME
+from src.GUI.Util.CONSTANTS import JSON_SCHEMA_FILE_NAME, TEMP_DIR
+from os.path import join
 
 
 class Experiment:

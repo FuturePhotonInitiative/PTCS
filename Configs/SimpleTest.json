@@ -1,0 +1,18 @@
+{
+  "name": "Base Test",
+  "devices":[
+
+  ],
+  "experiment": [
+    {
+      "type": "PY_SCRIPT",
+      "source": "PrintData.py",
+      "order": 1
+    }
+  ],
+  "data": {
+    "Variable_1": 0.00,
+    "Variable_2": 1.00,
+	"Results": ""
+  }
+}

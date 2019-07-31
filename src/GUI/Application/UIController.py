@@ -37,7 +37,7 @@ class UIController:
     def fix_control_list(self):
         for control in self.controls_to_fix_text_size:
             # print control
-            fix_text_size(control, 10)
+            UIController.fix_text_size(control, 10)
 
     def switch_to_result(self):
         # self.mainframe.notebook

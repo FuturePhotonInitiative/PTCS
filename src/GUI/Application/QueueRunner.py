@@ -2,16 +2,18 @@ import os
 import datetime
 from shutil import copyfile
 from threading import Thread
+import copy
+import contextlib2
 
 from src.GUI import RunAConfigFileMain
 from src.GUI.Util import Globals
 from src.GUI.Util.Functions import clean_name_for_file
+from src.GUI.RunAConfigFile.DeviceSetup import DeviceSetup
 
 from src.GUI.Model.ExperimentModel import Experiment
 
 from src.GUI.Util.CONSTANTS import TIMESTAMP_FORMAT
 from src.GUI.Util.CONSTANTS import TEMP_DIR
-from src.GUI.Util.CONSTANTS import CONFIGS
 from src.GUI.Util.CONSTANTS import SCRIPTS_DIR
 
 
@@ -25,8 +27,6 @@ class QueueRunner(Thread):
         Create a new QueueRunner that will run the provided queue using the provided temporary directory
         :param queue:
             The queue to run with Prober
-        :param temp_directory:
-            The directory to store the temporary json file for the experiment on which we will call Prober
         """
         Thread.__init__(self)
         self.queue = queue
@@ -43,6 +43,10 @@ class QueueRunner(Thread):
         :return:
             Nothing
         """
+        print "Verifying devices..."
+        if not self.verify_devices():
+            print "\nA device was not connected properly. Aborting experiment.\n"
+            return
         print "\n====================\nStarting the Queue\n====================\n"
         self.queue_result.start_queue()
         # TODO catch any exceptions run by prober and try to continue, but only if a flag in the __init__ has been
@@ -50,32 +54,38 @@ class QueueRunner(Thread):
         self.queue.schedule_experiments()
         i = 0
         while i < len(self.queue):
-            if self.queue.get_ith_experiment(i).get_name() == 'Load Queue':
-                index = self.queue.get_ith_experiment(i).config_dict['Data']['Queue']
-                rq = self.read_queue_from_file("../../Saved_Experiments/Saved_Experiment_" + str(index), CONFIGS)
-                tq = self.queue.queue[:i]
-                tq.extend(rq)
-                tq.extend(self.queue.queue[i+1:])
-                self.queue.queue = tq
+            if self.queue.get_ith_experiment(i).config.data is not None:
+                rt = self.queue.get_ith_experiment(i).config.data.get('Results', None)
+                if rt is not None:
+                    if rt != "":
+                        Globals.systemConfigManager.get_results_manager().results_root = rt
+            if self.queue.get_ith_experiment(i).get_name() == 'Repeat Experiment':
+                if i > 0:
+                    ex = self.queue.get_ith_experiment(i)
+                    vary_param = ex.config.data['Parameter']
+                    start = float(ex.config.data['Start'])
+                    if float(int(start)) == start:
+                        start = int(start)
+                    count = int(ex.config.data['Count'])
+                    step = float(ex.config.data['Step'])
+                    if float(int(step)) == step:
+                        step = int(step)
+                    base_exp = self.queue.get_ith_experiment(i - 1)
+                    rq = self.add_test_series(base_exp, vary_param, start, count, step)
+                    tq = self.queue.queue[:i-1]
+                    tq.extend(rq)
+                    tq.extend(self.queue.queue[i+1:])
+                    self.queue.queue = tq
+                else:
+                    self.queue.queue = self.queue.queue[1:]
+                i -= 1
             else:
                 i += 1
         i = 0
         while i < len(self.queue):
             self.current_experiment = self.queue.get_ith_experiment(i)
             print(self.current_experiment.get_name())
-            if self.current_experiment.get_name() == 'Save Queue':
-                # Save the queue in the Saved Experiments folder
-                self.queue.queue.pop(i)
-                self.save_queue_to_file("../../Saved_Experiments")
-            elif self.current_experiment.get_name() == 'Load Queue':
-                # Load a queue from the Saved Experiments folder
-                index = self.current_experiment.config_dict['Data']['Queue']
-                rq = self.read_queue_from_file("../../Saved_Experiments/Saved_Experiment_" + str(index), CONFIGS)
-                tq = self.queue.queue[:i]
-                tq.extend(rq)
-                tq.extend(self.queue.queue[i+1:])
-                self.queue.queue = tq
-            elif self.current_experiment.get_name()[-5:] == '(Tcl)':
+            if self.current_experiment.get_name()[-5:] == '(Tcl)':
                 # Run a contiguous sequence of Tcl tests
                 tcl_end = i + 1
                 while tcl_end < len(self.queue) and self.queue.get_ith_experiment(tcl_end).get_name()[-5:] == '(Tcl)':
@@ -129,8 +139,9 @@ class QueueRunner(Thread):
                 done_sets = False
                 ex_name = clean_name_for_file(self.queue.get_ith_experiment(i).get_name())
                 # Create a subdirectory for results from this specific test
-                os.mkdir(os.path.join(output_folder, ex_name + "_" + str(i+1)))
-                master_tcl += "set output \"" + output_folder + "/" + ex_name + "_" + str(i+1) + "/Collected_Data.csv\"\n"
+                os.mkdir(output_folder + "/" + ex_name + "_" + str(i+1))
+                master_tcl += "set output \"" + output_folder + "/" + ex_name + "_" + str(i+1) + \
+                              "/Collected_Data.csv\"\n"
                 master_tcl += "set index " + str(i+1) + "\n"
                 for line in f.readlines():
                     if not done_sets:
@@ -140,9 +151,10 @@ class QueueRunner(Thread):
                             else:
                                 words = line.split(' ')
                                 val = words[1]
-                                for k in self.queue.get_ith_experiment(i).config_dict['Data'].keys():
+                                for k in self.queue.get_ith_experiment(i).config.data.keys():
                                     if k == val:
-                                        line = words[0]+" "+words[1]+" "+str(self.queue.get_ith_experiment(i).config_dict['Data'][k]) + "\n"
+                                        line = words[0]+" "+words[1]+" " + \
+                                               str(self.queue.get_ith_experiment(i).config.data[k]) + "\n"
                     master_tcl += line
         target_location = os.path.join(output_folder, "combined.tcl")
         # Save the combined Tcl script to be run
@@ -152,12 +164,12 @@ class QueueRunner(Thread):
         # Read in necessary devices and scripts
         master_experiment = Experiment("..\\..\\template.json")
         for i in range(start_index, tcl_end):
-            if self.queue.get_ith_experiment(i).config_dict.get('Devices', None) is not None:
-                for key in self.queue.get_ith_experiment(i).config_dict['Devices']:
+            if self.queue.get_ith_experiment(i).config.devices is not None:
+                for key in self.queue.get_ith_experiment(i).config.devices:
                     if key not in master_experiment.config.devices:
                         master_experiment.config.devices.append(key)
-            if self.queue.get_ith_experiment(i).config_dict.get('Experiment', None) is not None:
-                for key in self.queue.get_ith_experiment(i).config_dict['Experiment']:
+            if self.queue.get_ith_experiment(i).config.devices is not None:
+                for key in self.queue.get_ith_experiment(i).config.experiment:
                     if key not in master_experiment.config.experiment:
                         master_experiment.config.experiment.append(key)
         # Generate the script to run the Tcl script through the Vivado command line
@@ -168,8 +180,10 @@ class QueueRunner(Thread):
         exp['source'] = 'script.py'
         exp['order'] = 1
         with open(pyLoc, "w") as f:
-            f.write(("import os\ndef main(data_map, experiment_result):\n\tos.system('C:\\Xilinx\\Vivado\\2017.4\\bin\\vivado -mode tcl < ' + '" + target_location + "')").replace('\\', '\\\\'))
-        copyfile(pyLoc, os.path.join(output_folder, "script.py"))
+            f.write(("import os\ndef main(data_map, experiment_result):\n\t" +
+                     "os.system('C:\\Xilinx\\Vivado\\2017.4\\bin\\vivado -mode tcl < ' + '" + target_location + "')")
+                    .replace('\\', '\\\\'))
+        copyfile(pyLoc, output_folder + "/script.py")
         master_experiment.config.experiment.append(exp)
         print "exporting to " + tmp_file_name
         master_experiment.export_to_json(tmp_file_name)
@@ -178,8 +192,11 @@ class QueueRunner(Thread):
                             queue_result=self.queue_result)
         for i in range(start_index, tcl_end):
             ex_name = clean_name_for_file(self.queue.get_ith_experiment(i).get_name())
-            if len(os.listdir(os.path.join(result_dir, name, ex_name + "_" + str(i+1)))) == 0:
-                os.rmdir(os.path.join(result_dir, name, ex_name + "_" + str(i+1)))
+            if len(os.listdir(result_dir + "/" + name + "/" + ex_name + "_" + str(i+1))) == 0:
+                os.rmdir(result_dir + "/" + name + "/" + ex_name + "_" + str(i+1))
+        for fl in os.listdir("."):
+            if fl.endswith(".jou") or fl.endswith(".log"):
+                os.remove(fl)
 
     def get_current_experiment(self):
         """
@@ -198,54 +215,43 @@ class QueueRunner(Thread):
         """
         return self.experiment_status[experiment]
 
-    def add_test_series(self, config_file, vary_param, start, end, step=1):
-        rqueue = []
-        for i in range(start, end, step):
-            exp = Experiment(config_file)
-            exp['Data'][vary_param] = i
-            rqueue.append(exp)
-        return rqueue
-
-    def save_queue_to_file(self, folder_path):
+    def verify_devices(self):
         """
-        Save the queue to a file
-        :param folder_path:
-            The folder to save it in.
-        :return:
-            Nothing
+        Verify that all the devices in the tests are connected.
+        :return: If all the selected devices are connected.
         """
-        index = len(os.listdir(folder_path)) + 1
-        output = ""
-        for i in range(len(self.queue)):
-            exp = self.queue.get_ith_experiment(i)
-            output += "*" + exp.config_file_name[24:-5] + "\n"
-            for field in exp.config_dict.get('Data', dict()).keys():
-                output += str(exp.config_dict['Data'][field]) + " // " + str(field) + "\n"
+        device_list = []
+        for test in self.queue.queue:
+            d = test.config.devices
+            if d is not None:
+                for dev in d:
+                    if dev not in device_list:
+                        device_list.append(dev)
+        with contextlib2.ExitStack() as stack:
+            device_setup = DeviceSetup()
+            try:
+                devs = device_setup.connect_devices(device_list, stack)
+            except Exception:
+                return False
+        return True
 
-        with open(folder_path + "/Saved_Experiment_" + str(index), "w") as f:
-            f.write(output)
-
-    def read_queue_from_file(self, file_path, config_root):
+    @staticmethod
+    def add_test_series(base_exp, vary_param, start, count, step=1):
         """
-        Construct a queue from a file
-        :param file_path:
-            The file to read from.
-        :param config_root:
-            The folder to read config files from.
-        :return:
-            The constructed queue.
+        Create a series of tests to add to the queue the at runtime.
+        :param config_file: The config file for the test in question.
+        :param base_config: The base config object.
+        :param vary_param: The name of the parameter to vary.
+        :param start: The starting value of vary_param.
+        :param count: The number of tests to add.
+        :param step: The amount to change vary_param by each time.
+        :return: The created test series.
         """
         rqueue = []
-        with open(file_path) as f:
-            exp = None
-            for line in f.readlines():
-                if line.startswith('*'):
-                    if exp is not None:
-                        rqueue.append(exp)
-                    exp = Experiment(os.path.join(config_root, line[1:-1] + ".json"))
-                else:
-                    ind = line.find(' // ')
-                    if ind > -1:
-                        exp.config_dict['Data'][line[ind+4:-1]] = line[:ind]
+        i = start
+        for it in range(0, count):
+            exp = Experiment(base_exp.config_file_name)
+            exp.config.data[vary_param] = i
             rqueue.append(exp)
+            i += step
         return rqueue

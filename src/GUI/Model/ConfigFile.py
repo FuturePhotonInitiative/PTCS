@@ -35,6 +35,9 @@ class ConfigFile:
         validate(instance=config, schema=schema)
         return cls(**config)
 
+    def copy(self):
+        return ConfigFile(**self.to_dict())
+
     def to_dict(self):
         dct = deepcopy(self)
         dct.experiment = [i.__dict__ for i in self.experiment]
