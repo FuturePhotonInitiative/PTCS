@@ -14,10 +14,10 @@ class PM500(PyVisaDriver):
         self.device = device
         self.velocity = 0
 
-    def run_set_velocity(self, velocity):
+    def set_velocity(self, velocity):
         self.velocity = velocity
 
-    def run_move_up(self):
+    def move_up(self):
         if self.velocity <= 0:
             return
         if self.device.write('YS ' + str(self.velocity))[1] != 0:
@@ -25,7 +25,7 @@ class PM500(PyVisaDriver):
         while self.device.query('YSTAT') != 'YL':
             time.sleep(0.01)
 
-    def run_move_dev(self):
+    def move_dev(self):
         if self.velocity <= 0:
             return
         if self.device.write('YS -' + str(self.velocity))[1] != 0:

@@ -23,7 +23,7 @@ class AEDFA_IL_23_B_FA(PyVisaDriver):
 
         self.device.write(":MODE:SW:CH1 "+mode+" \n")
 
-    def run_get_mode(self):
+    def get_mode(self):
         """
         Query the current mode of instrument.
         :returns: String, current mode.
@@ -32,7 +32,7 @@ class AEDFA_IL_23_B_FA(PyVisaDriver):
         self.device.write(":MODE:SW:CH1? \n")
         return self._read2cr()
 
-    def run_mode_options(self):
+    def mode_options(self):
         """
         Queries available modes for the instrument.
         :returns: String of available modes
@@ -41,7 +41,7 @@ class AEDFA_IL_23_B_FA(PyVisaDriver):
         self.device.write(":READ:MODE:NAMES? \n")
         return self._read2cr()
 
-    def run_set_power(self, power):
+    def set_power(self, power):
         """
         Set the driving set-point of the specified <mode> for the specified channel
         :param power: specified power
@@ -50,18 +50,18 @@ class AEDFA_IL_23_B_FA(PyVisaDriver):
 
         self.device.write(":DRIV:APC:CUR:CH1 "+str(power)+" \n")
 
-    def run_get_set_power(self):
+    def get_set_power(self):
         """
         Queries the current set power
         :returns: Float
         """
-        if self.run_get_mode() == "APC":
+        if self.get_mode() == "APC":
             self.device.write(":DRIV:APC:CUR:CH1? \n")
             return self._read2cr()
         else:
             return -1
 
-    def run_set_pump_currents(self, channel, current):
+    def set_pump_currents(self, channel, current):
         """
         Sets the specified current for a particular channel.
 
@@ -73,32 +73,32 @@ class AEDFA_IL_23_B_FA(PyVisaDriver):
 
         self.device.write(":DRIV:ACC:CUR:CH"+str(channel)+" "+str(current)+" \n")
 
-    def run_get_pump_currents(self, channel):
+    def get_pump_currents(self, channel):
         """
         Queries the current for specified channel.
         :returns: Float
         """
 
-        if self.run_get_mode() == "ACC":
+        if self.get_mode() == "ACC":
             self.device.write(":DRIV:ACC:CUR:CH"+str(channel)+"? \n")
             return self._read2cr()
         else:
             return -1
 
-    def run_set_status_pumps(self, state=1):
+    def set_status_pumps(self, state=1):
         """
         Sets the status for pump.
         :param state: specified state
         :type state: Integer
         """
-        if self.run_get_mode() == "ACC":
+        if self.get_mode() == "ACC":
             self.device.write(":DRIV:ACC:STAT:CH1 "+str(state)+" \n")
             sleep(0.01)
             self.device.write(":DRIV:ACC:STAT:CH2 "+str(state)+" \n")
-        elif self.run_get_mode() == "APC":
+        elif self.get_mode() == "APC":
             self.device.write(":DRIV:APC:STAT:CH1 "+str(state)+" \n")
 
-    def run_set_master_out(self, state=1):
+    def set_master_out(self, state=1):
         """
         Sets master control switch
         :param state: 1 means ON and 0 means OFF
@@ -110,7 +110,7 @@ class AEDFA_IL_23_B_FA(PyVisaDriver):
         else:
             self.device.write(":DRIV:MCTRL 0 \n")
 
-    def run_get_master_out(self):
+    def get_master_out(self):
         """
         Get the master control switch status
         :returns: Integer; 0,1,2 for OFF, ON, BUSY respectively
@@ -118,7 +118,7 @@ class AEDFA_IL_23_B_FA(PyVisaDriver):
         self.device.write(":DRIV:MCTRL? \n")
         return self._read2cr()
 
-    def run_get_out_power(self):
+    def get_out_power(self):
         """
         Get the existing input power value of the specified channel.
         :returns: Float

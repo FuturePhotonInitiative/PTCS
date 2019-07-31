@@ -9,7 +9,7 @@ class IEEE_488_2(PyVisaDriver):
         PyVisaDriver.__init__(self)
         self.name += " that can communicate using IEEE 488.2 common commands - "
 
-    def run_identify(self):
+    def identify(self):
         """
         Identifies itself using IDN query
         :return:
@@ -20,13 +20,13 @@ class IEEE_488_2(PyVisaDriver):
         else:
             raise Exception('Serial communication port is not open.')
 
-    def run_reset(self):
+    def reset(self):
         """
         Restores the majority of the instrument's settings to their default values
         """
         self.device.write("*RST")
 
-    def run_clear_status(self):
+    def clear_status(self):
         """
         clear status command. If an error message is currently posted on the test set's display,
         this command also closes the error message.

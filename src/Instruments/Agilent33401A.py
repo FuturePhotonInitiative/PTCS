@@ -24,7 +24,7 @@ class Agilent34401A(PyVisaDriver):
         self.device = device
         self.scaling_factor = scaling_factor
 
-    def run_get_voltage(self, scaled=False, query_range=10, resolution=0.01):
+    def get_voltage(self, scaled=False, query_range=10, resolution=0.01):
         """
         Queries the voltage of multimeter.
         :param scaled: Optional scaling
@@ -44,7 +44,7 @@ class Agilent34401A(PyVisaDriver):
         except pyvisa.errors.VisaIOError:
             return False
 
-    def run_get_current(self, query_range=1, resolution=0.000001):
+    def get_current(self, query_range=1, resolution=0.000001):
         """
         Queries the current reading of the multimeter
         :param query_range: range for query
@@ -58,13 +58,13 @@ class Agilent34401A(PyVisaDriver):
         except pyvisa.errors.VisaIOError:
             return False
 
-    def run_get_feedback(self):
+    def get_feedback(self):
         """
         Requirement for generic feedback
         """
-        return self.run_get_current()
+        return self.get_current()
 
-    def run_set_scaling(self, factor=1):
+    def set_scaling(self, factor=1):
         """
         Sets the scaling factor of the multimeter instrument.
         :param factor: Desired factor
@@ -73,7 +73,7 @@ class Agilent34401A(PyVisaDriver):
 
         self.scaling_factor = factor
 
-    def run_get_scaling(self):
+    def get_scaling(self):
         """
         Gets the scaling factor.
         :returns: Scaling factor as Int or Float

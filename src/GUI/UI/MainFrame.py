@@ -1,7 +1,9 @@
 import wx
-from src.GUI.UI.ExperimentResults.ExperimentResultsPage import ExperimentResultsPage
-from src.GUI.UI.Hardware.HardwarePage import HardwarePage
-from src.GUI.UI.Queue.QueuePage import QueuePage
+
+from ExperimentResults.ExperimentResultsPage import ExperimentResultsPage
+from Hardware.HardwarePage import HardwarePage
+from Queue.QueuePage import QueuePage
+
 from src.GUI.Util import CONSTANTS
 from src.GUI.UI.TestBuild.TestBuildPage import TestBuildPage
 from src.GUI.Util import Globals
@@ -26,7 +28,6 @@ class MainFrame(wx.Frame):
         self.notebook.AddPage(self.hardware_page, CONSTANTS.HARDWARE_PAGE_NAME)
         self.notebook.AddPage(self.test_build_page, CONSTANTS.TEST_BUILD_PAGE_NAME)
         # self.notebook.AddPage(self.build_experiments_page, CONSTANTS.BUILD_EXPERIMENTS_PAGE_NAME)
-
 
         sizer = wx.BoxSizer()
         sizer.Add(self.notebook, 1, wx.EXPAND)
@@ -55,4 +56,3 @@ class MainFrame(wx.Frame):
         if UI_controller:
             UI_controller.fix_control_list()
             UI_controller.rebuild_all_pages()
-

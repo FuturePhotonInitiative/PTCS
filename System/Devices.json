@@ -22,7 +22,7 @@
   "BERT Analyzer": {
     "Driver": "AnritsuMP2100A",
     "Type": "VISA",
-    "Default": "TCPIP::129.21.172.198::5001::SOCKET"
+    "Default": "TCPIP::129.21.172.228::5001::SOCKET"
   },
   "GPIB-USB": {
     "Driver": "GPIBtoUSBAdapter",

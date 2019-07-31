@@ -15,23 +15,23 @@ def main(data_map, experiment_result):
     final_voltage = float(data_map['Data']['Initial']["Final_Voltage"])
     step_voltage = float(data_map['Data']['Initial']["Step_Voltage"])
 
-    voltage_source.run_set_voltage(0)
+    voltage_source.set_voltage(0)
     voltage_source.set_output_switch(1)
 
     voltage = start_voltage
 
     start_time = time.time()
     while voltage <= final_voltage:
-        voltage_source.run_set_voltage(voltage)
+        voltage_source.set_voltage(voltage)
         if voltage % 1 == 0:
             print "Applying " + str(voltage) + " volts"
-        data_map['Data']['Collect'][str(voltage)] = osc.run_measure_vaverage()
+        data_map['Data']['Collect'][str(voltage)] = osc.measure_vaverage()
         voltage += step_voltage
 
     end_time = time.time()
     print "Collection took: " + str(end_time - start_time) + " seconds"
 
-    voltage_source.run_set_voltage(0)
+    voltage_source.set_voltage(0)
     voltage_source.set_output_switch(0)
 
     return

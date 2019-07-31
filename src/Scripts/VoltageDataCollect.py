@@ -15,22 +15,22 @@ def main(data_map, experiment_result):
 	step_voltage = float(data_map['Data']['Initial']["Step_Voltage"])
 	levels = dec_range(start_voltage, final_voltage, step_voltage)
 
-	voltage_source.run_set_voltage(0)
+	voltage_source.set_voltage(0)
 	voltage_source.set_output_switch(1)
 
-	logic_analyzer.run_open_module(0)
+	logic_analyzer.open_module(0)
 
 	start_time = time.time()
 	for i in levels:
-		voltage_source.run_set_voltage(i)
+		voltage_source.set_voltage(i)
 		# time.sleep(0.25)
 		if i % 1 == 0:
 			print "Applying " + str(i) + " volts"
-		logic_analyzer.run_start_capture(False)
+		logic_analyzer.start_capture(False)
 
-		data_map['Data']['Collect'][str(i)] = logic_analyzer.run_get_bus_data('My Bus 1', False)
+		data_map['Data']['Collect'][str(i)] = logic_analyzer.get_bus_data('My Bus 1', False)
 
-	voltage_source.run_set_voltage(0)
+	voltage_source.set_voltage(0)
 	voltage_source.set_output_switch(0)
 
 	print "Collection took: " + str(time.time() - start_time) + " seconds"

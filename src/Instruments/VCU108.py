@@ -31,7 +31,7 @@ class VCU108(PyVisaDriver):
             data.append(line)
         return data
 
-    def run_eyescan(self, range_value=0, scale_factor=0, horizontal=127, vertical=512, drp=0, step=2):
+    def eyescan(self, range_value=0, scale_factor=0, horizontal=127, vertical=512, drp=0, step=2):
         """
         Eyescan test
         :param range_value: range for eyescan
@@ -57,14 +57,14 @@ class VCU108(PyVisaDriver):
                     continue
             return data
 
-    def run_raw_command(self, command):
+    def raw_command(self, command):
         if not self.check_connected():
             return False
         else:
             self.device.write(command)
             return self.read_data()
 
-    def run_petb_read(self, pin):
+    def petb_read(self, pin):
         """
         petb gpio read [port=0] [pin], port is always 0
         :param pin: string, pin value, must be in valid_pins
@@ -79,7 +79,7 @@ class VCU108(PyVisaDriver):
             self.device.write("petb gpio read 0 "+str(pin))
             return self.read_data()
 
-    def run_petb_set(self, pin):
+    def petb_set(self, pin):
         """
         petb gpio write [port=0] [pin], port is always 0
         :param pin: string, pin value, must be in valid_pins
@@ -94,7 +94,7 @@ class VCU108(PyVisaDriver):
             self.device.write("petb gpio set 0 "+str(pin))
             return self.read_data()
 
-    def run_petb_clear(self, pin):
+    def petb_clear(self, pin):
         """
         petb gpio write [port=0] [pin], port is always 0
         :param pin: string, pin value, must be in valid_pins
@@ -109,7 +109,7 @@ class VCU108(PyVisaDriver):
             self.device.write("petb gpio clear 0 "+str(pin))
         return self.read_data()
 
-    def run_petb_toggle(self, pin):
+    def petb_toggle(self, pin):
         """
         petb gpio write [port=0] [pin], port is always 0
         :param pin: string, pin value, must be in valid_pins
@@ -124,7 +124,7 @@ class VCU108(PyVisaDriver):
             self.device.write("petb gpio toggle 0 "+str(pin))
             return self.read_data()
 
-    def run_pek_read(self, pin=0, port=0):
+    def pek_read(self, pin=0, port=0):
         """
         pek gpio read [port=0] [pin=0]
         :param pin: string, pin value, must be in valid_pins
@@ -145,7 +145,7 @@ class VCU108(PyVisaDriver):
             self.device.write("pek gpio read " + str(port) + " " + str(pin))
             return self.read_data()
 
-    def run_pek_set(self, pin=0, port=0):
+    def pek_set(self, pin=0, port=0):
         """
         pek gpio set [port=0] [pin=0]
         :param pin: string, pin value, must be in valid_pins
@@ -166,7 +166,7 @@ class VCU108(PyVisaDriver):
             self.device.write("pek gpio set " + str(port) + " " + str(pin))
             return self.read_data()
 
-    def run_pek_clear(self, pin=0, port=0):
+    def pek_clear(self, pin=0, port=0):
         """
         pek gpio clear [port=0] [pin=0]
         :param pin: string, pin value, must be in valid_pins
@@ -187,7 +187,7 @@ class VCU108(PyVisaDriver):
             self.device.write("pek gpio clear " + str(port) + " " + str(pin))
             return self.read_data()
 
-    def run_pek_toggle(self, pin=0, port=0):
+    def pek_toggle(self, pin=0, port=0):
         """
         pek gpio toggle [port=0] [pin=0]
         :param pin: string, pin value, must be in valid_pins
@@ -208,7 +208,7 @@ class VCU108(PyVisaDriver):
             self.device.write("pek gpio toggle " + str(port) + " " + str(pin))
             return self.read_data()
 
-    def run_pek_write(self, pin=0, port=0, value=0):
+    def pek_write(self, pin=0, port=0, value=0):
         """
         pek gpio write [port=0] [pin=0]
         :param pin: string, pin value, must be in valid_pins
@@ -234,7 +234,7 @@ class VCU108(PyVisaDriver):
             self.device.write("pek gpio write " + str(port) + " " + str(pin) + " " + str(value))
             return self.read_data()
 
-    def run_pek_list(self):
+    def pek_list(self):
         """
         pek gpio list
         :return: data, all data from command, will need to be parsed later
@@ -245,7 +245,7 @@ class VCU108(PyVisaDriver):
             self.device.write("pek gpio list")
             return self.read_data()
 
-    def run_adc_read(self, channel="00"):
+    def adc_read(self, channel="00"):
         """
         adc read [channel]
         :param channel: string, must be in valid_channels
@@ -262,7 +262,7 @@ class VCU108(PyVisaDriver):
             self.device.write("adc read " + str(channel))
             return self.read_data()
 
-    def run_dac_write(self, value=""):
+    def dac_write(self, value=""):
         """
         dac write []
         :param value: string, data to be written to the DAC
@@ -274,7 +274,7 @@ class VCU108(PyVisaDriver):
             self.device.write("dac write " + str(value))
             return self.read_data()
 
-    def run_spixfer(self, value):
+    def spixfer(self, value):
         """
         spixfer [string]
         :param value: string, data to be written to SPI
@@ -286,7 +286,7 @@ class VCU108(PyVisaDriver):
             self.device.write("spixfer " + str(value))
             return self.read_data()
 
-    def run_spilib(self, value):
+    def spilib(self, value):
         """
         spilib [string]
         :param value: string, data to be written to SPI
@@ -298,7 +298,7 @@ class VCU108(PyVisaDriver):
             self.device.write("spilib "+str(value))
             return self.read_data()
 
-    def run_i2cwrite(self, address, value):
+    def i2cwrite(self, address, value):
         """
         i2cwrite [address] [byte value]
         :param address: string, must be between 0x00 and 0xFF
@@ -316,7 +316,7 @@ class VCU108(PyVisaDriver):
             self.device.write("i2cwrite " + str(address) + " " + str(value))
             return self.read_data()
 
-    def run_i2cread(self, address, value=""):
+    def i2cread(self, address, value=""):
         """
         i2cwrite [address] [byte value]
         :param address: string, must be between 0x00 and 0xFF

@@ -1,4 +1,5 @@
 import time
+import os
 
 BITRATE = "\"INF10G\""
 NO_OFFSET = 0
@@ -9,7 +10,7 @@ BIT_VIEW_NUMBER = 2
 DISPLAY_TYPE = "EYE"
 SAMPLE_LIMIT = 10  # million
 GATING_CYCLE = "REPeat"
-PNG_FILE_LOCATION = r"C:\Users\mdn4993\Downloads\yolo.png"
+PNG_FILE_LOCATION = "yolo.png"
 TEST_HEADER = "BERTWave-> "
 
 
@@ -32,9 +33,9 @@ def main(data_map, experiment_result):
 
     # Eye/Pulse Scope Graph Configuration
     device.set_scale(SCALE)
-    device.set_amplitude_offset(NO_OFFSET)
-    device.set_bit_view_number(BIT_VIEW_NUMBER)
-    device.set_time_offset(TIME_OFFSET)
+    device.set_vertical_offset(NO_OFFSET)
+    device.set_view_number_bits(BIT_VIEW_NUMBER)
+    device.set_time_ps_offset(TIME_OFFSET)
 
     # Eye/Pulse Scope Setup
     device.set_display_type(DISPLAY_TYPE)
@@ -66,10 +67,8 @@ def main(data_map, experiment_result):
     print(TEST_HEADER + "omitted error count:\t" + str(device.get_error_rate_omitted()))
 
     png_bytes = device.get_last_screenshot()
-    fil = open(PNG_FILE_LOCATION, "wb")
-    fil.write(png_bytes)
-    fil.close()
+    experiment_result.add_image_file(png_bytes, PNG_FILE_LOCATION)
 
-    print(TEST_HEADER + "Eye diagram output path: " + PNG_FILE_LOCATION)
+    print(TEST_HEADER + "Eye diagram output path: " + os.path.join(experiment_result.experiment_results_directory, PNG_FILE_LOCATION))
 
     print

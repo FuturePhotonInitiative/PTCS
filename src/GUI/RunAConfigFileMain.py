@@ -18,6 +18,7 @@ def spawn_scripts(scripts, data_map, experiment_result):
         two different tasks can have the same order, meaning they should be spawned at the same time.
     :param scripts: The scripts pulled from the config
     :param data_map: The dictionary to store data between tasks
+    :param experiment_result: The experiment result object to pass into the main class of the script(s) when called
     :return: None
     """
     for script in scripts:
@@ -42,6 +43,8 @@ def main(args, config_manager=None, queue_result=None):
     from Application.SystemConfigManager import SystemConfigManager
     if config_manager is None:
         config_manager = SystemConfigManager()
+    results_manager = config_manager.get_results_manager()
+
     from Model.QueueResultModel import QueueResultsModel
     if queue_result is None:
         queue_result = QueueResultsModel()
@@ -71,7 +74,7 @@ def main(args, config_manager=None, queue_result=None):
 
     print("Running Experiment: " + config.name + "\n\n")
     experiment_result, experiment_result_name = \
-        config_manager.get_results_manager().make_new_experiment_result(file_name, queue_result)
+        results_manager.make_new_experiment_result(file_name, queue_result)
 
     with contextlib2.ExitStack() as stack:
         # if there are devices in the config file
@@ -79,12 +82,14 @@ def main(args, config_manager=None, queue_result=None):
             device_setup = DeviceSetup()
             data_map['Devices'] = device_setup.connect_devices(config.devices, stack)
 
-        # Create json file for Config used in experiment
+        # save the config and the param file to the results directory
         experiment_result.add_json_file_dict("Config", data_map['Config'])
+        if arguments.get_param_file():
+            experiment_result.add_result_file(arguments.get_param_file())
         spawn_scripts(config.experiment, data_map, experiment_result)
 
     experiment_result.end_experiment()
-    config_manager.get_results_manager().save_experiment_result(experiment_result_name, experiment_result)
+    results_manager.save_experiment_result(experiment_result_name, experiment_result)
     print 'Experiment complete, goodbye!'
 
 

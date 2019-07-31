@@ -18,7 +18,7 @@ def main(data_map, experiment_result):
     vcu108.device.read_termination = '\n'
 
     experiment_result.start_experiment()
-    data_map['Data']['Collect'] = vcu108.run_eyescan(range_value=range, scale_factor=scale, horizontal=horizontal,
+    data_map['Data']['Collect'] = vcu108.eyescan(range_value=range, scale_factor=scale, horizontal=horizontal,
                                                      vertical=vertical, drp=drp, step=step)
     experiment_result.end_experiment()
     return

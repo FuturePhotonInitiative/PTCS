@@ -16,7 +16,7 @@ class HP8163A(IEEE_488_2):
         self.__channel = None
         self.__port = None
 
-    def run_set_channel(self, channel):
+    def set_channel(self, channel):
         if '.' in str(channel):
             segments = channel.split('.')
             self.__channel = int(segments[0])
@@ -25,22 +25,22 @@ class HP8163A(IEEE_488_2):
             self.__channel = int(channel)
             self.__port = 1
 
-    def run_get_power(self):
+    def get_power(self):
         cmd = 'read'
         cmd += self.__channel + ':chan' + self.__port
         cmd += ':pow?'
         return float(self.device.query(cmd))
 
-    def run_config_meter(self, range):
+    def config_meter(self, range):
         if self.__port != 2:
             range = str(range)
             self.device.write('sens' + self.__channel + ':chan' + self.__port + ':pow:unit 0')
             self.device.write('sens' + self.__channel + ':chan' + self.__port + ':pow:range:auto 0')
             self.device.write('sens' + self.__channel + ':chan' + self.__port + ':pow:range ' + range + 'DBM')
 
-    def run_prep_measure_on_trigger(self, samples=64):
+    def prep_measure_on_trigger(self, samples=64):
         if self.__port != 2:
-            self.run_clear_status()
+            self.clear_status()
             samples = str(samples)
             self.device.write('sens' + self.__channel + ':chan' + self.__port + ':func:stat logg,stop')
             self.device.write('trig' + self.__channel + ':chan' + self.__port + ':inp sme')
@@ -51,7 +51,7 @@ class HP8163A(IEEE_488_2):
             self.device.query('sens' + self.__channel + ':chan' + self.__port + ':func:stat?')
             self.device.query('syst:err?')
 
-    def run_get_results_from_log(self, samples=64):
+    def get_results_from_log(self, samples=64):
         if self.__port != 2:
             self.device.query('sens' + self.__channel + ':chan' + self.__port + ':func:stat?')
         samples = int(samples)

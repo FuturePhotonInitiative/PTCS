@@ -6,7 +6,7 @@ class KST_Z812B(Motor_KST_ZST):
     def __init__(self, device):
         Motor_KST_ZST.__init__(self, device)
 
-    def run_home(self):
+    def home(self):
         """
         Puts the motor to backward limit position so that the
         position markers make sense
@@ -24,6 +24,6 @@ class KST_Z812B(Motor_KST_ZST):
         # self.logger.info('homed successfully.', extra=self.ext)
         # self.moving = False
 
-    def run_delta_root(self, degrees):
+    def delta_root(self, degrees):
         if self.deg_pos + degrees > self.STOP_LIMIT or self.deg_pos + degrees < -self.STOP_LIMIT:
             return False

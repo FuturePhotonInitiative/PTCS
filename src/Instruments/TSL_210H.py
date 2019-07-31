@@ -17,7 +17,7 @@ class TSL_210H(PyVisaDriver):
         self.min_wavelength = 1510
 
         self.active = False
-        self.run_turn_output_on()
+        self.turn_output_on()
         self.locked = True
 
         self.sweep_start = None
@@ -25,16 +25,16 @@ class TSL_210H(PyVisaDriver):
         self.sweep_step = None
         self.wavelength = None
 
-    def run_change_state(self):
+    def change_state(self):
         self.active = ~self.active
 
-    def run_get_max_wavelength(self):
+    def get_max_wavelength(self):
         return self.max_wavelength
 
-    def run_get_min_wavelength(self):
+    def get_min_wavelength(self):
         return self.min_wavelength
 
-    def run_set_wavelength(self, wavelength):
+    def set_wavelength(self, wavelength):
         if wavelength > self.max_wavelength or wavelength < self.min_wavelength:
             print 'Wavelength out of range'
         else:
@@ -50,7 +50,7 @@ class TSL_210H(PyVisaDriver):
                 check = self.device.read()
         return
 
-    def run_sweep_setup(self, start, end, step):
+    def sweep_setup(self, start, end, step):
         if start < self.min_wavelength or start > self.max_wavelength or \
                 end < self.min_wavelength or start > self.max_wavelength:
             print 'Wavelength out of range'
@@ -59,30 +59,30 @@ class TSL_210H(PyVisaDriver):
             self.sweep_end = end
             self.sweep_step = step
 
-    def run_sweep_step(self):
+    def sweep_step(self):
         if self.sweep_end > self.wavelength >= self.sweep_start:
             self.wavelength = float(self.wavelength) + float(self.sweep_step)
-            self.run_set_wavelength(self.wavelength)
+            self.set_wavelength(self.wavelength)
 
-    def run_start_sweep(self):
+    def start_sweep(self):
         if self.sweep_start is None or self.sweep_end is None or self.sweep_step is None:
             print 'Sweep not configured'
         else:
-            self.run_set_wavelength(self.sweep_start)
+            self.set_wavelength(self.sweep_start)
 
-    def run_pause_sweep(self):
+    def pause_sweep(self):
         """
         Pause sweep
         """
         self.device.write('WA')
 
-    def run_stop_sweep(self):
+    def stop_sweep(self):
         """
         Stop the sweep
         """
-        self.run_turn_output_off()
+        self.turn_output_off()
 
-    def run_check_status(self):
+    def check_status(self):
         """
         Check the status of the instrument
 
@@ -107,19 +107,19 @@ class TSL_210H(PyVisaDriver):
             return int(self.device.read()) > 0
         return False
 
-    def run_turn_output_on(self):
+    def turn_output_on(self):
         """
         Turns output of laser source ON.
         """
         self.device.write('LO')  # turn on diode
 
-    def run_turn_output_off(self):
+    def turn_output_off(self):
         """
         Turns output of laser source OFF. Output occasionally doesn't turn off unless turned ON beforehand
         """
         self.device.write('LF')  # turn off diode
 
-    def run_get_wavelength(self):
+    def get_wavelength(self):
         """
         Query the current wavelength
 
@@ -129,7 +129,7 @@ class TSL_210H(PyVisaDriver):
         # return float(self.device.read())
         return float(self.device.query('WA'))
 
-    def run_set_power(self, power):
+    def set_power(self, power):
         """
         Set power in dbm
 
@@ -138,7 +138,7 @@ class TSL_210H(PyVisaDriver):
         """
         self.device.write('OP' + str(power))
 
-    def run_get_power(self):
+    def get_power(self):
         """
         Gets output power in dbm
 
@@ -148,7 +148,7 @@ class TSL_210H(PyVisaDriver):
         # return float(self.gpib.read())
         return float(self.device.query('OP'))
 
-    def run_set_current(self, current):
+    def set_current(self, current):
         """
         Set the current. Note: current is mA
 
@@ -157,7 +157,7 @@ class TSL_210H(PyVisaDriver):
         """
         self.device.write('CU' + str(current))
 
-    def run_get_current(self):
+    def get_current(self):
         """
         Queries the current, Note: current is mA
 
@@ -167,7 +167,7 @@ class TSL_210H(PyVisaDriver):
         # return float(self.gpib.read())
         return float(self.device.query('CU'))
 
-    def run_set_temperature(self, temperature):
+    def set_temperature(self, temperature):
         """
         Set the temperature. Note: temperature is C
 
@@ -176,7 +176,7 @@ class TSL_210H(PyVisaDriver):
         """
         self.device.write('TL' + str(temperature))
 
-    def run_get_temperature(self):
+    def get_temperature(self):
         """
         Queries the temperature, Note: temperature is C
 
@@ -186,19 +186,19 @@ class TSL_210H(PyVisaDriver):
         # return float(self.gpib.read())
         return float(self.device.query('TL'))
 
-    def run_set_ACC(self):
+    def set_ACC(self):
         """
         Sets the ACC
         """
         self.device.write('AO')
 
-    def run_set_APC(self):
+    def set_APC(self):
         """
         Sets the APC
         """
         self.device.write('AF')
 
-    def run_get_status(self):
+    def get_status(self):
         """
         Queries the status of the...
 
@@ -208,7 +208,7 @@ class TSL_210H(PyVisaDriver):
         # return self.gpib.read()
         return self.device.query('SU')
 
-    def run_set_power_mw(self, powermw):
+    def set_power_mw(self, powermw):
         """
         Sets the powerMW
 
@@ -217,7 +217,7 @@ class TSL_210H(PyVisaDriver):
         """
         self.device.write('LP' + str(powermw))
 
-    def run_get_power_mw(self):
+    def get_power_mw(self):
         """
         Queries the status of the powerMW
 
@@ -227,19 +227,19 @@ class TSL_210H(PyVisaDriver):
         # return float(self.gpib.read())
         return float(self.device.query('LP'))
 
-    def run_coherence_on(self):
+    def coherence_on(self):
         """
         Turns coherence ON
         """
         self.device.write('CO')
 
-    def run_coherence_off(self):
+    def coherence_off(self):
         """
         Turns coherence OFF
         """
         self.device.write('CF')
 
-    def run_set_coherence(self, coherence):
+    def set_coherence(self, coherence):
         """
         Sets the coherence
 
@@ -248,7 +248,7 @@ class TSL_210H(PyVisaDriver):
         """
         self.device.write('CV' + str(coherence))
 
-    def run_get_coherence(self):
+    def get_coherence(self):
         """
         Queries the coherence value
 

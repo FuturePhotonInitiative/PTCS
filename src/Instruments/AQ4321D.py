@@ -26,7 +26,7 @@ class AQ4321D(GPIBtoUSBAdapter):
         self.device = device
         self.name += "Ando AQ4321D laser"
 
-        self.become_controller()
+        self._become_controller()
 
         self.instrument_gpib_address = 24
 
@@ -79,98 +79,96 @@ class AQ4321D(GPIBtoUSBAdapter):
         self._check_float(wavelength, MIN_WAVELENGTH, MAX_WAVELENGTH, THOUSANDTHS)
         self._send_to_device("TWL{}".format(wavelength))
 
-    def get_power(self):
+    def get_optical_power(self):
         """
         :return: The current power setting in dBm
         """
         return float(self._query_device("TPDB?"))
 
-    def set_power(self, power):
+    def set_optical_power(self, optical_power):
         """
-        :param power: The power to set. -20.0 to 10.0 inclusive, up to the tenths place.
+        :param optical_power: The power to set. -20.0 to 10.0 inclusive, up to the tenths place.
         I had issues setting the power to 10 remotely though.
         """
-        self._check_float(power, MIN_POWER, MAX_POWER, TENTHS)
-        self._send_to_device("TPDB{}".format(power))
+        self._check_float(optical_power, MIN_POWER, MAX_POWER, TENTHS)
+        self._send_to_device("TPDB{}".format(optical_power))
 
-    def set_start_sweep_wavelength(self, wavelength):
+    def _set_start_sweep_wavelength(self, wavelength):
         """
         :param wavelength: The wavelength the sweep should start at
         """
         self._check_float(wavelength, MIN_WAVELENGTH, MAX_WAVELENGTH, THOUSANDTHS)
         self._send_to_device("TSTAWL{}".format(wavelength))
 
-    def set_stop_sweep_wavelength(self, wavelength):
+    def _set_stop_sweep_wavelength(self, wavelength):
         """
         :param wavelength: The wavelength the sweep should end at
         """
         self._check_float(wavelength, MIN_WAVELENGTH, MAX_WAVELENGTH, THOUSANDTHS)
         self._send_to_device("TSTPWL{}".format(wavelength))
 
-    def set_step_sweep_wavelength(self, wavelength):
+    def _set_step_sweep_wavelength(self, wavelength):
         """
         :param wavelength: The amount of wavelength the sweep should traverse each step
         """
         self._check_float(wavelength, MIN_SWEEP_WAVELENGTH, MAX_SWEEP_WAVELENGTH, THOUSANDTHS)
         self._send_to_device("TSTEWL{}".format(wavelength))
 
-    def set_step_time_sweep(self, time):
+    def _set_step_time_sweep(self, time):
         """
         :param time: The time that each step should take in seconds
         """
         self._check_float(time, MIN_STEP_TIME, MAX_STEP_TIME, TENTHS)
         self._send_to_device("TSTET{}".format(time))
 
-    def run_sweep_step(self, start, stop, wavelength_step, time_step):
+    def run_sweep_step(self, start_wavelength, stop_wavelength, step_wavelength, time_step):
         """
         Runs a step based sweep. This will run the necessary number of steps depending on how long each step should
         take and how much wavelength should be traversed at each step
-        :param start: The wavelength the sweep should start at
-        :param stop: The wavelength the sweep should end at
-        :param wavelength_step: The amount of wavelength the sweep should traverse each step
+        :param start_wavelength: The wavelength the sweep should start at
+        :param stop_wavelength: The wavelength the sweep should end at
+        :param step_wavelength: The amount of wavelength the sweep should traverse each step
         :param time_step: The time that each step should take in seconds
         """
         self._send_to_device("TSWM{}".format(SWEEP_MODE_STEP))  # this is the step version of a sweep
-        self.set_start_sweep_wavelength(start)
-        self.set_stop_sweep_wavelength(stop)
-        self.set_step_sweep_wavelength(wavelength_step)
-        self.set_step_time_sweep(time_step)
+        self._set_start_sweep_wavelength(start_wavelength)
+        self._set_stop_sweep_wavelength(stop_wavelength)
+        self._set_step_sweep_wavelength(step_wavelength)
+        self._set_step_time_sweep(time_step)
         self.turn_laser_on()
-        self.start_sweep()
+        self._start_sweep()
         # apparently the instrument freezes for some seconds right after the laser is
         # turned on and the start sweep command is issued
         time.sleep(3.5)
-        self._print("Step sweeping in progress...")
+        self._print("Step sweeping from {}nm to {}nm by {}nm every {} seconds".format(start_wavelength, stop_wavelength,
+                                                                                      step_wavelength, time_step))
 
-    def set_cont_time_sweep(self, time):
+    def _set_cont_time_sweep(self, total_time):
         """
-        :param time: How long the continuous sweep should take in total
+        :param total_time: How long the continuous sweep should take in total
         """
-        self._check_float(time, MIN_CONT_TIME, MAX_CONT_TIME, TENTHS)
+        self._check_float(total_time, MIN_CONT_TIME, MAX_CONT_TIME, TENTHS)
         self._send_to_device("TSWET{}".format(time))
 
-    def run_sweep_continuous(self, start, stop, time_length):
+    def run_sweep_continuous(self, start_wavelength, stop_wavelength, time_length):
         """
         Runs a continuous sweep. This appears to be like one step of a step based sweep.
-        :param start: The wavelength the sweep should start at
-        :param stop: The wavelength the sweep should end at
+        :param start_wavelength: The wavelength the sweep should start at
+        :param stop_wavelength: The wavelength the sweep should end at
         :param time_length: How long the continuous sweep should take in total
         :return:
         """
         self._send_to_device("TSWM{}".format(SWEEP_MODE_CONTINUOUS))  # this is the continuous mode of a sweep
-        self.set_start_sweep_wavelength(start)
-        self.set_stop_sweep_wavelength(stop)
-        self.set_cont_time_sweep(time_length)
+        self._set_start_sweep_wavelength(start_wavelength)
+        self._set_stop_sweep_wavelength(stop_wavelength)
+        self._set_cont_time_sweep(time_length)
         self.turn_laser_on()
-        self.start_sweep()
+        self._start_sweep()
         # apparently the instrument freezes for some seconds right after the laser is
         # turned on and the start sweep command is issued
         time.sleep(3.5)
-        self._print("Continuous sweeping in progress for {} seconds...".format(time_length))
-        while self.sweep_in_progress():
-            time.sleep(1)
-        self.turn_laser_off()
-        self._print("Sweeping Done!")
+        self._print("Continuous sweeping from {}nm to {}nm in {} seconds".format(start_wavelength, stop_wavelength,
+                                                                                 time_length))
 
     def sweep_in_progress(self):
         """
@@ -178,7 +176,7 @@ class AQ4321D(GPIBtoUSBAdapter):
         """
         return self._query_device("TSWEEP?")[2] != "0"
 
-    def start_sweep(self):
+    def _start_sweep(self):
         """
         starts the currently selected and configured sweep
         """

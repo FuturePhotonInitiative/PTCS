@@ -37,7 +37,7 @@ class SystemConfigManager:
         """
         if self.hardware_manager is None:
             self.hardware_manager = \
-                HardwareManager(CONSTANTS.DEVICES_CONFIG, CONSTANTS.DRIVERS_DIR, self)
+                HardwareManager(CONSTANTS.DEVICES_CONFIG, CONSTANTS.DRIVERS_DIR)
         return self.hardware_manager
 
     def get_experiments_manager(self):
@@ -47,7 +47,7 @@ class SystemConfigManager:
             A new ExperimentsManager object if one has not already been created by this class, an existing on otherwise.
         """
         if self.experiments_manager is None:
-            self.experiments_manager = ExperimentsManager(CONSTANTS.CONFIGS, CONSTANTS.SCRIPTS_DIR, self)
+            self.experiments_manager = ExperimentsManager(CONSTANTS.CONFIGS, CONSTANTS.SCRIPTS_DIR)
         return self.experiments_manager
 
     def get_queue_manager(self):
@@ -67,5 +67,5 @@ class SystemConfigManager:
             A new ResultsManager object if one has not already been created by this class, an existing on otherwise.
         """
         if self.results_manager is None:
-            self.results_manager = ResultsManager(CONSTANTS.RESULTS_DIR, CONSTANTS.RESULTS_CONFIG_DIR, self)
+            self.results_manager = ResultsManager(CONSTANTS.RESULTS_DIR, CONSTANTS.RESULTS_CONFIG_DIR)
         return self.results_manager

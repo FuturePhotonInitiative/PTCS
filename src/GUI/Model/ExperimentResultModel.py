@@ -7,6 +7,10 @@ from src.GUI.Util.CONSTANTS import TIMESTAMP_FORMAT
 
 
 class ExperimentResultsModel:
+    """
+    This contains the data and functionality that saves a json file after an experiment is run that logs
+    what happened in that experiment. This also contains functions to take data and make graphs out of it.
+    """
     def __init__(self,
                  experiment_results_directory,
                  experiment_config_location=None,
@@ -78,14 +82,19 @@ class ExperimentResultsModel:
         with open(filename, 'w') as config_file:
             json.dump(config_dict, config_file, indent=4 if pretty_print else None, default=str)
 
-    def add_result_file(self, file_name):
-        path_of_file = os.path.dirname(file_name)
-        if path_of_file != self.experiment_results_directory:
-            file_name = file_name.replace(path_of_file, "")
-            copyfile(file_name, self.experiment_results_directory + file_name)
-            self.experiments_results_files.append(self.experiment_results_directory + file_name)
+    def add_result_file(self, file_path):
+        """
+        If the file given is not already in that experiment result's folder, then
+        copy the file from the place where it is into the experiment result's directory under the same name
+        :param file_path: the path of the file to copy/keep track of
+        """
+        dirname = os.path.dirname(file_path)
+        if dirname != self.experiment_results_directory:
+            new_file_path = os.path.join(self.experiment_results_directory, os.path.basename(file_path))
+            copyfile(file_path, new_file_path)
+            self.experiments_results_files.append(new_file_path)
         else:
-            self.experiments_results_files.append(file_name)
+            self.experiments_results_files.append(file_path)
 
     def add_scatter_chart(self, file_name, x_axis, y_axis, autoscale=True, x_lim=(-10, 10), y_lim=(-10, 10),
                           x_label="", y_label="", title=""):
@@ -218,12 +227,18 @@ class ExperimentResultsModel:
         with open(out_file_name, 'w') as out_file:
             json.dump(config, out_file, separators=(',', ": "), indent=4)
         self.experiments_results_files.append(out_file_name)
-    #
-    # def add_binary_data_file(self, data, file_name):
-    #     out_file_name = self.experiment_results_directory + "//" + file_name + ".data"
-    #     out_file = open(out_file_name, "wb")
-    #     out_file.write(data)
-    #     self.experiments_results_files.append(out_file_name)
+
+    def add_binary_data_file(self, data, file_name):
+        out_file_name = os.path.join(self.experiment_results_directory, file_name + ".data")
+        with open(out_file_name, "wb") as out_file:
+            out_file.write(data)
+        self.experiments_results_files.append(out_file_name)
+
+    def add_image_file(self, data, file_name):
+        out_file_name = os.path.join(self.experiment_results_directory, file_name)
+        with open(out_file_name, "wb") as out_file:
+            out_file.write(data)
+        self.experiments_results_files.append(out_file_name)
 
     def start_experiment(self):
         self.start_datetime = datetime.datetime.today().strftime(TIMESTAMP_FORMAT)

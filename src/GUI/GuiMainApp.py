@@ -1,11 +1,11 @@
 import wx
 
-from src.GUI.Application.SystemConfigManager import SystemConfigManager
-from src.GUI.UI.MainFrame import MainFrame
-import src.GUI.Util.Globals as Globals
+from Application.SystemConfigManager import SystemConfigManager
+from UI.MainFrame import MainFrame
+import Util.Globals as Globals
 
 
-if __name__ == '__main__':
+def main():
     Globals.systemConfigManager = SystemConfigManager()
     app = wx.App()
     frame = MainFrame(None, -1)
@@ -13,3 +13,6 @@ if __name__ == '__main__':
     frame.Show()
     app.MainLoop()
 
+
+if __name__ == '__main__':
+    main()

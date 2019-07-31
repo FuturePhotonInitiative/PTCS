@@ -64,11 +64,11 @@ class AnritsuMP2100A(IEEE_488_2):
         self._channel(EYE_PULSE_SCOPE)
         return self.device.query(":DISPlay:WINDow:Y:DIVision:CHA?")
 
-    def set_amplitude_offset(self, offset):
+    def set_vertical_offset(self, offset):
         self._channel(EYE_PULSE_SCOPE)
         self.device.write(":DISPlay:WINDow:Y:OFFSets:CHA " + str(offset))
 
-    def get_amplitude_offset(self):
+    def get_vertical_offset(self):
         self._channel(EYE_PULSE_SCOPE)
         return self.device.query(":DISPlay:WINDow:Y:OFFSets:CHA?")
 
@@ -102,21 +102,21 @@ class AnritsuMP2100A(IEEE_488_2):
         self._channel(EYE_PULSE_SCOPE)
         self.device.write(":SAMPling:STATus HOLD")
 
-    def set_bit_view_number(self, bits):
+    def set_view_number_bits(self, bits):
         self._channel(EYE_PULSE_SCOPE)
         self.device.write(":DISPlay:WINDow:X:BITs " + str(bits))
 
-    def get_bit_view_number(self):
+    def get_view_number_bits(self):
         self._channel(EYE_PULSE_SCOPE)
         return self.device.query(":DISPlay:WINDow:X:BITs?")
 
-    def get_time_offset(self):
+    def get_time_ps_offset(self):
         self._channel(EYE_PULSE_SCOPE)
         return self.device.query(":DISPlay:WINDow:X:OFFSets?")
 
-    def set_time_offset(self, offset):
+    def set_time_ps_offset(self, time_ps):
         self._channel(EYE_PULSE_SCOPE)
-        self.device.write(":DISPlay:WINDow:X:OFFSets " + str(offset))
+        self.device.write(":DISPlay:WINDow:X:OFFSets " + str(time_ps))
 
     def set_display_type(self, display_type):
         self._channel(EYE_PULSE_SCOPE)
