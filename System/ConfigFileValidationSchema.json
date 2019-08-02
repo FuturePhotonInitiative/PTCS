@@ -43,7 +43,11 @@
     "data": {
       "type": ["object", "null"],
       "additionalItems": { "type": "string" }
+    },
+
+    "tcl": {
+      "type": "string"
     }
   },
-  "required": ["name", "experiment"]
+  "required": ["name"]
 }

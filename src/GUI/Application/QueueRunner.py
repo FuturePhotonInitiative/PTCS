@@ -134,7 +134,7 @@ class QueueRunner(Thread):
         output_folder = os.path.join(result_dir, name)
         os.mkdir(output_folder)
         for i in range(start_index, tcl_end):
-            with open(self.queue.get_ith_experiment(i).tcl_file, "r") as f:
+            with open(self.queue.get_ith_experiment(i).config.tcl, "r") as f:
                 # Edit the Tcl scripts with the test parameters
                 done_sets = False
                 ex_name = clean_name_for_file(self.queue.get_ith_experiment(i).get_name())

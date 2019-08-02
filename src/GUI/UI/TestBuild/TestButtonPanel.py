@@ -4,7 +4,14 @@ from src.GUI.UI.ControlPanel import ControlPanel
 
 
 class TestButtonPanel(ControlPanel):
+    """
+    Panel for rendering the buttons required to build a test.
+    """
     def __init__(self, parent):
+        """
+        Set up the Test Button Panel.
+        :param parent: The parent to display the panel on
+        """
         ControlPanel.__init__(self, parent)
 
         self.build_panel = parent.build_panel
@@ -13,9 +20,11 @@ class TestButtonPanel(ControlPanel):
 
         self.sizer = wx.BoxSizer(wx.VERTICAL)
 
+        # Button names
         names = ["IF", "ELSE", "END", "LOOP", "PARAMETER", "SET", "PRINT",
                  "SAVE", "START TIMER", "GET TIMER", "DEVICE CALL", "DEVICE READ"]
 
+        # Button patterns
         patterns = [["IF", "[STR]", "[OP]", "[STR]"],
                     ["ELSE"],
                     ["END"],
@@ -38,6 +47,13 @@ class TestButtonPanel(ControlPanel):
         self.SetSizer(self.sizer)
 
     def add_buttons(self, sizer, names, columns):
+        """
+        Add buttons to the panel.
+        :param sizer: Sizer to add to.
+        :param names: Button names.
+        :param columns: Number of columns.
+        :return: The list of buttons.
+        """
         lst = []
         rows = [wx.BoxSizer(wx.HORIZONTAL)]
         colct = 0

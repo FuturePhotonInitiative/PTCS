@@ -5,7 +5,18 @@ from src.GUI.Util import CONSTANTS
 
 
 class TestBuildPage(Page):
+    """
+    A page for building custom tests.
+    """
     def __init__(self, parent):
+        """
+        Sets up the Test Build Page
+        The page has two halves
+        The first half is the Test Button Panel, which contains the buttons for different test functions
+        The second half is the Test Build Panel which displays the lines of the current test being built
+        and allows editing the lines and saving the test.
+        :param parent: The wxframe that the Test Build Page will be shown on
+        """
         Page.__init__(self, parent)
         self.build_panel = TestBuildPanel(self)
         self.button_panel = TestButtonPanel(self)

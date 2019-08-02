@@ -116,16 +116,28 @@ class QueuePanel(DisplayPanel):
 
     @staticmethod
     def run_the_queue(event):
+        """
+        Runs the queue.
+        :param event: The triggering event.
+        """
         ui_control = Globals.systemConfigManager.get_ui_controller()
         if ui_control is not None:
             ui_control.switch_queue_to_running()
         Globals.systemConfigManager.get_queue_manager().run()
 
     def clear_queue(self, event):
+        """
+        Clears the queue.
+        :param event: The triggering event.
+        """
         self.deselected(event)
         Globals.systemConfigManager.get_queue_manager().clear_queue()
 
     def save_queue(self, event):
+        """
+        Saves the queue.
+        :param event: The triggering event.
+        """
         st = self.save_exp.GetValue().replace(" ", "_")
         while os.path.isfile(os.path.join(SAVED_EXPERIMENTS_DIR, "Saved_Experiment_" + st)):
             st += "-"
@@ -134,12 +146,20 @@ class QueuePanel(DisplayPanel):
         self.load_exp.Append(st.replace("_", " "))
 
     def load_queue(self, event):
+        """
+        Loads the queue in the load box.
+        :param event: The triggering event.
+        """
         nm = self.load_exp.GetString(self.load_exp.GetSelection()).replace(" ", "_")
         mgr = Globals.systemConfigManager.get_queue_manager()
         mgr.read_queue_from_file(os.path.join(SAVED_EXPERIMENTS_DIR, "Saved_Experiment_" + nm), CONFIGS)
 
     @staticmethod
     def get_loadable_experiments():
+        """
+        Gets possible experiments to load.
+        :return: A list of loadable experiments.
+        """
         res = []
         try:
             for fl in os.listdir(SAVED_EXPERIMENTS_DIR):
