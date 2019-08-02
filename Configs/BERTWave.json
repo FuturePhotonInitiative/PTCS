@@ -11,7 +11,15 @@
     }
   ],
   "data": {
-    "Variable_1": 0.00,
-    "Variable_2": 1.00
+    "bitrate": "\"INF10G\"",
+    "graph_vertical_offset": 0,
+    "amplitude": 0.32,
+    "graph_scale": 11.2,
+    "graph_time_offset": 0,
+    "graph_bit_view_number": 2,
+    "sampling_mode_display_type": "EYE",
+    "million_sample_limit": 10,
+    "gating_cycle_type": "REPeat",
+    "eyescan_image_name": "yolo.png"
   }
 }
