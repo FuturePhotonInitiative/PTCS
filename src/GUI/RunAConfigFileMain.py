@@ -16,17 +16,24 @@ def spawn_scripts(scripts, data_map, experiment_result):
     """
     Runs the scripts defined in the JSON config. The tasks are called based on the order specified in the config,
         two different tasks can have the same order, meaning they should be spawned at the same time.
-    :param scripts: The scripts pulled from the config
+    :param scripts: The scripts pulled from the config in sorted order
     :param data_map: The dictionary to store data between tasks
     :param experiment_result: The experiment result object to pass into the main class of the script(s) when called
     :return: None
     """
+    curr_order = -1
+    thread_groups = []
     for script in scripts:
-        threads = []  # TODO add multithreading support here
-        module = script.source[:-3]
-        if module not in [i[0] for i in globals().items() if isinstance(i[1], types.ModuleType)]:
-            globals()[module] = imp.load_source(module, os.path.join(SCRIPTS_DIR, module + '.py'))
-        [i[1] for i in inspect.getmembers(globals()[module], inspect.isfunction) if i[0] is 'main'][0](data_map, experiment_result)
+        if curr_order != script.order:
+            thread_groups.append([])
+            curr_order = script.order
+        thread_groups[-1].append(script)
+    for thread_group in thread_groups:
+        for script in thread_group:
+            module = script.source[:-3]
+            if module not in [i[0] for i in globals().items() if isinstance(i[1], types.ModuleType)]:
+                globals()[module] = imp.load_source(module, os.path.join(SCRIPTS_DIR, module + '.py'))
+            [i[1] for i in inspect.getmembers(globals()[module], inspect.isfunction) if i[0] is 'main'][0](data_map, experiment_result)
     print "Scripts Completed"
     return
 

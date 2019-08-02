@@ -74,9 +74,9 @@ class AgilentDSO7000A(IEEE_488_2):
         :return: Fall Time (seconds)
         """
         if channel_num is not None:
-            return self.device(":MEAS:FALL? CHAN"+str(channel_num), delay=8.25)
+            return self.device.query(":MEAS:FALL? CHAN"+str(channel_num), delay=8.25)
         else:
-            return self.device(":MEAS:FALL?", delay=8.25)
+            return self.device.query(":MEAS:FALL?", delay=8.25)
 
     def measure_frequency(self, channel_num=None):
         """
@@ -85,9 +85,9 @@ class AgilentDSO7000A(IEEE_488_2):
         :return: Frequency (Hertz)
         """
         if channel_num is not None:
-            return self.device(":MEAS:FREQ? CHAN"+str(channel_num), delay=8.25)
+            return self.device.query(":MEAS:FREQ? CHAN"+str(channel_num), delay=8.25)
         else:
-            return self.device(":MEAS:FREQ?", delay=8.25)
+            return self.device.query(":MEAS:FREQ?", delay=8.25)
 
     def measure_nwidth(self, channel_num=None):
         """
