@@ -1,0 +1,10 @@
+{
+	"name": "Repeat Experiment",
+	"data":
+		{
+			"Parameter": "Dummy",
+			"Start": 0,
+			"Count": 10,
+			"Step": 1
+		}
+}

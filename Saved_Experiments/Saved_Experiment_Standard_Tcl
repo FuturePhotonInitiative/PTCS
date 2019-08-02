@@ -1,0 +1,14 @@
+*Open_Ibert_Tcl
+25 // Speed
+*Bert_Tcl
+ // Results
+*Eyescan_Tcl
+1 // Vertical_Step
+0 // Scale
+0 // DRP
+512 // Vertical_Boundary
+0 // Range
+ // Results
+1 // Horizontal_Step
+127 // Horizontal_Boundary
+*Close_Project_Tcl

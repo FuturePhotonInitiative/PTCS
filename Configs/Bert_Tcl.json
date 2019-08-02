@@ -1,0 +1,12 @@
+{
+  "name": "BERT (Tcl)",
+  "tcl": "C:\\Users\\ofs9424\\SPAE\\bert_procedure.tcl",
+  "devices":
+              [
+                "VCU 108"
+              ],
+  "data":
+			{
+				"Results":""
+			}
+}

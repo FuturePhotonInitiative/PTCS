@@ -1,0 +1,13 @@
+Test- Laser Test
+Newport OPM as pd
+Laser Source as ls
+ls;run_sweep_step 1520 1530 1 2
+start timer
+t = get timer
+ct = 5
+while t <= 25:
+	if t >= ct:
+		pwr = pd;get_power_reading
+		store ct,pwr
+		ct = ct+1
+	t = get timer
