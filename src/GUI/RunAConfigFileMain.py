@@ -4,6 +4,8 @@ import types
 import contextlib2
 import imp
 import os
+import threading
+from threading import Thread
 
 from RunAConfigFile.Args import Args
 from RunAConfigFile.DeviceSetup import DeviceSetup
@@ -21,6 +23,7 @@ def spawn_scripts(scripts, data_map, experiment_result):
     :param experiment_result: The experiment result object to pass into the main class of the script(s) when called
     :return: None
     """
+    # group all the configs with the same order into a list
     curr_order = -1
     thread_groups = []
     for script in scripts:
@@ -28,14 +31,23 @@ def spawn_scripts(scripts, data_map, experiment_result):
             thread_groups.append([])
             curr_order = script.order
         thread_groups[-1].append(script)
+
+    # load the scripts, start the thread(s) and have them join on the current thread
     for thread_group in thread_groups:
+        threads = []
         for script in thread_group:
             module = script.source[:-3]
             if module not in [i[0] for i in globals().items() if isinstance(i[1], types.ModuleType)]:
                 globals()[module] = imp.load_source(module, os.path.join(SCRIPTS_DIR, module + '.py'))
-            [i[1] for i in inspect.getmembers(globals()[module], inspect.isfunction) if i[0] is 'main'][0](data_map, experiment_result)
+            func = [i[1] for i in inspect.getmembers(globals()[module], inspect.isfunction) if i[0] is 'main'][0]
+            thread = Thread(target=func, args=(data_map, experiment_result, ))
+            threads.append(thread)
+            thread.start()
+
+        for thread in threads:
+            thread.join()
+
     print "Scripts Completed"
-    return
 
 
 def main(args, config_manager=None, queue_result=None):

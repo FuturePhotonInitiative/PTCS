@@ -31,7 +31,9 @@
           },
 
           "order": {
-            "type": "number"
+            "type": "number",
+            "multipleOf": 1,
+            "minimum": 1
           }
 
         },
