@@ -7,19 +7,20 @@ import os
 from src.GUI.UI.DisplayPanel import DisplayPanel
 from src.GUI.Util import CONSTANTS
 import src.GUI.Model.TestBuildModel as build
-import src.GUI.Util.Globals as Globals
 
 
 class TestBuildPanel(DisplayPanel):
     """
     Panel for rendering a test being built and some controls for editing it.
     """
-    def __init__(self, parent):
+    def __init__(self, parent, hardware_manager):
         """
         Sets up the Test Build Panel
         :param parent: The parent to display the panel on
         """
         DisplayPanel.__init__(self, parent)
+
+        self.hardware_manager = hardware_manager
 
         # Reduction area
         self.reduce_x_line = wx.BoxSizer(wx.HORIZONTAL)
@@ -122,9 +123,8 @@ class TestBuildPanel(DisplayPanel):
         self.fc_args = {}
 
         # Getting the hardware functions from the hardware manager
-        hwm = Globals.systemConfigManager.get_hardware_manager()
-        for dev in hwm.get_all_hardware_names():
-            drv = hwm.get_hardware_object(dev).driver
+        for dev in self.hardware_manager.get_all_hardware_names():
+            drv = self.hardware_manager.get_hardware_object(dev).driver
             drvcls = imp.load_source("drvcls", os.path.join(CONSTANTS.DRIVERS_DIR, drv + ".py"))
             classes = inspect.getmembers(drvcls, inspect.isclass)
             funcs = []
@@ -298,7 +298,7 @@ class TestBuildPanel(DisplayPanel):
             elif symbol == "[DEV]":
                 # Device
                 b = wx.Choice(self)
-                b.Append(Globals.systemConfigManager.get_hardware_manager().get_all_hardware_names())
+                b.Append(self.hardware_manager.get_all_hardware_names())
                 si = b.FindString(patterns[0][i])
                 if si > -1:
                     b.SetSelection(si)

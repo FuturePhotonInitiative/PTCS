@@ -10,10 +10,9 @@ class UIController:
         assert (mainframe is not None)
         self.mainframe = mainframe
         self.controls_to_fix_text_size = []
-        self.mainframe.queue_page.set_up_ui_control(self)
-        self.mainframe.hardware_page.set_up_ui_control(self)
-        # self.mainframe.build_experiments_page.set_up_ui_control(self)
-        self.mainframe.experiment_results_page.set_up_ui_control(self)
+        # self.mainframe.queue_page.set_up_ui_control(self)
+        # self.mainframe.hardware_page.set_up_ui_control(self)
+        # self.mainframe.experiment_results_page.set_up_ui_control(self)
 
     def rebuild_all_pages(self):
         self.rebuild_queue_page()

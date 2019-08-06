@@ -3,19 +3,21 @@ import os
 
 from src.GUI.UI.DisplayPanel import DisplayPanel
 from src.GUI.Util.CONSTANTS import LIST_PANEL_COLOR, LIST_PANEL_FOREGROUND_COLOR, SAVED_EXPERIMENTS_DIR, CONFIGS
-import src.GUI.Util.Globals as Globals
 
 
 class QueuePanel(DisplayPanel):
     """
     Panel for rendering a queue of experiments
     """
-    def __init__(self, parent):
+    def __init__(self, parent, queue_manager):
         """
         Sets up the Queue Panel
         :param parent: The parent to display the panel on
         """
         DisplayPanel.__init__(self, parent)
+
+        self.ui_controller = parent.ui_controller
+        self.queue_manager = queue_manager
 
         self.list_box = wx.ListBox(self)
         # self.list_box_sizer = wx.BoxSizer(wx.HORIZONTAL)
@@ -87,9 +89,9 @@ class QueuePanel(DisplayPanel):
         Reloads the display list with the current Queue contents
         """
 
-        if self.list_box.GetCount() != len(Globals.systemConfigManager.get_queue_manager().get_experiment_names()):
+        if self.list_box.GetCount() != len(self.queue_manager.get_experiment_names()):
             self.list_box.Clear()
-            for experiment in Globals.systemConfigManager.get_queue_manager().get_experiment_names():
+            for experiment in self.queue_manager.get_experiment_names():
                 self.list_box.Append(experiment)
 
     def deselected(self, event):
@@ -108,22 +110,18 @@ class QueuePanel(DisplayPanel):
         Tells the parent to render the control panel with the selected experiment
         :param event: The event that caused the call
         """
-
-        queue_manager = Globals.systemConfigManager.get_queue_manager()
-        selected_experiment = queue_manager.get_ith_experiment(self.list_box.GetSelection())
+        selected_experiment = self.queue_manager.get_ith_experiment(self.list_box.GetSelection())
         self.GetParent().render_control_panel(selected_experiment)
         pass
 
-    @staticmethod
-    def run_the_queue(event):
+    def run_the_queue(self, event):
         """
         Runs the queue.
         :param event: The triggering event.
         """
-        ui_control = Globals.systemConfigManager.get_ui_controller()
-        if ui_control is not None:
-            ui_control.switch_queue_to_running()
-        Globals.systemConfigManager.get_queue_manager().run()
+        if self.ui_controller is not None:
+            self.ui_controller.switch_queue_to_running()
+        self.queue_manager.run()
 
     def clear_queue(self, event):
         """
@@ -131,7 +129,7 @@ class QueuePanel(DisplayPanel):
         :param event: The triggering event.
         """
         self.deselected(event)
-        Globals.systemConfigManager.get_queue_manager().clear_queue()
+        self.queue_manager.clear_queue()
 
     def save_queue(self, event):
         """
@@ -141,7 +139,7 @@ class QueuePanel(DisplayPanel):
         st = self.save_exp.GetValue().replace(" ", "_")
         while os.path.isfile(os.path.join(SAVED_EXPERIMENTS_DIR, "Saved_Experiment_" + st)):
             st += "-"
-        Globals.systemConfigManager.get_queue_manager().save_queue_to_file(SAVED_EXPERIMENTS_DIR, st)
+        self.queue_manager.save_queue_to_file(SAVED_EXPERIMENTS_DIR, st)
         print("Queue saved: " + st)
         self.load_exp.Append(st.replace("_", " "))
 
@@ -151,8 +149,7 @@ class QueuePanel(DisplayPanel):
         :param event: The triggering event.
         """
         nm = self.load_exp.GetString(self.load_exp.GetSelection()).replace(" ", "_")
-        mgr = Globals.systemConfigManager.get_queue_manager()
-        mgr.read_queue_from_file(os.path.join(SAVED_EXPERIMENTS_DIR, "Saved_Experiment_" + nm), CONFIGS)
+        self.queue_manager.read_queue_from_file(os.path.join(SAVED_EXPERIMENTS_DIR, "Saved_Experiment_" + nm), CONFIGS)
 
     @staticmethod
     def get_loadable_experiments():

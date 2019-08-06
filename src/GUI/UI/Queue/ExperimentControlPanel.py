@@ -1,7 +1,6 @@
 import wx
 
 from src.GUI.Util import CONSTANTS
-import src.GUI.Util.Globals as Globals
 from src.GUI.UI.ControlPanel import ControlPanel
 
 
@@ -18,7 +17,8 @@ class ExperimentControlPanel(ControlPanel):
         """
         ControlPanel.__init__(self, parent)
 
-        self.UI_control = Globals.systemConfigManager.get_ui_controller()
+        self.queue_manager = parent.queue_manager
+        self.experiments_manager = parent.experiments_manager
 
         # Sets up the colors display Constants are in Util.CONSTANTS
         self.SetBackgroundColour(CONSTANTS.CONTROL_PANEL_COLOR)
@@ -41,12 +41,13 @@ class ExperimentControlPanel(ControlPanel):
         self.remove_button = None
         self.add_button = None
 
+        self.ui_controller = None
+
         # Renders the panel with the given experiment
         self.render(experiment)
 
     def set_up_ui_control(self, ui_control):
-        if ui_control is None:
-            ui_control = Globals.systemConfigManager.get_ui_controller()
+        self.ui_controller = ui_control
         if ui_control:
             controls_to_add = []
 
@@ -55,15 +56,12 @@ class ExperimentControlPanel(ControlPanel):
             controls_to_add.append(self.choice_box)
             controls_to_add.append(self.remove_button)
             controls_to_add.append(self.add_button)
-            # print "ADD BUTTON:", self.add_button
-
 
             for control in controls_to_add:
                 ui_control.add_control_to_text_list(control)
 
     def clean_up_ui_control(self):
-        ui_control = Globals.systemConfigManager.get_ui_controller()
-        if ui_control:
+        if self.ui_controller:
             controls_to_add = []
 
             controls_to_add.extend(self.variables_labels)
@@ -73,7 +71,7 @@ class ExperimentControlPanel(ControlPanel):
             controls_to_add.append(self.add_button)
 
             for control in controls_to_add:
-                ui_control.remove_control_from_text_list(control)
+                self.ui_controller.remove_control_from_text_list(control)
 
     def render(self, experiment):
         """
@@ -148,8 +146,7 @@ class ExperimentControlPanel(ControlPanel):
         self.label = wx.StaticText(self)
         self.label.SetLabelText("Pre-Defined Tests")
         self.label.SetFont(wx.Font(wx.FontInfo(30)))
-        self.choice_box = wx.Choice(self,
-                    choices=Globals.systemConfigManager.get_experiments_manager().get_available_experiments_names())
+        self.choice_box = wx.Choice(self, choices=self.experiments_manager.get_available_experiments_names())
         # self.UI_control.add_control_to_text_list(self.choice_box)
         self.add_button = wx.Button(self, label="Add")
         # self.UI_control.add_control_to_text_list(self.add_button)
@@ -175,12 +172,11 @@ class ExperimentControlPanel(ControlPanel):
         :param evt: The causing event
         """
         experiment = self.choice_box.GetString(self.choice_box.GetSelection())
-        experiment = Globals.systemConfigManager.get_experiments_manager().get_experiment_from_name(experiment)
+        experiment = self.experiments_manager.get_experiment_from_name(experiment)
         if experiment:
-            Globals.systemConfigManager.get_queue_manager().add_to_queue(experiment)
+            self.queue_manager.add_to_queue(experiment)
 
-            ui_control = Globals.systemConfigManager.get_ui_controller()
-            ui_control.rebuild_queue_page()
+            self.ui_controller.rebuild_queue_page()
 
     def remove_experiment(self, evt):
         """
@@ -188,8 +184,7 @@ class ExperimentControlPanel(ControlPanel):
         :param evt: The causing event
         """
         if self.experiment:
-            Globals.systemConfigManager.get_queue_manager().remove_from_queue(self.experiment)
+            self.queue_manager.remove_from_queue(self.experiment)
             self.render_without_experiment()
 
-            ui_control = Globals.systemConfigManager.get_ui_controller()
-            ui_control.rebuild_queue_page()
+            self.ui_controller.rebuild_queue_page()

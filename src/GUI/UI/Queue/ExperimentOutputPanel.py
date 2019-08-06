@@ -1,6 +1,5 @@
 import wx
 
-import src.GUI.Util.Globals as Globals
 from src.GUI.UI.ControlPanel import ControlPanel
 from src.GUI.Util import CONSTANTS
 
@@ -18,7 +17,7 @@ class ExperimentOutputPanel(ControlPanel):
         """
         ControlPanel.__init__(self, parent)
 
-        self.UI_control = Globals.systemConfigManager.get_ui_controller()
+        self.ui_controller = parent.ui_controller
 
         # Sets up the colors display Constants are in Util.CONSTANTS
         self.SetBackgroundColour(CONSTANTS.CONTROL_PANEL_COLOR)
@@ -43,8 +42,6 @@ class ExperimentOutputPanel(ControlPanel):
         self.Bind(wx.EVT_BUTTON, self.change_mode)
 
     def set_up_ui_control(self, ui_control):
-        if ui_control is None:
-            ui_control = Globals.systemConfigManager.get_ui_controller()
         ui_control.redirectSTDout(self.out_text_field)
 
     def render(self, obj):
@@ -55,7 +52,6 @@ class ExperimentOutputPanel(ControlPanel):
         pass
 
     def change_mode(self, evt):
-        ui_control = Globals.systemConfigManager.get_ui_controller()
-        if ui_control is not None:
-            ui_control.redirectSTDout(None)
-            ui_control.switch_queue_to_edit()
+        if self.ui_controller is not None:
+            self.ui_controller.redirectSTDout(None)
+            self.ui_controller.switch_queue_to_edit()

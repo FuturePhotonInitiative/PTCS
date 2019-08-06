@@ -1,7 +1,6 @@
 import wx
 from src.GUI.UI.DisplayPanel import DisplayPanel
 from src.GUI.Util import CONSTANTS
-import src.GUI.Util.Globals as Globals
 
 
 class ExperimentListPanel(DisplayPanel):
@@ -9,12 +8,15 @@ class ExperimentListPanel(DisplayPanel):
     Panel for displaying a list of the experiments that have been run
     """
 
-    def __init__(self, parent):
+    def __init__(self, parent, results_manager):
         """
         Sets up the experiment list panel
         :param parent: The parent to display the panel on
         """
         DisplayPanel.__init__(self, parent)
+
+        self.results_manager = results_manager
+
         self.root = None
 
         self.tree_box = wx.TreeCtrl(self)
@@ -63,11 +65,10 @@ class ExperimentListPanel(DisplayPanel):
         # print "RELOADING", self.root, self, event
         if not self.root:
             self.root = self.tree_box.AddRoot(CONSTANTS.EXPERIMENT_QUEUE_RESULT_ROOT)
-        # print self.tree_box.GetChildrenCount(self.root, recursively=False), len(Globals.systemConfigManager.get_results_manager().get_queue_results())
-        if self.tree_box.GetChildrenCount(self.root, recursively=False) != len(Globals.systemConfigManager.get_results_manager().get_queue_results()):
+        if self.tree_box.GetChildrenCount(self.root, recursively=False) != len(self.results_manager.get_queue_results()):
 
             self.tree_box.DeleteChildren(self.root)
-            for que_result in Globals.systemConfigManager.get_results_manager().get_queue_results():
+            for que_result in self.results_manager.get_queue_results():
                 que_root = self.tree_box.AppendItem(self.root, que_result.get_name())
                 for exp_result_name in que_result.get_experiment_results_list():
                     self.tree_box.AppendItem(que_root, exp_result_name)
@@ -93,8 +94,7 @@ class ExperimentListPanel(DisplayPanel):
         """
         selected = self.tree_box.GetItemText(self.tree_box.GetSelection())
         try:
-            experiment_result = Globals.systemConfigManager.get_results_manager().get_experiment_result(selected)
+            experiment_result = self.results_manager.get_experiment_result(selected)
         except KeyError:
             experiment_result = None
         self.Parent.render_control_panel(experiment_result)
-

@@ -8,7 +8,7 @@ class TestBuildPage(Page):
     """
     A page for building custom tests.
     """
-    def __init__(self, parent):
+    def __init__(self, parent, hardware_manager):
         """
         Sets up the Test Build Page
         The page has two halves
@@ -18,8 +18,8 @@ class TestBuildPage(Page):
         :param parent: The wxframe that the Test Build Page will be shown on
         """
         Page.__init__(self, parent)
-        self.build_panel = TestBuildPanel(self)
-        self.button_panel = TestButtonPanel(self)
+        self.build_panel = TestBuildPanel(self, hardware_manager)
+        self.button_panel = TestButtonPanel(self, hardware_manager)
 
         Page.add_panels(self, self.build_panel, self.button_panel,
                         display_propotion=CONSTANTS.TEST_BUTTON_PANEL_PROPORTION,

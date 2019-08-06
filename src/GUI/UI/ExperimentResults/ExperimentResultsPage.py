@@ -10,7 +10,7 @@ class ExperimentResultsPage(Page):
     and the files that they created as results
     """
 
-    def __init__(self, parent):
+    def __init__(self, parent, results_manager):
         """
         Sets up the Experiment Results Page
         The page has two halves
@@ -21,7 +21,7 @@ class ExperimentResultsPage(Page):
         Page.__init__(self, parent)
 
         # Sets up both the halves of the page
-        self.experiment_list_panel = ExperimentListPanel(self)
+        self.experiment_list_panel = ExperimentListPanel(self, results_manager)
         self.results_file_list_panel = ResultsFileListPanel(self)
 
         Page.add_panels(self, self.experiment_list_panel, self.results_file_list_panel,

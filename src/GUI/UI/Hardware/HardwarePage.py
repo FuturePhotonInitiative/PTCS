@@ -9,7 +9,7 @@ class HardwarePage(Page):
     A page for displaying and modifying hardware configurations
     """
 
-    def __init__(self, parent):
+    def __init__(self, parent, hardware_manager):
         """
         Sets up the Hardware Page
         The page has two halves
@@ -22,7 +22,7 @@ class HardwarePage(Page):
         Page.__init__(self, parent)
 
         # Sets up the sub-panels
-        self.hardwareConfigurationListPanel = HardwareListPanel(self)
+        self.hardwareConfigurationListPanel = HardwareListPanel(self, hardware_manager)
         self.control_panel = ControlPanel(self)
         self.add_panels(self.hardwareConfigurationListPanel, self.control_panel,
                         display_propotion=CONSTANTS.HARDWARE_PANEL_PROPORTION,

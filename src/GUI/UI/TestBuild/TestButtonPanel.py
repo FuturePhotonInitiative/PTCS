@@ -7,7 +7,7 @@ class TestButtonPanel(ControlPanel):
     """
     Panel for rendering the buttons required to build a test.
     """
-    def __init__(self, parent):
+    def __init__(self, parent, hardware_manager):
         """
         Set up the Test Button Panel.
         :param parent: The parent to display the panel on
@@ -16,7 +16,7 @@ class TestButtonPanel(ControlPanel):
 
         self.build_panel = parent.build_panel
 
-        self.build_panel.__init__(parent)
+        self.build_panel.__init__(parent, hardware_manager)
 
         self.sizer = wx.BoxSizer(wx.VERTICAL)
 

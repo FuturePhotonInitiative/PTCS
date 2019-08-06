@@ -1,5 +1,3 @@
-
-
 def clean_name_for_file(name):
     OK_LETTERS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890_"
     name_new = ""

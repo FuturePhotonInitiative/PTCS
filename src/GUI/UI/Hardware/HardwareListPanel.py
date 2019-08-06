@@ -1,7 +1,6 @@
 import wx
 from src.GUI.UI.DisplayPanel import DisplayPanel
 from src.GUI.Util import CONSTANTS
-import src.GUI.Util.Globals as Globals
 
 
 class HardwareListPanel(DisplayPanel):
@@ -9,12 +8,14 @@ class HardwareListPanel(DisplayPanel):
     Panel for displaying a list of hardware configs
     """
 
-    def __init__(self, parent):
+    def __init__(self, parent, hardware_manager):
         """
         Sets up the Hardware List Panel
         :param parent: The parent to display the panel on
         """
         DisplayPanel.__init__(self, parent)
+
+        self.hardware_manager = hardware_manager
 
         self.list_box = wx.ListBox(self)
         # Setting up display for the Hardware list panel
@@ -23,7 +24,7 @@ class HardwareListPanel(DisplayPanel):
         self.list_box.SetForegroundColour(CONSTANTS.LIST_PANEL_FOREGROUND_COLOR)
 
         # Adds all the hardware to the display
-        for hardware in Globals.systemConfigManager.get_hardware_manager().get_all_hardware_names():
+        for hardware in self.hardware_manager.get_all_hardware_names():
             self.list_box.Append(hardware)
 
         self.sizer = wx.BoxSizer(wx.VERTICAL)
@@ -46,7 +47,7 @@ class HardwareListPanel(DisplayPanel):
         :return:
         """
         self.list_box.Clear()
-        for hardware in Globals.systemConfigManager.get_hardware_manager().get_all_hardware_names():
+        for hardware in self.hardware_manager.get_all_hardware_names():
             self.list_box.Append(hardware)
 
     def deselected(self, event):

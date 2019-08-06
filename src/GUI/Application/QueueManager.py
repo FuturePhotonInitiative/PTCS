@@ -6,8 +6,8 @@ from src.GUI.Model.ExperimentModel import Experiment
 
 
 class QueueManager:
-    def __init__(self, temp_dir, results_config_manager):
-        self.results_config_manager = results_config_manager
+    def __init__(self, temp_dir, results_manager):
+        self.results_manager = results_manager
         if not os.path.exists(temp_dir):
             os.makedirs(temp_dir)
         self.runner = None
@@ -28,8 +28,8 @@ class QueueManager:
             None, immediately
         """
         if self.runner is None:
-            queue_result = self.results_config_manager.get_results_manager().make_new_queue_result()
-            runner = QueueRunner(to_run, queue_result)
+            queue_result = self.results_manager.make_new_queue_result()
+            runner = QueueRunner(to_run, queue_result, self.results_manager)
             runner.start()
 
     def queue_is_running(self):

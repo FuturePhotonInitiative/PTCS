@@ -2,11 +2,9 @@ import os
 import datetime
 from shutil import copyfile
 from threading import Thread
-import copy
 import contextlib2
 
 from src.GUI import RunAConfigFileMain
-from src.GUI.Util import Globals
 from src.GUI.Util.Functions import clean_name_for_file
 from src.GUI.RunAConfigFile.DeviceSetup import DeviceSetup
 
@@ -22,7 +20,7 @@ class QueueRunner(Thread):
     Thread class to run a provided queue
     """
 
-    def __init__(self, queue, queue_result):
+    def __init__(self, queue, queue_result, results_manager):
         """
         Create a new QueueRunner that will run the provided queue using the provided temporary directory
         :param queue:
@@ -31,6 +29,7 @@ class QueueRunner(Thread):
         Thread.__init__(self)
         self.queue = queue
         self.queue_result = queue_result
+        self.results_manager = results_manager
         # Initialize the status of all of the experiments in the queue to "not yet run"
         self.experiment_status = {}
         for i in range(len(queue)):
@@ -58,7 +57,7 @@ class QueueRunner(Thread):
                 rt = self.queue.get_ith_experiment(i).config.data.get('Results', None)
                 if rt is not None:
                     if rt != "":
-                        Globals.systemConfigManager.get_results_manager().results_root = rt
+                        self.results_manager.results_root = rt
             if self.queue.get_ith_experiment(i).get_name() == 'Repeat Experiment':
                 if i > 0:
                     ex = self.queue.get_ith_experiment(i)
@@ -101,7 +100,7 @@ class QueueRunner(Thread):
                 try:
                     RunAConfigFileMain.main(
                         ["RunAConfigFileMain.py", "-c", tmp_file_name],
-                        config_manager=Globals.systemConfigManager,
+                        results_manager=self.results_manager,
                         queue_result=self.queue_result
                     )
                 finally:
@@ -129,7 +128,7 @@ class QueueRunner(Thread):
         name = "Tcl_Experiment" + str(now)
         name = clean_name_for_file(name)
         self.queue_result.time = now
-        result_dir = Globals.systemConfigManager.get_results_manager().results_root
+        result_dir = self.results_manager.results_root
         master_tcl = ""
         output_folder = os.path.join(result_dir, name)
         os.mkdir(output_folder)
@@ -188,8 +187,11 @@ class QueueRunner(Thread):
         print "exporting to " + tmp_file_name
         master_experiment.export_to_json(tmp_file_name)
         # Run the experiment
-        RunAConfigFileMain.main(["RunAConfigFileMain.py", "-c", tmp_file_name], config_manager=Globals.systemConfigManager,
-                            queue_result=self.queue_result)
+        RunAConfigFileMain.main(
+            ["RunAConfigFileMain.py", "-c", tmp_file_name],
+            results_manager=self.results_manager,
+            queue_result=self.queue_result
+        )
         for i in range(start_index, tcl_end):
             ex_name = clean_name_for_file(self.queue.get_ith_experiment(i).get_name())
             if len(os.listdir(result_dir + "/" + name + "/" + ex_name + "_" + str(i+1))) == 0:

@@ -3,37 +3,49 @@ import wx
 from ExperimentResults.ExperimentResultsPage import ExperimentResultsPage
 from Hardware.HardwarePage import HardwarePage
 from Queue.QueuePage import QueuePage
+from TestBuild.TestBuildPage import TestBuildPage
+
+from src.GUI.Application.HardwareManager import HardwareManager
+from src.GUI.Application.ExperimentsManager import ExperimentsManager
+from src.GUI.Application.ResultsManager import ResultsManager
+from src.GUI.Application.QueueManager import QueueManager
 
 from src.GUI.Util import CONSTANTS
-from src.GUI.UI.TestBuild.TestBuildPage import TestBuildPage
-from src.GUI.Util import Globals
+from src.GUI.Application.UIController import UIController
 
 
 class MainFrame(wx.Frame):
     def __init__(self, parent, id):
+        hardware_manager = HardwareManager(CONSTANTS.DEVICES_CONFIG, CONSTANTS.DRIVERS_DIR)
+        experiments_manager = ExperimentsManager(CONSTANTS.CONFIGS, CONSTANTS.SCRIPTS_DIR)
+        results_manager = ResultsManager(CONSTANTS.RESULTS_DIR, CONSTANTS.RESULTS_CONFIG_DIR)
+        queue_manager = QueueManager(CONSTANTS.TEMP_DIR, results_manager)
+
         wx.Frame.__init__(self, parent, id, CONSTANTS.MAIN_PAGE_TITLE, size=CONSTANTS.PAGE_SIZE)
         self.panel = wx.Panel(self)
         self.notebook = wx.Notebook(self.panel)
-        # self.notebook.SetTabSize()
+
+        self.ui_controller = UIController(self)
+
+        self.queue_page = QueuePage(self.notebook, experiments_manager, self.ui_controller, queue_manager)
+        self.hardware_page = HardwarePage(self.notebook, hardware_manager)
+        self.experiment_results_page = ExperimentResultsPage(self.notebook, results_manager)
+        self.test_build_page = TestBuildPage(self.notebook, hardware_manager)
 
         self.timer = wx.Timer(self)
-        self.queue_page = QueuePage(self.notebook)
-        self.hardware_page = HardwarePage(self.notebook)
-        # self.build_experiments_page = BuildExperimentsPage(self.notebook)
-        self.experiment_results_page = ExperimentResultsPage(self.notebook)
-        self.test_build_page = TestBuildPage(self.notebook)
+        self.queue_page.set_up_ui_control(self.ui_controller)
+        self.hardware_page.set_up_ui_control(self.ui_controller)
+        self.experiment_results_page.set_up_ui_control(self.ui_controller)
 
         self.notebook.AddPage(self.queue_page, CONSTANTS.QUEUE_PAGE_NAME)
         self.notebook.AddPage(self.experiment_results_page, CONSTANTS.RESULTS_PAGE_NAME)
         self.notebook.AddPage(self.hardware_page, CONSTANTS.HARDWARE_PAGE_NAME)
         self.notebook.AddPage(self.test_build_page, CONSTANTS.TEST_BUILD_PAGE_NAME)
-        # self.notebook.AddPage(self.build_experiments_page, CONSTANTS.BUILD_EXPERIMENTS_PAGE_NAME)
 
         sizer = wx.BoxSizer()
         sizer.Add(self.notebook, 1, wx.EXPAND)
         self.panel.SetSizer(sizer)
         sizer.Layout()
-        # self.fix_tab_size(None)
         self.Bind(wx.EVT_SIZE, self.fix_tab_size)
         self.Bind(wx.EVT_TIMER, self.run_page_update, self.timer)
         self.timer.Start(500)
@@ -51,8 +63,5 @@ class MainFrame(wx.Frame):
         self.notebook.SetPadding(wx.Size(size, 3))
 
     def run_page_update(self, event):
-        # print "ding"
-        UI_controller = Globals.systemConfigManager.get_ui_controller()
-        if UI_controller:
-            UI_controller.fix_control_list()
-            UI_controller.rebuild_all_pages()
+        self.ui_controller.fix_control_list()
+        self.ui_controller.rebuild_all_pages()

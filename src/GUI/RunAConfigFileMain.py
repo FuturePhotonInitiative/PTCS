@@ -31,20 +31,15 @@ def spawn_scripts(scripts, data_map, experiment_result):
     return
 
 
-def main(args, config_manager=None, queue_result=None):
+def main(args, results_manager=None, queue_result=None):
     """
     Entry point of PTCS.
     Loads config file, parses parameters, sets up the devices, and runs the scripts specified.
     :param args: run RunAConfigFileMain.py with no arguments to see the argument specification
-    :param config_manager: the ConfigurationManager object to obtain configuration data for running the scripts
+    :param results_manager: the ResultsManager object store the results in
     :param queue_result: the QueueResult object to add run result data to
     :return: None
     """
-    from Application.SystemConfigManager import SystemConfigManager
-    if config_manager is None:
-        config_manager = SystemConfigManager()
-    results_manager = config_manager.get_results_manager()
-
     from Model.QueueResultModel import QueueResultsModel
     if queue_result is None:
         queue_result = QueueResultsModel()
