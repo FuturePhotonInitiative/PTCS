@@ -1,5 +1,5 @@
 {
-  "name": "Power Test",
+  "name": "Optical Power Accuracy Test",
   "devices":[
     "Newport OPM",
     "Laser Source"

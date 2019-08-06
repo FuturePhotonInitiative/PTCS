@@ -257,6 +257,10 @@ class AgilentDSO7000A(IEEE_488_2):
         # Return the saved file path and file name
         return self.device.query(":SAVE:PWD?")+self.device.query("SAVE:FIL?")
 
+    # someone went back in time and is messing with me: do_query_ieee_block
+    def get_capture(self):
+        return self.device.read_bytes(":DISPlay:DATA? PNG")
+
     def time_range(self, time_ns):
         """
         Update the timebase to specified value
