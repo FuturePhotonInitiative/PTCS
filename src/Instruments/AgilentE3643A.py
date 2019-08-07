@@ -51,13 +51,9 @@ class AgilentE3643A(IEEE_488_2):
 
         :param value: Specified voltage value, defaults to 0
         :type value: float
-        :raises: Exception when serial communication port is not open
         """
-        if self.check_connected():
-            self.device.write('VOLT {}'.format(str(value)))
-            time.sleep(0.25)
-        else:
-            raise Exception('Serial communication port is not open.')
+        self.device.write('VOLT {}'.format(value))
+        time.sleep(.25)
 
     def set_current(self, value=0):
         """
@@ -65,13 +61,9 @@ class AgilentE3643A(IEEE_488_2):
 
         :param value: Specified current value, defaults to 0
         :type value: float
-        :raises: Exception when serial communication port is not open
         """
-        if self.check_connected():
-            self.device.write('CURR {}'.format(str(value)))
-            time.sleep(0.25)
-        else:
-            raise Exception('Serial communication port is not open.')
+        self.device.write('CURR {}'.format(value))
+        time.sleep(.25)
 
     def set_over_voltage(self, value=0):
         """

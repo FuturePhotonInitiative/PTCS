@@ -18,6 +18,8 @@ class ExperimentsManager:
         self.cache_is_valid = True
 
     def get_available_experiments_names(self):
+        if not self.cache_is_valid:
+            self.rebuild_available_experiments()
         names = self.available_experiments.keys()
         names.sort()
         return names
@@ -25,10 +27,9 @@ class ExperimentsManager:
     def rebuild_available_experiments(self):
         self.available_experiments = {}
         self.available_scripts = []
-        for root in self.experiment_root:
-            for experiment_file in os.listdir(root):
-                tmp = Experiment(experiment_file)
-                self.available_experiments[str(tmp)] = tmp
+        for experiment_file in os.listdir(self.experiment_root):
+            tmp = Experiment(os.path.join(self.experiment_root, experiment_file))
+            self.available_experiments[str(tmp)] = tmp
         for script in self.script_root:
             self.available_scripts.append(script)
         self.cache_is_valid = True
