@@ -86,7 +86,7 @@ class TestBuildPanel(DisplayPanel):
 
         self.items = []
 
-        self.param_items = []
+        # self.param_items = []
 
         self.lines = []
 

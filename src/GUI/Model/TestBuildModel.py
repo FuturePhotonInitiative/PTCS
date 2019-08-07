@@ -127,6 +127,9 @@ def parse_lines(lines, output_file, functions):
                 # Store data in the results
                 i = ret.find("store ") + 6
                 args = ret[i:].split(",")
+                if len(args) >= 3:
+                    ret = ret[:i - 6] + "data_map['Data']['Collect'][str(" + args[2].strip() + ")]" \
+                          + "][str(" + args[0].strip() + ")]" + " = " + args[1].strip()
                 ret = ret[:i-6] + "data_map['Data']['Collect'][str(" + args[0].strip() + ")]" + " = " + args[1].strip()
 
             script += "\t" + ret + "\n"

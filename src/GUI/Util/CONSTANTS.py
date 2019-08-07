@@ -38,17 +38,17 @@ CONTROL_PANEL_FOREGROUND_COLOR = wx.BLACK#wx.Colour(100, 100, 100)
 LABEL_PROPORTION = .1
 
 # directories of interest
-PROJ_DIR = dirname(dirname(dirname(dirname(abspath(__file__)))))
-TEMP_DIR = join(join(PROJ_DIR, "System"), "temp")
-CONFIGS = join(PROJ_DIR, "Configs")
-SCRIPTS_DIR = join(join(PROJ_DIR, "src"), "Scripts")
-SAVED_EXPERIMENTS_DIR = join(PROJ_DIR, "Saved_Experiments")
-DRIVERS_DIR = join(join(PROJ_DIR, "src"), "Instruments")
-RESULTS_DIR = join(PROJ_DIR, "Results")
-DEVICES_CONFIG = join(join(PROJ_DIR, "System"), "Devices.json")
-RESULTS_CONFIG_DIR = join(join(PROJ_DIR, "System"), "ResultsConfiguration")
-JSON_SCHEMA_FILE_NAME = join(join(PROJ_DIR, "System"), "ConfigFileValidationSchema.json")
-CUSTOM_TESTS_DIR = join(PROJ_DIR, "Custom_Tests")
+PROJ_DIR = dirname(dirname(dirname(dirname(abspath(__file__))))).replace("\\", "/")
+TEMP_DIR = join(join(PROJ_DIR, "System"), "temp").replace("\\", "/")
+CONFIGS = join(PROJ_DIR, "Configs").replace("\\", "/")
+SCRIPTS_DIR = join(join(PROJ_DIR, "src"), "Scripts").replace("\\", "/")
+SAVED_EXPERIMENTS_DIR = join(PROJ_DIR, "Saved_Experiments").replace("\\", "/")
+DRIVERS_DIR = join(join(PROJ_DIR, "src"), "Instruments").replace("\\", "/")
+RESULTS_DIR = join(PROJ_DIR, "Results").replace("\\", "/")
+DEVICES_CONFIG = join(join(PROJ_DIR, "System"), "Devices.json").replace("\\", "/")
+RESULTS_CONFIG_DIR = join(join(PROJ_DIR, "System"), "ResultsConfiguration").replace("\\", "/")
+JSON_SCHEMA_FILE_NAME = join(join(PROJ_DIR, "System"), "ConfigFileValidationSchema.json").replace("\\", "/")
+CUSTOM_TESTS_DIR = join(PROJ_DIR, "Custom_Tests").replace("\\", "/")
 
 EXPERIMENT_QUEUE_RESULT_ROOT = "Experiment Queues"
 

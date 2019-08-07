@@ -13,7 +13,9 @@ class ConfigFile:
     The object is then possibly manipulated and then possibly dumped to a file
     """
 
-    def __init__(self, name, experiment=[], devices=None, data=None, tcl=None):
+    def __init__(self, name, experiment=None, devices=None, data=None, tcl=None):
+        if experiment is None:
+            experiment = []
         self.name = name
 
         self.experiment = []

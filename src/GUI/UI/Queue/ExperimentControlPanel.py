@@ -1,4 +1,5 @@
 import wx
+import os
 
 from src.GUI.Util import CONSTANTS
 import src.GUI.Util.Globals as Globals
@@ -40,6 +41,7 @@ class ExperimentControlPanel(ControlPanel):
         self.choice_box = None
         self.remove_button = None
         self.add_button = None
+        self.show_source_button = None
 
         # Renders the panel with the given experiment
         self.render(experiment)
@@ -53,6 +55,7 @@ class ExperimentControlPanel(ControlPanel):
             controls_to_add.extend(self.variables_labels)
 
             controls_to_add.append(self.choice_box)
+            controls_to_add.append(self.show_source_button)
             controls_to_add.append(self.remove_button)
             controls_to_add.append(self.add_button)
             # print "ADD BUTTON:", self.add_button
@@ -69,6 +72,7 @@ class ExperimentControlPanel(ControlPanel):
             controls_to_add.extend(self.variables_labels)
 
             controls_to_add.append(self.choice_box)
+            controls_to_add.append(self.show_source_button)
             controls_to_add.append(self.remove_button)
             controls_to_add.append(self.add_button)
 
@@ -121,6 +125,18 @@ class ExperimentControlPanel(ControlPanel):
 
             # Bind the remove button to a remove function
             self.remove_button.Bind(wx.EVT_BUTTON, self.remove_experiment)
+
+            # Set up show source button
+            self.show_source_button = wx.Button(self, label="Show Source")
+
+            # Bind the show source button to a show source function
+            self.show_source_button.Bind(wx.EVT_BUTTON, self.show_source)
+
+            self.sizer.Add(self.show_source_button, 0.5, wx.EXPAND | wx.ALL)
+
+            exp_name = self.experiment.get_name().replace(" ", "_")
+            if not os.path.isfile("Custom_Tests/" + exp_name + ".txt"):
+                self.show_source_button.Disable()
 
             # Add a remove button at the bottom of the page
             self.sizer.Add(self.remove_button, 1, wx.EXPAND | wx.ALL)
@@ -193,3 +209,7 @@ class ExperimentControlPanel(ControlPanel):
 
             ui_control = Globals.systemConfigManager.get_ui_controller()
             ui_control.rebuild_queue_page()
+
+    def show_source(self, evt):
+        exp_name = self.experiment.get_name().replace(" ", "_")
+        os.system("start Custom_Tests/" + exp_name + ".txt")
