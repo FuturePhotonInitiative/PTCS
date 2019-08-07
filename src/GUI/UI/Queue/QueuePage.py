@@ -10,7 +10,7 @@ class QueuePage(Page):
     A page for setting up, and running a queue of experiments
     """
 
-    def __init__(self, parent, experiments_manager, ui_controller, queue_manager):
+    def __init__(self, parent, experiments_manager, queue_manager):
         """
         Sets up the Queue Page
         The page has two halves
@@ -20,7 +20,6 @@ class QueuePage(Page):
         """
         Page.__init__(self, parent)
         self.experiments_manager = experiments_manager
-        self.ui_controller = ui_controller
         self.queue_manager = queue_manager
 
         # Sets up the sub-panels

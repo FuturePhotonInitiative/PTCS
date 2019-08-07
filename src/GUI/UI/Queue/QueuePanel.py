@@ -16,7 +16,6 @@ class QueuePanel(DisplayPanel):
         """
         DisplayPanel.__init__(self, parent)
 
-        self.ui_controller = parent.ui_controller
         self.queue_manager = queue_manager
 
         self.list_box = wx.ListBox(self)
@@ -59,7 +58,7 @@ class QueuePanel(DisplayPanel):
         self.midbar.Add(self.input_sizer, 0.5, wx.EXPAND | wx.ALL)
 
         self.sizer.Add(self.midbar, 1, wx.EXPAND | wx.ALL)
-        self.sizer.Add(self.run_button, 2, wx.EXPAND | wx.ALL)
+        self.sizer.Add(self.run_button, 1, wx.EXPAND | wx.ALL)
 
         # Sets up the colors display Constants are in Util.CONSTANTS
         self.list_box.SetBackgroundColour(LIST_PANEL_COLOR)
@@ -81,7 +80,10 @@ class QueuePanel(DisplayPanel):
         self.load_button.Bind(wx.EVT_BUTTON, self.load_queue)
         self.clear_button.Bind(wx.EVT_BUTTON, self.clear_queue)
 
+        self.ui_controller = None
+
     def set_up_ui_control(self, ui_control):
+        self.ui_controller = ui_control
         ui_control.add_control_to_text_list(self.run_button)
 
     def reload(self):

@@ -17,8 +17,6 @@ class ExperimentOutputPanel(ControlPanel):
         """
         ControlPanel.__init__(self, parent)
 
-        self.ui_controller = parent.ui_controller
-
         # Sets up the colors display Constants are in Util.CONSTANTS
         self.SetBackgroundColour(CONSTANTS.CONTROL_PANEL_COLOR)
         self.SetForegroundColour(CONSTANTS.CONTROL_PANEL_FOREGROUND_COLOR)
@@ -41,7 +39,10 @@ class ExperimentOutputPanel(ControlPanel):
         # Renders the panel with the given experiment
         self.Bind(wx.EVT_BUTTON, self.change_mode)
 
+        self.ui_controller = None
+
     def set_up_ui_control(self, ui_control):
+        self.ui_controller = ui_control
         ui_control.redirectSTDout(self.out_text_field)
 
     def render(self, obj):

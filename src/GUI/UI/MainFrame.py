@@ -16,18 +16,19 @@ from src.GUI.Application.UIController import UIController
 
 class MainFrame(wx.Frame):
     def __init__(self, parent, id):
+        wx.Frame.__init__(self, parent, id, CONSTANTS.MAIN_PAGE_TITLE, size=CONSTANTS.PAGE_SIZE)\
+
         hardware_manager = HardwareManager(CONSTANTS.DEVICES_CONFIG, CONSTANTS.DRIVERS_DIR)
         experiments_manager = ExperimentsManager(CONSTANTS.CONFIGS, CONSTANTS.SCRIPTS_DIR)
         results_manager = ResultsManager(CONSTANTS.RESULTS_DIR, CONSTANTS.RESULTS_CONFIG_DIR)
         queue_manager = QueueManager(CONSTANTS.TEMP_DIR, results_manager)
 
-        wx.Frame.__init__(self, parent, id, CONSTANTS.MAIN_PAGE_TITLE, size=CONSTANTS.PAGE_SIZE)
         self.panel = wx.Panel(self)
         self.notebook = wx.Notebook(self.panel)
 
         self.ui_controller = UIController(self)
 
-        self.queue_page = QueuePage(self.notebook, experiments_manager, self.ui_controller, queue_manager)
+        self.queue_page = QueuePage(self.notebook, experiments_manager, queue_manager)
         self.hardware_page = HardwarePage(self.notebook, hardware_manager)
         self.experiment_results_page = ExperimentResultsPage(self.notebook, results_manager)
         self.test_build_page = TestBuildPage(self.notebook, hardware_manager)
