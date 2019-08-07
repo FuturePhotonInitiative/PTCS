@@ -20,6 +20,6 @@
     "sampling_mode_display_type": "EYE",
     "million_sample_limit": 10,
     "gating_cycle_type": "REPeat",
-    "eyescan_image_name": "yolo.png"
+    "eyescan_image_name": "eyescan.png"
   }
 }
