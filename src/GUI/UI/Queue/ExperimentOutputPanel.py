@@ -31,7 +31,7 @@ class ExperimentOutputPanel(ControlPanel):
         style = wx.TE_MULTILINE | wx.TE_READONLY | wx.HSCROLL
         self.out_text_field = wx.TextCtrl(self, style=style)
         self.stop_button = wx.Button(self)
-        self.stop_button.SetLabelText("Exit")
+        self.stop_button.SetLabelText("Back to Test List")
 
         self.sizer.Add(self.out_text_field, 5, wx.EXPAND | wx.ALL)
         self.sizer.Add(self.stop_button, 1, wx.EXPAND | wx.ALL)

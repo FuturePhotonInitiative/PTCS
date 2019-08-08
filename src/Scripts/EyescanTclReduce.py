@@ -18,18 +18,19 @@ def main(data_map, experiment_result):
         if test.startswith("Eyescan__Tcl__"):
             index = test[14:]
             reduced = []
-            with open(dr + "/" + test + "/Collected_Data.csv") as data:
-                reader = csv.reader(data, delimiter=',')
-                ind = 0
-                for row in reader:
-                    ind += 1
-                    if ind >= 23:
-                        lyst = row[1:]
-                        if len(lyst) > 0:
-                            floatrow = []
-                            for v in lyst:
-                                floatrow.append(float(v) * 200.0)
-                            reduced.append(floatrow)
+            if os.path.isfile(dr + "/" + test + "/Collected_Data.csv"):
+                with open(dr + "/" + test + "/Collected_Data.csv") as data:
+                    reader = csv.reader(data, delimiter=',')
+                    ind = 0
+                    for row in reader:
+                        ind += 1
+                        if ind >= 23:
+                            lyst = row[1:]
+                            if len(lyst) > 0:
+                                floatrow = []
+                                for v in lyst:
+                                    floatrow.append(float(v) * 200.0)
+                                reduced.append(floatrow)
 
-            experiment_result.add_heat_map(reduced, "Eye Scan Heat Map",
-                                           colormap, path=test + "/Eye Scan Heat Map", vmax=25)
+                experiment_result.add_heat_map(reduced, "Eye Scan Heat Map",
+                                               colormap, path=test + "/Eye Scan Heat Map", vmax=25)

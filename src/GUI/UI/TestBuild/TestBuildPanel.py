@@ -307,10 +307,10 @@ class TestBuildPanel(DisplayPanel):
             elif symbol == "[FNC]":
                 # Function
                 b = wx.Choice(self)
-                i = items[1].GetSelection()
+                k = items[1].GetSelection()
                 dev = ""
-                if i > -1:
-                    dev = items[1].GetString(i)
+                if k > -1:
+                    dev = items[1].GetString(k)
                 for fc in self.device_functions.get(dev, []):
                     b.Append(fc[0])
                 si = b.FindString(patterns[0][i])
