@@ -11,6 +11,7 @@ from src.GUI.Util.Functions import clean_name_for_file
 from src.GUI.RunAConfigFile.DeviceSetup import DeviceSetup
 
 from src.GUI.Model.ExperimentModel import Experiment
+from src.GUI.Model.ExperimentScriptModel import ExperimentScript
 
 from src.GUI.Util.CONSTANTS import TIMESTAMP_FORMAT
 from src.GUI.Util.CONSTANTS import TEMP_DIR
@@ -58,7 +59,7 @@ class QueueRunner(Thread):
                 rt = self.queue.get_ith_experiment(i).config.data.get('Results', None)
                 if rt is not None:
                     if rt != "":
-                        Globals.systemConfigManager.get_results_manager().results_root = rt
+                        Globals.systemConfigManager.get_results_manager().results_directory = rt
             if self.queue.get_ith_experiment(i).get_name() == 'Repeat Experiment':
                 if i > 0:
                     ex = self.queue.get_ith_experiment(i)
@@ -129,9 +130,9 @@ class QueueRunner(Thread):
         name = "Tcl_Experiment" + str(now)
         name = clean_name_for_file(name)
         self.queue_result.time = now
-        result_dir = Globals.systemConfigManager.get_results_manager().results_root
+        result_dir = Globals.systemConfigManager.get_results_manager().results_directory
         master_tcl = ""
-        output_folder = os.path.join(result_dir, name)
+        output_folder = os.path.join(result_dir, name).replace("\\", "/")
         os.mkdir(output_folder)
         for i in range(start_index, tcl_end):
             with open(self.queue.get_ith_experiment(i).config.tcl, "r") as f:
@@ -162,7 +163,7 @@ class QueueRunner(Thread):
             f.writelines(master_tcl)
 
         # Read in necessary devices and scripts
-        master_experiment = Experiment("..\\..\\template.json")
+        master_experiment = Experiment("template.json")
         for i in range(start_index, tcl_end):
             if self.queue.get_ith_experiment(i).config.devices is not None:
                 for key in self.queue.get_ith_experiment(i).config.devices:
@@ -184,8 +185,7 @@ class QueueRunner(Thread):
                      "os.system('C:\\Xilinx\\Vivado\\2017.4\\bin\\vivado -mode tcl < ' + '" + target_location + "')")
                     .replace('\\', '\\\\'))
         copyfile(pyLoc, output_folder + "/script.py")
-        master_experiment.config.experiment.append(exp)
-        print "exporting to " + tmp_file_name
+        master_experiment.config.experiment.append(ExperimentScript(exp))
         master_experiment.export_to_json(tmp_file_name)
         # Run the experiment
         RunAConfigFileMain.main(["RunAConfigFileMain.py", "-c", tmp_file_name], config_manager=Globals.systemConfigManager,
@@ -195,8 +195,11 @@ class QueueRunner(Thread):
             if len(os.listdir(result_dir + "/" + name + "/" + ex_name + "_" + str(i+1))) == 0:
                 os.rmdir(result_dir + "/" + name + "/" + ex_name + "_" + str(i+1))
         for fl in os.listdir("."):
-            if fl.endswith(".jou") or fl.endswith(".log"):
-                os.remove(fl)
+            try:
+                if fl.endswith(".jou") or fl.endswith(".log"):
+                    os.remove(fl)
+            except WindowsError:
+                pass
 
     def get_current_experiment(self):
         """

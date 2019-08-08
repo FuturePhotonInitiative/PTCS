@@ -1,5 +1,3 @@
-import time
-
 
 # it takes a good amount of seconds after turning the laser on for the opm do get acclimated to
 # reading a different range of light
@@ -31,7 +29,6 @@ def main(data_map, results):
     print("switching power of the laser from " + orij + " to " + str(laser.get_optical_power()))
 
     laser.turn_laser_on()
-    time.sleep(3.5)  # necessary to make it not crash
     print("running first part")
 
     for i in range(70):
@@ -42,7 +39,6 @@ def main(data_map, results):
     laser.set_optical_power(laser_power2)
     print("switching power of the laser from " + orij + " to " + str(laser.get_optical_power()))
     laser.turn_laser_on()
-    time.sleep(3.5)  # necessary to make it not crash
     print("running second part")
 
     for i in range(70):

@@ -1,0 +1,4 @@
+Test- pwrnosc
+Voltage_Source as Voltage_Source
+Voltage_Source;set_voltage 3
+Voltage_Source;set_output_switch 1

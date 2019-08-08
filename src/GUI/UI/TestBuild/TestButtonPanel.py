@@ -42,7 +42,7 @@ class TestButtonPanel(ControlPanel):
 
         for i in range(len(names)):
             self.buttons[i].Bind(wx.EVT_BUTTON, (lambda label: lambda evt:
-                self.build_panel.add_symbol(evt, label))(patterns[i]))
+                                                 self.build_panel.add_symbol(evt, label))(patterns[i]))
 
         self.SetSizer(self.sizer)
 

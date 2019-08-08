@@ -17,11 +17,12 @@ def main(data_map, experiment_result):
     opm.set_wavelength(opm_wavelength)
     opm.change_reading_units(reading_units)
 
-    laser.run_sweep_step(sweep_start, sweep_end, sweep_step, time_per_step)
-
     data_map["Data"]["Collect"]["sweep"] = []
 
-    for i in range(100):
+    laser.turn_laser_on()
+    laser.run_sweep_step(sweep_start, sweep_end, sweep_step, time_per_step)
+
+    while laser.sweep_in_progress():
         data_map["Data"]["Collect"]["sweep"].append(opm.get_power_reading())
 
     laser.turn_laser_off()

@@ -1,0 +1,3 @@
+Test- osc measure
+Oscilloscope as Oscilloscope
+Oscilloscope;measure_vpp 1

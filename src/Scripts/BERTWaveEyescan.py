@@ -58,12 +58,16 @@ def main(data_map, experiment_result):
 
     print(TEST_PRINT_HEADER + "Test completed.")
 
-    print(TEST_PRINT_HEADER + "total error rate:\t\t" + str(device.get_error_count_total()))
-    print(TEST_PRINT_HEADER + "inserted error rate:\t\t" + str(device.get_error_count_inserted()))
-    print(TEST_PRINT_HEADER + "omitted error rate:\t\t" + str(device.get_error_count_omitted()))
-    print(TEST_PRINT_HEADER + "total error count:\t\t" + str(device.get_error_rate_total()))
-    print(TEST_PRINT_HEADER + "inserted error count:\t" + str(device.get_error_rate_inserted()))
-    print(TEST_PRINT_HEADER + "omitted error count:\t" + str(device.get_error_rate_omitted()))
+    ber = dict()
+
+    ber["total error rate"] = device.get_error_rate_total()
+    ber["inserted error rate"] = device.get_error_rate_inserted()
+    ber["omitted error rate"] = device.get_error_rate_omitted()
+    ber["total error count"] = device.get_error_count_total()
+    ber["inserted error count"] = device.get_error_count_inserted()
+    ber["omitted error count"] = device.get_error_count_omitted()
+
+    experiment_result.add_csv_dict("error_rate_data", ber, ber.keys())
 
     png_bytes = device.get_last_screenshot()
     experiment_result.add_image_file(png_bytes, eyescan_image_name)

@@ -1,6 +1,6 @@
 {
   "name": "Eyescan (Tcl)",
-  "tcl": "C:\\Users\\ofs9424\\SPAE\\eyescan_procedure.tcl",
+  "tcl": "Eyescan_Procedure.tcl",
   "devices":
               [
                 "VCU 108"

@@ -1,6 +1,6 @@
 {
   "name": "BERT (Tcl)",
-  "tcl": "C:\\Users\\ofs9424\\SPAE\\bert_procedure.tcl",
+  "tcl": "BERT_Procedure.tcl",
   "devices":
               [
                 "VCU 108"

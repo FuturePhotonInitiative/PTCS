@@ -1,5 +1,5 @@
 {
-  "name": "BERTWave Anritsu MP2100A Test",
+  "name": "BERT and Eyescan Using the BERTWave",
   "devices":[
     "BERT Analyzer"
   ],
