@@ -1,5 +1,5 @@
 {
-  "name": "Optical Power Accuracy Test",
+  "name": "Optical Wavelength Sweep Test",
   "devices":[
     "Newport OPM",
     "Laser Source"
@@ -7,25 +7,26 @@
   "experiment": [
     {
       "type": "PY_SCRIPT",
-      "source": "OPATCollect.py",
+      "source": "SweepWavelengthCollect.py",
       "order": 1
     },
     {
       "type": "PY_SCRIPT",
-      "source": "OPATReduce.py",
+      "source": "SweepWavelengthReduce.py",
       "order": 2
     },
     {
       "type": "PY_SCRIPT",
-      "source": "OPATExport.py",
+      "source": "SweepWavelengthExport.py",
       "order": 3
     }
   ],
   "data": {
     "opm_wavelength": 1100,
-    "laser_wavelength": 1520,
     "reading_units": "auto",
-    "laser_power1": -20,
-    "laser_power2": -10
+    "sweep_wavelen_start": 1520,
+    "sweep_wavelen_stop": 1530,
+    "sweep_wavelen_step": 1,
+    "time_per_step": 1
   }
 }

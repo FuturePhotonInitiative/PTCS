@@ -1,5 +1,5 @@
 {
-  "name": "Fake Test",
+  "name": "Fake Voltage Accuracy Test (no instruments used)",
   "experiment": [
     {
       "type": "PY_SCRIPT",

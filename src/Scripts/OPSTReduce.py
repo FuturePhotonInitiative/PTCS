@@ -1,6 +1,7 @@
 def filter_results(test_lst):
     """
-    gets rid of entries that are more than a tenth away from the last group of values
+    makes zero all of the entries that are more than a tenth away from the last group of values. This is useful to
+    get rid of the noisy data at the beginning of the test
     :param test_lst: the list to filter
     :return: a copy of the list but modified in the said way
     """

@@ -189,6 +189,16 @@ class ExperimentResultsModel:
 
     def add_csv_dict(self, file_name, data_dict, row_labels, column_labels=None, title="",
                      separator=",", surround_character="\"", new_line="\n"):
+        """
+        :param file_name: the file name (without spaces and without a .csv) to save the file to
+        :param data_dict: the dictionary with the data to save
+        :param row_labels: i think this is just data_dict.keys()
+        :param column_labels:
+        :param title:
+        :param separator:
+        :param surround_character:
+        :param new_line:
+        """
         out_data = ""
         if column_labels is not None:
             out_data += surround_character + title + surround_character + separator

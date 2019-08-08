@@ -135,11 +135,7 @@ class AQ4321D(GPIBtoUSBAdapter):
         self._set_stop_sweep_wavelength(stop_wavelength)
         self._set_step_sweep_wavelength(step_wavelength)
         self._set_step_time_sweep(time_step)
-        self.turn_laser_on()
         self._start_sweep()
-        # apparently the instrument freezes for some seconds right after the laser is
-        # turned on and the start sweep command is issued
-        time.sleep(3.5)
         self._print("Step sweeping from {}nm to {}nm by {}nm every {} seconds".format(start_wavelength, stop_wavelength,
                                                                                       step_wavelength, time_step))
 
@@ -162,11 +158,7 @@ class AQ4321D(GPIBtoUSBAdapter):
         self._set_start_sweep_wavelength(start_wavelength)
         self._set_stop_sweep_wavelength(stop_wavelength)
         self._set_cont_time_sweep(time_length)
-        self.turn_laser_on()
         self._start_sweep()
-        # apparently the instrument freezes for some seconds right after the laser is
-        # turned on and the start sweep command is issued
-        time.sleep(3.5)
         self._print("Continuous sweeping from {}nm to {}nm in {} seconds".format(start_wavelength, stop_wavelength,
                                                                                  time_length))
 
@@ -209,6 +201,9 @@ class AQ4321D(GPIBtoUSBAdapter):
         """
         self._print("turning laser on")
         self._send_to_device("L1")
+        # apparently the instrument freezes for some seconds right after the laser is
+        # turned on in an indeterminate number of cases
+        time.sleep(3.5)
 
     def turn_laser_off(self):
         """
