@@ -26,7 +26,11 @@ class TestBuildPanel(DisplayPanel):
         self.reduce_checkbox_label = wx.StaticText(self)
         self.reduce_checkbox_label.SetLabelText("Reduce?")
         self.reduce_checkbox = wx.CheckBox(self)
-        self.reduce_checkbox.SetValue(True)
+        self.reduce_checkbox.SetValue(False)
+        self.csv_checkbox_label = wx.StaticText(self)
+        self.csv_checkbox_label.SetLabelText("CSV?")
+        self.csv_checkbox = wx.CheckBox(self)
+        self.csv_checkbox.SetValue(False)
         self.reduce_x_label_text = wx.StaticText(self)
         self.reduce_x_label_text.SetLabelText("X Label:")
         self.reduce_x_label = wx.TextCtrl(self)
@@ -36,6 +40,8 @@ class TestBuildPanel(DisplayPanel):
         self.reduce_x_max = wx.TextCtrl(self)
         self.reduce_x_line.AddMany([(self.reduce_checkbox_label),
                                     (self.reduce_checkbox),
+                                    (self.csv_checkbox_label),
+                                    (self.csv_checkbox),
                                     (self.reduce_x_label_text),
                                     (self.reduce_x_label, wx.ALL),
                                     (self.reduce_x_min, wx.ALL),
@@ -151,12 +157,13 @@ class TestBuildPanel(DisplayPanel):
         ip.insert(0, "Test- " + test_name)
         config, script = build.parse_lines(ip, test_v, self.fcs)
         # If reduction was selected, add the reduction script with the appropriate parameters to the config
-        if self.reduce_checkbox.GetValue():
+        if self.reduce_checkbox.GetValue() or self.csv_checkbox.GetValue():
             config['experiment'].append({
                 "type": "PY_SCRIPT",
                 "source": "CustomTestReduce.py",
                 "order": 2
             })
+        if self.reduce_checkbox.GetValue():
             config['data']['Title'] = self.reduce_title.GetLineText(0)
             config['data']['X Label'] = self.reduce_x_label.GetLineText(0)
             config['data']['X Lower'] = float(self.reduce_x_min.GetLineText(0))
@@ -164,6 +171,12 @@ class TestBuildPanel(DisplayPanel):
             config['data']['Y Label'] = self.reduce_y_label.GetLineText(0)
             config['data']['Y Lower'] = float(self.reduce_y_min.GetLineText(0))
             config['data']['Y Upper'] = float(self.reduce_y_max.GetLineText(0))
+            config['data']['Reduce?'] = True
+        if self.csv_checkbox.GetValue():
+            config['data']['Csv?'] = True
+        else:
+            config['data']['Csv?'] = False
+
         # Save the config file
         with open(os.path.join(CONSTANTS.CONFIGS, test_v + ".json"), "w") as f:
             json.dump(config, f)

@@ -6,6 +6,9 @@ def main(data_map, experiment_result):
     :param experiment_result: ExperimentResultsModel object.
     :return: None
     """
+    # Check whether we should be reducing or just outputting csv
+    red = data_map['Data']['Initial'].get('Reduce?', False)
+    csv = data_map['Data']['Initial'].get('Csv?', False)
 
     # Read reduction data from the data map
     red_func = data_map['Data']['Initial'].get('Reduce Function', lambda vl, r: r)
@@ -36,19 +39,21 @@ def main(data_map, experiment_result):
         new_list = [float(val), float(reduced[val])]
         reduced_data.append(new_list)
 
-    # Writing out collected data to csv
-    experiment_result.add_csv("Collected_Data", collected_data, row_labels=[])
-    # Writing out reduced data to csv
-    experiment_result.add_csv("Reduced_Data", reduced_data, row_labels=[])
+    if csv:
+        # Writing out collected data to csv
+        experiment_result.add_csv("Collected_Data", collected_data, row_labels=[])
+        # Writing out reduced data to csv
+        experiment_result.add_csv("Reduced_Data", reduced_data, row_labels=[])
 
-    # Generate the scatter plot
-    x_axis = []
-    y_axis = []
-    for v in sorted(reduced_data):
-        x_axis.append(float(v[0]))
-        y_axis.append(float(v[1]))
+    if red:
+        # Generate the scatter plot
+        x_axis = []
+        y_axis = []
+        for v in sorted(reduced_data):
+            x_axis.append(float(v[0]))
+            y_axis.append(float(v[1]))
 
-    experiment_result.add_scatter_chart(graph_title.replace(" ", "_"), x_axis, y_axis,
-                                        title=graph_title, x_label=x_l, y_label=y_l,
-                                        x_lim=(x_lower, x_upper), y_lim=(y_lower, y_upper))
+        experiment_result.add_scatter_chart(graph_title.replace(" ", "_"), x_axis, y_axis,
+                                            title=graph_title, x_label=x_l, y_label=y_l,
+                                            x_lim=(x_lower, x_upper), y_lim=(y_lower, y_upper))
     return
