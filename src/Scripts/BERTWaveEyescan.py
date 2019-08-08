@@ -56,6 +56,8 @@ def main(data_map, experiment_result):
     while bertwave.is_sampling():
         pass
 
+    bertwave.turn_off_output()
+
     print(TEST_PRINT_HEADER + "Test completed.")
     print(TEST_PRINT_HEADER + "Saving Data...")
 
