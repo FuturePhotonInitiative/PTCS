@@ -1,2 +1,0 @@
-Test- tst
-print tst

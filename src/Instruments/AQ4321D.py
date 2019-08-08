@@ -144,7 +144,7 @@ class AQ4321D(GPIBtoUSBAdapter):
         :param total_time: How long the continuous sweep should take in total
         """
         self._check_float(total_time, MIN_CONT_TIME, MAX_CONT_TIME, TENTHS)
-        self._send_to_device("TSWET{}".format(time))
+        self._send_to_device("TSWET{}".format(total_time))
 
     def run_sweep_continuous(self, start_wavelength, stop_wavelength, time_length):
         """
