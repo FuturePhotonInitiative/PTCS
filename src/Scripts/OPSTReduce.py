@@ -24,7 +24,12 @@ def filter_results(test_lst):
                 flag = True
         else:
             return_lst[i] = 0
-    return return_lst
+
+    lst_start = 0
+    while return_lst[lst_start] == 0:
+        lst_start += 1
+
+    return return_lst[lst_start:]
 
 
 def main(data_map, experiment_result):

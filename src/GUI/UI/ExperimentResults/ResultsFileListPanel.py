@@ -13,7 +13,7 @@ class ResultsFileListPanel(wx.StaticBox):
 
         self.result = None
 
-        self.list_box = wx.ListBox(self)
+        self.list_box = wx.ListBox(self, style=wx.LB_HSCROLL)
         self.list_box.SetBackgroundColour(CONSTANTS.LIST_PANEL_COLOR)
         self.list_box.SetForegroundColour(CONSTANTS.LIST_PANEL_FOREGROUND_COLOR)
 
@@ -37,8 +37,8 @@ class ResultsFileListPanel(wx.StaticBox):
         self.list_box.Clear()
         self.result = result
         if self.result is not None:
-            for file in self.result.get_experiment_results_file_list():
-                self.list_box.Append(file)
+            for fil in self.result.get_experiment_results_file_list():
+                self.list_box.Append(fil)
 
     def on_result_select(self, event):
         """

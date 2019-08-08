@@ -1,4 +1,0 @@
-Test- save osc measure
-Oscilloscope as Oscilloscope
-measure = Oscilloscope;measure_vpp
-store 3,measure

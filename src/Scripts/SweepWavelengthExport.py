@@ -10,15 +10,26 @@ def write_to_file(file_name, data):
 def main(data_map, results):
 
     save_dir = results.experiment_results_directory
-    sweep_data = data_map["Data"]["Collect"]["sweep"]
-    sweep_data_name = op.join(save_dir, "collected-sweep-data.txt")
-    write_to_file(sweep_data_name, sweep_data)
-    results.add_result_file(sweep_data_name)
+    collected_data = data_map["Data"]["Collect"]["sweep"]
+    reduced_data = data_map["Data"]["Reduce"]
+    sweep_start = data_map["Data"]["Initial"]["sweep_wavelen_start"]
+    sweep_end = data_map["Data"]["Initial"]["sweep_wavelen_stop"]
+
+    collect_data_name = op.join(save_dir, "collected-sweep-data.txt")
+    write_to_file(collect_data_name, collected_data)
+    results.add_result_file(collect_data_name)
+
+    reduced_data_name = op.join(save_dir, "reduced-sweep-data.txt")
+    write_to_file(reduced_data_name, [str(i) for i in reduced_data])
+    results.add_result_file(reduced_data_name)
 
     plot_path = op.join(save_dir, "pyplot.png")
 
     plt.figure(1)
-    plt.plot(sweep_data, color="y", label="sweep")
-    plt.savefig(plot_path)
+    plt.plot(reduced_data, color="y", label="Sweep from {}nm to {}nm".format(sweep_start, sweep_end))
+    plt.legend()
+    plt.xlabel("Sample Number (sequential)")
+    plt.ylabel("Optical Power (W)")
+    plt.savefig(plot_path, bbox_inches="tight")
 
     results.add_result_file(plot_path)

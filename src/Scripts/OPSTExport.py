@@ -41,6 +41,9 @@ def main(data_map, results):
     plt.figure(1)
     plt.plot(reduced1, color="y", label="{}dBm".format(laser_power1))
     plt.plot(reduced2, color="k", label="{}dBm".format(laser_power2))
-    plt.savefig(plot_path)
+    plt.legend()
+    plt.xlabel("Sample Number (sequential)")
+    plt.ylabel("Optical Power (W)")
+    plt.savefig(plot_path, bbox_inches="tight")
 
     results.add_result_file(plot_path)
