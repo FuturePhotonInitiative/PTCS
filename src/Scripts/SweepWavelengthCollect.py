@@ -7,8 +7,7 @@ def main(data_map, experiment_result):
     reading_units = data_map["Data"]["Initial"]["reading_units"]
     sweep_start = data_map["Data"]["Initial"]["sweep_wavelen_start"]
     sweep_end = data_map["Data"]["Initial"]["sweep_wavelen_stop"]
-    sweep_step = data_map["Data"]["Initial"]["sweep_wavelen_step"]
-    time_per_step = data_map["Data"]["Initial"]["time_per_step"]
+    total_sweep_time = data_map["Data"]["Initial"]["total_sweep_time"]
 
     data_map["Data"]["Collect"] = {}
 
@@ -20,7 +19,7 @@ def main(data_map, experiment_result):
     data_map["Data"]["Collect"]["sweep"] = []
 
     laser.turn_laser_on()
-    laser.run_sweep_step(sweep_start, sweep_end, sweep_step, time_per_step)
+    laser.run_sweep_continuous(sweep_start, sweep_end, total_sweep_time)
 
     while laser.sweep_in_progress():
         data_map["Data"]["Collect"]["sweep"].append(opm.get_power_reading())
