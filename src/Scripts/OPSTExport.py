@@ -44,6 +44,6 @@ def main(data_map, results):
     plt.legend()
     plt.xlabel("Sample Number (sequential)")
     plt.ylabel("Optical Power (W)")
-    plt.savefig(plot_path)
+    plt.savefig(plot_path, bbox_inches="tight")
 
     results.add_result_file(plot_path)
