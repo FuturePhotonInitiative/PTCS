@@ -177,6 +177,8 @@ class TestBuildPanel(DisplayPanel):
             f.writelines([l + "\n" for l in ip])
         # Clear the save field so the user knows the saving was successful
         self.save_field.Clear()
+        Globals.systemConfigManager.experiments_manager.cache_is_valid = False
+        Globals.systemConfigManager.ui_controller.test_added_to_config_directory()
 
     def deselected(self, event):
         """

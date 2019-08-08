@@ -1,0 +1,13 @@
+{
+  "devices": [
+    "Oscilloscope"
+  ],
+  "name": "GetVoltage",
+  "experiment": [
+    {
+      "type": "PY_SCRIPT",
+      "source": "GetVoltage.py",
+      "order": 1
+    }
+  ]
+}

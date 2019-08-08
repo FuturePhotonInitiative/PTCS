@@ -1,0 +1,4 @@
+Test- set voltage and current
+Voltage_Source as Voltage_Source
+Voltage_Source;set_current .002
+Voltage_Source;set_voltage 3.30
