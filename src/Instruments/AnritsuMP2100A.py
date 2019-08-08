@@ -14,6 +14,9 @@ OFF = "OFF"
 REPEAT = "REP"
 SINGLE = "SING"
 
+SAMPLE_RUN = "RUN"
+SAMPLE_NOT_RUN = "HOLD"
+
 
 class AnritsuMP2100A(IEEE_488_2):
 
@@ -29,11 +32,23 @@ class AnritsuMP2100A(IEEE_488_2):
     def stop_all_measurements(self):
         self.device.write(":SENSe:MEASure:ASTP")
 
+    def get_measurement_is_running(self):
+        return self.device.query(":SENSe:MEASure:ASTate?") == "1"
+
+    def start_sampling(self):
+        self._channel(EYE_PULSE_SCOPE)
+        self.device.write(":SAMPling:STATus {}".format(SAMPLE_RUN))
+
+    def stop_sampling(self):
+        self._channel(EYE_PULSE_SCOPE)
+        self.device.write(":SAMPling:STATus {}".format(SAMPLE_NOT_RUN))
+
+    def is_sampling(self):
+        self._channel(EYE_PULSE_SCOPE)
+        return self.device.query(":SAMPling:STATus?") == SAMPLE_RUN
+
     def get_device_option_codes(self):
         return self.device.query("*OPT?")
-
-    def measurement_is_running(self):
-        return self.device.query(":SENSe:MEASure:ASTate?") == "1"
 
     def set_bitrate(self, bitrate):
         self._channel(PPG_ED_CH1)
@@ -73,13 +88,13 @@ class AnritsuMP2100A(IEEE_488_2):
         return self.device.query(":DISPlay:WINDow:Y:OFFSets:CHA?")
 
     # the file will not save unless the connection stays open a little
-    def save_eye_screenshot_to_file(self):
+    def save_eye_screenshot_to_instrument(self):
         self._channel(EYE_PULSE_SCOPE)
         self.device.write(":EYEPulse:PRINt:COPY")
         time.sleep(5)
 
     # the file will not save unless the connection stays open a little
-    def save_full_screen_screenshot_to_file(self):
+    def save_full_screen_screenshot_to_instrument(self):
         self._channel(EYE_PULSE_SCOPE)
         self.device.write(":SYSTem:PRINt:COPY")
         time.sleep(5)
@@ -273,7 +288,7 @@ class AnritsuMP2100A(IEEE_488_2):
         self._channel(PPG_ED_CH1)
         self.device.write(":DISPlay:RESult:EALarm:MODE " + ON)
 
-    def get_last_screenshot(self):
+    def get_last_screenshot_from_instrument(self):
         """
         :return: the byte string of the screenshot file
         """

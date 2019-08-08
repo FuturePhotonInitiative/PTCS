@@ -18,7 +18,7 @@
     "graph_time_offset": 0,
     "graph_bit_view_number": 2,
     "sampling_mode_display_type": "EYE",
-    "million_sample_limit": 10,
+    "million_sample_limit": 1,
     "gating_cycle_type": "REPeat",
     "eyescan_image_name": "eyescan.png"
   }
