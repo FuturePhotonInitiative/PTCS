@@ -18,6 +18,7 @@ def main(data_map, results):
     raw2 = data_map["Data"]["Collect"][laser_power2]
     reduced1 = data_map["Data"]["Reduce"][laser_power1]
     reduced2 = data_map["Data"]["Reduce"][laser_power2]
+    laser_wavelength = data_map["Data"]["Initial"]["laser_wavelength"]
 
     save_dir = results.experiment_results_directory
 
@@ -38,12 +39,13 @@ def main(data_map, results):
 
     plot_path = op.join(save_dir, "pyplot.png")
 
-    plt.figure(1)
-    plt.plot(reduced1, color="y", label="{}dBm".format(laser_power1))
-    plt.plot(reduced2, color="k", label="{}dBm".format(laser_power2))
+    plt.figure()
+    plt.plot(reduced1, color="y", label="test 1: {}dBm".format(laser_power1))
+    plt.plot(reduced2, color="k", label="test 2: {}dBm".format(laser_power2))
     plt.legend()
     plt.xlabel("Sample Number (sequential)")
     plt.ylabel("Optical Power (W)")
+    plt.title("{}nm".format(laser_wavelength))
     plt.savefig(plot_path, bbox_inches="tight")
 
     results.add_result_file(plot_path)

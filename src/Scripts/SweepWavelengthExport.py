@@ -1,5 +1,6 @@
 import os.path as op
 import matplotlib.pyplot as plt
+import numpy as np
 
 
 def write_to_file(file_name, data):
@@ -25,10 +26,12 @@ def main(data_map, results):
 
     plot_path = op.join(save_dir, "pyplot.png")
 
-    plt.figure(1)
-    plt.plot(reduced_data, color="y", label="Sweep from {}nm to {}nm".format(sweep_start, sweep_end))
+    plt.figure()
+
+    x_axis = np.arange(sweep_start, sweep_end, float(abs(sweep_end - sweep_start)) / len(reduced_data))
+    plt.plot(x_axis, reduced_data, color="y", label="Sweep from {}nm to {}nm".format(sweep_start, sweep_end))
     plt.legend()
-    plt.xlabel("Sample Number (sequential)")
+    plt.xlabel("Wavelength")
     plt.ylabel("Optical Power (W)")
     plt.savefig(plot_path, bbox_inches="tight")
 
