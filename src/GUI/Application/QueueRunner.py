@@ -181,9 +181,9 @@ class QueueRunner(Thread):
         exp['source'] = 'script.py'
         exp['order'] = 1
         with open(pyLoc, "w") as f:
-            f.write(("import os\ndef main(data_map, experiment_result):\n\t" +
-                     "os.system('C:\\Xilinx\\Vivado\\2017.4\\bin\\vivado -mode tcl < ' + '" + target_location + "')")
-                    .replace('\\', '\\\\'))
+            f.write("import os\ndef main(data_map, experiment_result):\n\t" +
+            "os.system('C:\\\\Xilinx\\\\Vivado\\\\2017.4\\\\bin\\\\vivado -mode tcl < ' + '\""
+            + target_location +"\"')")
         copyfile(pyLoc, output_folder + "/script.py")
         master_experiment.config.experiment.append(ExperimentScript(exp))
         master_experiment.export_to_json(tmp_file_name)
