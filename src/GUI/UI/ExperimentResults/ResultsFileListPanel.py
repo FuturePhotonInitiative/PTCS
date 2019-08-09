@@ -45,7 +45,6 @@ class ResultsFileListPanel(wx.StaticBox):
         Opens the file selected using the operating system, then deselects the selection
         :param event: The event that caused the call
         """
-
-        # Todo open the file selected
-        os.system("start "+self.result.get_experiment_results_file_list()[self.list_box.GetSelection()])
+        file_name = self.result.get_experiment_results_file_list()[self.list_box.GetSelection()]
+        os.startfile("\"{}\"".format(file_name))
         self.list_box.Deselect(self.list_box.GetSelection())
