@@ -35,15 +35,23 @@ class AnritsuMP2100A(IEEE_488_2):
     def get_measurement_is_running(self):
         return self.device.query(":SENSe:MEASure:ASTate?") == "1"
 
-    def start_sampling(self):
+    def start_error_detection(self):
+        self._channel(PPG_ED_CH1)
+        self.device.write(":SENSe:MEASure:STARt")
+
+    def stop_error_detection(self):
+        self._channel(PPG_ED_CH1)
+        self.device.write(":SENSe:MEASure:STOP")
+
+    def start_eye_sampling(self):
         self._channel(EYE_PULSE_SCOPE)
         self.device.write(":SAMPling:STATus {}".format(SAMPLE_RUN))
 
-    def stop_sampling(self):
+    def stop_eye_sampling(self):
         self._channel(EYE_PULSE_SCOPE)
         self.device.write(":SAMPling:STATus {}".format(SAMPLE_NOT_RUN))
 
-    def is_sampling(self):
+    def is_eye_sampling(self):
         self._channel(EYE_PULSE_SCOPE)
         return self.device.query(":SAMPling:STATus?") == SAMPLE_RUN
 

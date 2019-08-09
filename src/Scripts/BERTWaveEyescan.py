@@ -51,11 +51,13 @@ def main(data_map, experiment_result):
     bertwave.turn_on_output()
     time.sleep(1)  # give things a little time to settle themselves
 
-    bertwave.start_sampling()
+    bertwave.run_all_measurements()
 
-    while bertwave.is_sampling():
+    while bertwave.is_eye_sampling():
         pass
 
+    bertwave.stop_all_measurements()    # the eye has already stopped, but this turns off the error detection
+                                        # at the next measurement pass
     bertwave.turn_off_output()
 
     print(TEST_PRINT_HEADER + "Test completed.")
