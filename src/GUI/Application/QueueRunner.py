@@ -164,7 +164,7 @@ class QueueRunner(Thread):
             f.writelines(master_tcl)
 
         # Read in necessary devices and scripts
-        master_experiment = Experiment("template.json")
+        master_experiment = Experiment(PROJ_DIR + "/template.json")
         for i in range(start_index, tcl_end):
             if self.queue.get_ith_experiment(i).config.devices is not None:
                 for key in self.queue.get_ith_experiment(i).config.devices:

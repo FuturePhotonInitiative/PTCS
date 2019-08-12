@@ -36,6 +36,8 @@ set xil_newScan [create_hw_sio_scan -description "Eye Scan Id $index" 2d_full_ey
 set_property HORIZONTAL_INCREMENT "$Horizontal_Step" [get_hw_sio_scans $xil_newScan]
 set_property VERTICAL_INCREMENT "$Vertical_Step" [get_hw_sio_scans $xil_newScan]
 
+puts "Starting Eyescan..."
+
 # Run the scan, wait for completion, then export the data
 after [expr {int(5*1000)}] 
 run_hw_sio_scan [get_hw_sio_scans $xil_newScan]
