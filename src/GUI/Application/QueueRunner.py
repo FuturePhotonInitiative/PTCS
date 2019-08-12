@@ -16,6 +16,7 @@ from src.GUI.Model.ExperimentScriptModel import ExperimentScript
 from src.GUI.Util.CONSTANTS import TIMESTAMP_FORMAT
 from src.GUI.Util.CONSTANTS import TEMP_DIR
 from src.GUI.Util.CONSTANTS import SCRIPTS_DIR
+from src.GUI.Util.CONSTANTS import PROJ_DIR
 
 
 class QueueRunner(Thread):
@@ -135,7 +136,7 @@ class QueueRunner(Thread):
         output_folder = os.path.join(result_dir, name).replace("\\", "/")
         os.mkdir(output_folder)
         for i in range(start_index, tcl_end):
-            with open(self.queue.get_ith_experiment(i).config.tcl, "r") as f:
+            with open(PROJ_DIR + "/" + self.queue.get_ith_experiment(i).config.tcl, "r") as f:
                 # Edit the Tcl scripts with the test parameters
                 done_sets = False
                 ex_name = clean_name_for_file(self.queue.get_ith_experiment(i).get_name())
