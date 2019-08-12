@@ -294,3 +294,6 @@ class AgilentDSO7000A(IEEE_488_2):
         :return: None
         """
         self.device.write("TRIG:MODE "+mode)
+
+    def autoscale(self):
+        self.device.write(":AUToscale")

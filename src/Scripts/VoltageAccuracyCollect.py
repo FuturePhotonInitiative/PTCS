@@ -22,10 +22,10 @@ def main(data_map, experiment_result):
 
     start_time = time.time()
     while voltage <= final_voltage:
+        print "Applying " + str(voltage) + " volts"
         voltage_source.set_voltage(voltage)
-        if voltage % 1 == 0:
-            print "Applying " + str(voltage) + " volts"
-        data_map['Data']['Collect'][str(voltage)] = osc.measure_vaverage()
+        osc.autoscale()
+        data_map['Data']['Collect'][str(voltage)] = osc.measure_vaverage(2)
         voltage += step_voltage
 
     end_time = time.time()
