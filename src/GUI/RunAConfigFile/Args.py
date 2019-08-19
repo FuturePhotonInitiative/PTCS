@@ -5,7 +5,7 @@ import re
 class Args:
 
     def __init__(self):
-        parser = argparse.ArgumentParser(description="Run experiments")
+        parser = argparse.ArgumentParser(description="Run an Experiment")
         parser.add_argument("-c", "--configFile",
                             help="configuration json file")
         parser.add_argument("-p", "--paramFile", type=argparse.FileType('r'),

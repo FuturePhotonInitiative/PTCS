@@ -266,4 +266,3 @@ class ExperimentResultsModel:
 
     def get_experiment_results_file_list(self):
         return self.experiments_results_files
-
