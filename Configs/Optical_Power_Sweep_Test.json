@@ -7,17 +7,17 @@
   "experiment": [
     {
       "type": "PY_SCRIPT",
-      "source": "OPSTCollect.py",
+      "source": "SweepPowerCollect.py",
       "order": 1
     },
     {
       "type": "PY_SCRIPT",
-      "source": "OPSTReduce.py",
+      "source": "SweepPowerReduce.py",
       "order": 2
     },
     {
       "type": "PY_SCRIPT",
-      "source": "OPSTExport.py",
+      "source": "SweepPowerExport.py",
       "order": 3
     }
   ],
