@@ -1,9 +1,10 @@
-# Implements common commands specified in IEEE 488.2
-
 from PyVisaDriver import PyVisaDriver
 
 
 class IEEE_488_2(PyVisaDriver):
+    """
+    Implements common commands specified in IEEE 488.2
+    """
 
     def __init__(self):
         PyVisaDriver.__init__(self)

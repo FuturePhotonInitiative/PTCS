@@ -3,6 +3,10 @@ import pyvisa
 
 
 class PyVisaDriver(EVTDriver):
+    """
+    An abstract class that will be extended by an instrument driver
+    that needs to use PyVISA for instrument connection
+    """
 
     def __init__(self):
         EVTDriver.__init__(self)

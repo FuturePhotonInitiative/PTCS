@@ -3,13 +3,13 @@ import sys
 import types
 import contextlib2
 import imp
-import os
+from os.path import join
 
-from RunAConfigFile.Args import Args
-from RunAConfigFile.DeviceSetup import DeviceSetup
-from Model.ConfigFile import ConfigFile
-from Util.CONSTANTS import SCRIPTS_DIR
-from Util.CONSTANTS import JSON_SCHEMA_FILE_NAME
+from src.GUI.RunAConfigFile.Args import Args
+from src.GUI.RunAConfigFile.DeviceSetup import DeviceSetup
+from src.GUI.Model.ConfigFile import ConfigFile
+from src.GUI.Util.CONSTANTS import SCRIPTS_DIR
+from src.GUI.Util.CONSTANTS import JSON_SCHEMA_FILE_NAME
 
 
 def spawn_scripts(scripts, data_map, experiment_result):
@@ -25,9 +25,7 @@ def spawn_scripts(scripts, data_map, experiment_result):
         threads = []  # TODO add multithreading support here
         module = script.source[:-3]
         if module not in [i[0] for i in globals().items() if isinstance(i[1], types.ModuleType)]:
-            with open(os.path.join(SCRIPTS_DIR, module + '.py')) as sc:
-                print "spawning: " + str(sc.readlines())
-            globals()[module] = imp.load_source(module, os.path.join(SCRIPTS_DIR, module + '.py'))
+            globals()[module] = imp.load_source(module, join(SCRIPTS_DIR, module + '.py'))
         [i[1] for i in inspect.getmembers(globals()[module], inspect.isfunction) if i[0] is 'main'][0](data_map, experiment_result)
     print "Scripts Completed"
     return
@@ -93,7 +91,3 @@ def main(args, config_manager=None, queue_result=None):
     experiment_result.end_experiment()
     results_manager.save_experiment_result(experiment_result_name, experiment_result)
     print 'Experiment complete, goodbye!'
-
-
-if __name__ == '__main__':
-    main(sys.argv)

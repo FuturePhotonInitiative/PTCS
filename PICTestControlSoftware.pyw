@@ -1,17 +1,18 @@
 """
-This is the file that should be run if running in standalone mode, or without pycharm's automatic
- project directory path addition.
-All this does is add the project directory to the path and start the GUI.
-Since this is also a .pyw file, when you create a shortcut to this file, no console will show up with the GUI
-If src.GUI.GuiMainApp is run through a shortcut, it will fail because it cant find all the imports because the project
- directory is not in the python path
+This is the main file that should be run to start the program
+Since this is a .pyw file, when you create a shortcut to this file, no console will show up with the GUI
 """
+
+import matplotlib
 import sys
-from os.path import dirname
 
-import src.GUI.GuiMainApp as GUIMainApp
-
+# if there are args on the command line, you probably just want to run a config file
 if __name__ == "__main__":
-    proj_dir = dirname(sys.argv[0])
-    sys.path.append(proj_dir)
-    GUIMainApp.main()
+    # matplotlib backend needs to be changed because of GitHub issue #20
+    matplotlib.use("WXAgg")
+    if len(sys.argv) > 1:
+        import src.GUI.RunAConfigFileMain as RunAConfigFileMain
+        RunAConfigFileMain.main(sys.argv)
+    else:
+        import src.GUI.GuiMainApp as GUIMainApp
+        GUIMainApp.main()

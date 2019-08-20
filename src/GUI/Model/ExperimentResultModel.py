@@ -124,6 +124,8 @@ class ExperimentResultsModel:
             axes.set_ylim(y_lim)
 
         plt.savefig(file_name)
+        # this should be called to free up memory but because it is not the main thread, it will error
+        # plt.close()
         os.chdir(return_dir)
 
     def add_heat_map(self, graph_data,  title, colormap, path='', aspect='auto', graph_extent=(-0.5, 0.5, -127, 127),
@@ -264,4 +266,3 @@ class ExperimentResultsModel:
 
     def get_experiment_results_file_list(self):
         return self.experiments_results_files
-

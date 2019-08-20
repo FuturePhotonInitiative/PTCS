@@ -10,6 +10,16 @@ TERM_STRING_MAP = ["\r\n", "\r", "\n", ""]
 
 # all of these methods are private because a user using the GUI should not need to call these directly
 class GPIBtoUSBAdapter(PyVisaDriver):
+    """
+    This is the class that drives the yellow GPIB to USB adapter owned by the CFD.
+    https://www.sparkfun.com/products/549
+
+    Underscored method names usually indicate that only that class should use those methods, but in this case
+    it means that the user building a test on the test build page should not need to think about using these
+    methods, and therefore wont be shown to pick from on the UI.
+
+    Devices that extend this class may use them though.
+    """
 
     def __init__(self):
         # the GPIB address the instrument extending this class is set to
