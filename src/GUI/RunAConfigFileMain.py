@@ -25,6 +25,8 @@ def spawn_scripts(scripts, data_map, experiment_result):
         threads = []  # TODO add multithreading support here
         module = script.source[:-3]
         if module not in [i[0] for i in globals().items() if isinstance(i[1], types.ModuleType)]:
+            with open(os.path.join(SCRIPTS_DIR, module + '.py')) as sc:
+                print "spawning: " + str(sc.readlines())
             globals()[module] = imp.load_source(module, os.path.join(SCRIPTS_DIR, module + '.py'))
         [i[1] for i in inspect.getmembers(globals()[module], inspect.isfunction) if i[0] is 'main'][0](data_map, experiment_result)
     print "Scripts Completed"

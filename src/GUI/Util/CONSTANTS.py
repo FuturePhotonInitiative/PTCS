@@ -50,6 +50,8 @@ RESULTS_CONFIG_DIR = join(join(PROJ_DIR, "System"), "ResultsConfiguration").repl
 JSON_SCHEMA_FILE_NAME = join(join(PROJ_DIR, "System"), "ConfigFileValidationSchema.json").replace("\\", "/")
 CUSTOM_TESTS_DIR = join(PROJ_DIR, "Custom_Tests").replace("\\", "/")
 
+VIVADO_LOCATION = "C:/Xilinx/Vivado/2017.4/bin/vivado"
+
 EXPERIMENT_QUEUE_RESULT_ROOT = "Experiment Queues"
 
 QUEUE_FILE_TITLE = "queue_result"

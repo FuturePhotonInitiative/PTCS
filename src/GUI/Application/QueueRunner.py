@@ -17,6 +17,7 @@ from src.GUI.Util.CONSTANTS import TIMESTAMP_FORMAT
 from src.GUI.Util.CONSTANTS import TEMP_DIR
 from src.GUI.Util.CONSTANTS import SCRIPTS_DIR
 from src.GUI.Util.CONSTANTS import PROJ_DIR
+from src.GUI.Util.CONSTANTS import VIVADO_LOCATION
 
 
 class QueueRunner(Thread):
@@ -155,8 +156,10 @@ class QueueRunner(Thread):
                                 val = words[1]
                                 for k in self.queue.get_ith_experiment(i).config.data.keys():
                                     if k == val:
-                                        line = words[0]+" "+words[1]+" " + \
-                                               str(self.queue.get_ith_experiment(i).config.data[k]) + "\n"
+                                        dt = self.queue.get_ith_experiment(i).config.data[k]
+                                        if isinstance(dt, str) or isinstance(dt, unicode):
+                                            dt = "\"" + dt + "\""
+                                        line = words[0]+" "+words[1]+" " + str(dt) + "\n"
                     master_tcl += line
         target_location = os.path.join(output_folder, "combined.tcl")
         # Save the combined Tcl script to be run
@@ -170,21 +173,21 @@ class QueueRunner(Thread):
                 for key in self.queue.get_ith_experiment(i).config.devices:
                     if key not in master_experiment.config.devices:
                         master_experiment.config.devices.append(key)
-            if self.queue.get_ith_experiment(i).config.devices is not None:
+            if self.queue.get_ith_experiment(i).config.experiment is not None:
                 for key in self.queue.get_ith_experiment(i).config.experiment:
                     if key not in master_experiment.config.experiment:
                         master_experiment.config.experiment.append(key)
         # Generate the script to run the Tcl script through the Vivado command line
         tmp_file_name = TEMP_DIR + "\\tmp\\" + master_experiment.get_name().replace(" ", "_") + ".json"
-        pyLoc = os.path.join(SCRIPTS_DIR, "script.py")
+        pyLoc = os.path.join(SCRIPTS_DIR, "script" + str(name) + ".py")
         exp = dict()
         exp['type'] = 'PY_SCRIPT'
-        exp['source'] = 'script.py'
+        exp['source'] = 'script' + str(name) + '.py'
         exp['order'] = 1
         with open(pyLoc, "w") as f:
             f.write("import os\ndef main(data_map, experiment_result):\n\t" +
-            "os.system('C:\\\\Xilinx\\\\Vivado\\\\2017.4\\\\bin\\\\vivado -mode tcl < ' + '\""
-            + target_location +"\"')")
+                    "os.system('" + VIVADO_LOCATION + " -mode tcl < ' + '\""
+                    + target_location + "\"')")
         copyfile(pyLoc, output_folder + "/script.py")
         master_experiment.config.experiment.append(ExperimentScript(exp))
         master_experiment.export_to_json(tmp_file_name)
@@ -195,12 +198,15 @@ class QueueRunner(Thread):
             ex_name = clean_name_for_file(self.queue.get_ith_experiment(i).get_name())
             if len(os.listdir(result_dir + "/" + name + "/" + ex_name + "_" + str(i+1))) == 0:
                 os.rmdir(result_dir + "/" + name + "/" + ex_name + "_" + str(i+1))
+        # Get rid of the annoying files Vivado creates
         for fl in os.listdir("."):
             try:
                 if fl.endswith(".jou") or fl.endswith(".log"):
                     os.remove(fl)
             except WindowsError:
                 pass
+
+        os.remove(pyLoc)
 
     def get_current_experiment(self):
         """

@@ -133,7 +133,7 @@ class QueueManager:
                     ind = line.find(' // ')
                     if ind > -1:
                         val = line[:ind]
-                        if len(val) > 0 and ('0' <= val[0] <= '9' or val[0] == '.'):
+                        if len(val) > 0 and ('0' <= val[0] <= '9' or val[0] == '.') and '_' not in val:
                             try:
                                 val = int(val)
                             except ValueError:
