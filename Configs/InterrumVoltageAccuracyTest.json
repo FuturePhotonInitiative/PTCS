@@ -1,1 +1,0 @@
-{"experiment": [{"source": "osc_measure.py", "type": "PY_SCRIPT", "order": 1}], "data": {}, "name": "Interrum Voltage Accuracy Test", "devices": ["Oscilloscope", "Voltage_Source"]}
