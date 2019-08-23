@@ -1,0 +1,9 @@
+{
+  "name": "Program IBERT (Tcl)",
+  "tcl": "Prog_IBERT.tcl",
+  "data" :
+          {
+            "speed": "2_5",
+			"IBERT_directory": "C:/EVT/PETB/Summer_2019/Vivado/Multispeed_IBERTs/Multispeed_Bitstreams"
+          }
+}
