@@ -1,32 +1,30 @@
 {
   "name": "Voltage Accuracy Test",
-  "devices":
-              [
-                "Voltage_Source",
-                "Oscilloscope"
-              ],
-  "experiment" :
-              [
-                {
-                  "type":"PY_SCRIPT",
-                  "source": "VoltageAccuracyCollect.py",
-                  "order":  1
-                },
-                {
-                  "type":"PY_SCRIPT",
-                  "source": "VoltageAccuracyReduce.py",
-                  "order":  2
-                },
-                {
-                  "type":"PY_SCRIPT",
-                  "source": "VoltageAccuracyExport.py",
-                  "order":  3
-                }
-              ],
-  "data" :
-          {
-            "Start_Voltage": 1,
-            "Final_Voltage": 3,
-            "Step_Voltage": 0.5
-          }
+  "devices": [
+    "Voltage_Source",
+    "Oscilloscope"
+  ],
+  "experiment" : [
+    {
+      "type":"PY_SCRIPT",
+      "source": "VoltageAccuracyCollect.py",
+      "order":  1
+    },
+    {
+      "type":"PY_SCRIPT",
+      "source": "VoltageAccuracyReduce.py",
+      "order":  2
+    },
+    {
+      "type":"PY_SCRIPT",
+      "source": "VoltageAccuracyExport.py",
+      "order":  3
+    }
+  ],
+  "data" : {
+    "Start_Voltage": 1,
+    "Final_Voltage": 3,
+    "Step_Voltage": 0.5,
+    "Channel": 2
+  }
 }
