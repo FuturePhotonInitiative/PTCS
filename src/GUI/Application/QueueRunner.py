@@ -18,6 +18,7 @@ from src.GUI.Util.CONSTANTS import TEMP_DIR
 from src.GUI.Util.CONSTANTS import SCRIPTS_DIR
 from src.GUI.Util.CONSTANTS import PROJ_DIR
 from src.GUI.Util.CONSTANTS import VIVADO_LOCATION
+from src.GUI.Util.CONSTANTS import VIVADO_LOCATION
 
 
 class QueueRunner(Thread):
