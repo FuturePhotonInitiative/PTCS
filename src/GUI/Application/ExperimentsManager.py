@@ -20,7 +20,7 @@ class ExperimentsManager:
     def get_available_experiments_names(self):
         if not self.cache_is_valid:
             self.rebuild_available_experiments()
-        names = self.available_experiments.keys()
+        names = list(self.available_experiments.keys())
         names.sort()
         return names
 

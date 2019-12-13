@@ -3,12 +3,10 @@ import inspect
 import abc
 
 
-class EVTDriver:
+class EVTDriver(metaclass=abc.ABCMeta):
     """
     The base level abstract class for a driver used in this EVT project
     """
-
-    __metaclass__ = abc.ABCMeta
 
     def __init__(self):
         self.device = None  # your driver should set self.device after calling the super class constructor(s)

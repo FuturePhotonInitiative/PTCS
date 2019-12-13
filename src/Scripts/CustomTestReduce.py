@@ -25,17 +25,17 @@ def main(data_map, experiment_result):
     # Right now the reduction function just returns the data unchanged but in the future this can be used to do things
     # like calculate % error.
     samples = data_map['Data']['Collect']
-    for val in samples.keys():
+    for val in list(samples.keys()):
         data_map['Data']['Reduce'][val] = red_func(val, samples[val])
 
     reduced_data = []
     collected_data = []
 
-    for val in samples.keys():
+    for val in list(samples.keys()):
         new_list = [float(val), float(samples[val])]
         collected_data.append(new_list)
     reduced = data_map['Data']['Reduce']
-    for val in reduced.keys():
+    for val in list(reduced.keys()):
         new_list = [float(val), float(reduced[val])]
         reduced_data.append(new_list)
 

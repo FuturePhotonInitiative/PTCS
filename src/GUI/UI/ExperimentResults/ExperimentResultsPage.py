@@ -1,5 +1,5 @@
-from ExperimentListPanel import ExperimentListPanel
-from ResultsFileListPanel import ResultsFileListPanel
+from .ExperimentListPanel import ExperimentListPanel
+from .ResultsFileListPanel import ResultsFileListPanel
 from src.GUI.UI.Page import Page
 from src.GUI.Util import CONSTANTS
 

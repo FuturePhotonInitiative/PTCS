@@ -18,7 +18,7 @@ class HardwareManager:
         self.drivers = []
         with open(hardware_config) as config_file:
             self.hardware_dict = json.load(config_file)
-            for hardware_item in self.hardware_dict.keys():
+            for hardware_item in list(self.hardware_dict.keys()):
                 obj = HardwareModel(hardware_item,
                                self.hardware_dict[hardware_item]['Driver'],
                                self.hardware_dict[hardware_item]['Type'],
@@ -40,7 +40,7 @@ class HardwareManager:
         :return:
             A list of all of the names of hardware devices in the configuration file provided on initialization
         """
-        return self.hardware_objects.keys()
+        return list(self.hardware_objects.keys())
 
     def get_drivers(self):
         """

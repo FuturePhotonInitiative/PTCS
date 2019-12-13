@@ -13,7 +13,7 @@ class DeviceSetup:
 
     def __init__(self):
         self.visa_rm = pyvisa.ResourceManager()
-        self.available_instruments = self.visa_rm.list_resources_info().values()
+        self.available_instruments = list(self.visa_rm.list_resources_info().values())
 
     def attach_VISA(self, name, default):
         """
@@ -28,9 +28,9 @@ class DeviceSetup:
                           [i.alias for i in self.available_instruments if i.alias is not None] or \
                     default[-6:] == "SOCKET":
                 return self.visa_rm.open_resource(default)
-            print "'Default' connection string: " + default + " for " + name + " is invalid.",
+            print("'Default' connection string: " + default + " for " + name + " is invalid.", end=' ')
         else:
-            print "The default port for " + name + " was not specified.",
+            print("The default port for " + name + " was not specified.", end=' ')
         print(" Do you mean one of these?:")
 
         print("*****Connected Devices*****")
@@ -40,7 +40,7 @@ class DeviceSetup:
                 line += " -> '" + item.alias + "'"
             print(line)
         print("***************************")
-        instr = raw_input("Choose instrument to connect to: ")
+        instr = input("Choose instrument to connect to: ")
         return self.visa_rm.open_resource(instr)
 
     def connect_devices(self, config_file_devices, exit_stack):
@@ -55,36 +55,36 @@ class DeviceSetup:
         drivers = [i[:-3] for i in drivers if not (i == '__init__.py' or i[-3:] != '.py')]
         connected_devices = {}
 
-        print "Finding Devices...."
+        print("Finding Devices....")
 
         with open(CONSTANTS.DEVICES_CONFIG) as d:
             hardware_manager = json.load(d)
         for device_key in config_file_devices:
-            if device_key not in hardware_manager.keys():
-                print "Device not found in Devices.json: " + device_key
+            if device_key not in list(hardware_manager.keys()):
+                print("Device not found in Devices.json: " + device_key)
             else:
                 connection = None
                 device_config = hardware_manager[device_key]
                 if str(device_config['Type']) == "VISA":
                     connection = self.attach_VISA(str(device_key), str(device_config['Default']))
-                elif str(device_config['Type']) == "DIRECT" and "Default" in device_config.keys():
+                elif str(device_config['Type']) == "DIRECT" and "Default" in list(device_config.keys()):
                     connection = str(device_config['Default'])
                 else:
-                    connection = raw_input("\'" + str(device_key) + "\' cannot be used with VISA, "
+                    connection = input("\'" + str(device_key) + "\' cannot be used with VISA, "
                                                                     "Please enter connection info (eg. IP address): ")
 
                 driver_file_name = str(device_config['Driver'])
 
                 # instantiate a class based on the name of the file it is in.
                 if driver_file_name in drivers:
-                    if driver_file_name not in [i[0] for i in globals().items() if isinstance(i[1], types.ModuleType)]:
+                    if driver_file_name not in [i[0] for i in list(globals().items()) if isinstance(i[1], types.ModuleType)]:
                         globals()[driver_file_name] = imp.load_source(
                                 driver_file_name, os.path.join(CONSTANTS.DRIVERS_DIR, driver_file_name + '.py'))
                     DriverClass = [i for i in inspect.getmembers(globals()[driver_file_name], inspect.isclass)
                                    if i[0] == driver_file_name][0][1]
                     connected_devices[device_key] = exit_stack.enter_context(DriverClass(connection))
                 else:
-                    print("Error: Driver file '{}' for '{}' not found in the Driver Root directory '{}'".format(
-                            driver_file_name, device_key, CONSTANTS.DRIVERS_DIR))
+                    print(("Error: Driver file '{}' for '{}' not found in the Driver Root directory '{}'".format(
+                            driver_file_name, device_key, CONSTANTS.DRIVERS_DIR)))
                     sys.exit(1)
         return connected_devices

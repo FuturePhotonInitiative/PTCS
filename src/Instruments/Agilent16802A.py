@@ -134,7 +134,7 @@ class Agilent16802A(IPDriver):
         x_axis = self.dec_range(bus_info['Start_Time'], bus_info['End_Time'], sample_rate)
 
         if zipped:
-            temp = zip(x_axis, y_axis)
+            temp = list(zip(x_axis, y_axis))
         else:
             temp = (x_axis, y_axis)
         return temp

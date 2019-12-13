@@ -32,17 +32,17 @@ class AQ6317(PyVisaDriver):
         self.device.write('TLSADR24')  # Sets the GPIB Address of Laser to 24
         self.device.write('TLSADR?')  # Double checks that it is set
         info = self.device.read()
-        print ('Laser Address Set At: ' + info)
+        print(('Laser Address Set At: ' + info))
 
         self.device.write('GP2ADR20')  # Sets the GPIB of OSA to 20
         self.device.write('GP2ADR?')  # Double checks
         info = self.device.read()
-        print ('GP-IB2 Address of OSA set to: ' + info)
+        print(('GP-IB2 Address of OSA set to: ' + info))
 
         self.device.write('TLSSYNC1')  # Syncs Laser and OSA
         self.device.write('TLSSYNC?')  # Double checks
         info = self.device.read()
-        print ('Laser and OSA Link Status: ' + info)
+        print(('Laser and OSA Link Status: ' + info))
         # 1 on, 0 off
 
         start = float(start)
@@ -63,7 +63,7 @@ class AQ6317(PyVisaDriver):
         self.device.write('STAWL' + str(start))  # Beginning of sweep
         self.device.write('STPWL' + str(stop))  # End of sweep
 
-        print('Scan Starts: ' + str(start) + ' to ' + str(stop) + ' at ' + str(step) + 'nm step')
+        print(('Scan Starts: ' + str(start) + ' to ' + str(stop) + ' at ' + str(step) + 'nm step'))
 
         self.device.write('SGL')  # Start Single Sweep
 
@@ -85,10 +85,10 @@ class AQ6317(PyVisaDriver):
 
     def check_status(self):
         status = int(self.device.read_stb())
-        print('Status: %d' % status)
-        print('Scanning.'),
+        print(('Status: %d' % status))
+        print(('Scanning.'), end=' ')
         while status == 0:
             time.sleep(0.5)
             status = int(self.device.read_stb())
-            print('.'),
+            print(('.'), end=' ')
         return True

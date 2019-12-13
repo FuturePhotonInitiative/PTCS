@@ -20,7 +20,7 @@ class CSA8000(PyVisaDriver):
         envelope = bool(envelope)
 
         if (sample ^ average ^ envelope) & ~(sample & average & envelope):
-            print "Exactly one parameter needs to be set to True"
+            print("Exactly one parameter needs to be set to True")
             return
 
         if sample:
@@ -71,7 +71,7 @@ class CSA8000(PyVisaDriver):
 
     def set_mask_hit_ratio_target(self, ratio):
         if not (1e-8 < float(ratio) < 0.1):
-            print "Ratio must be within 1E-8 and 0.1"
+            print("Ratio must be within 1E-8 and 0.1")
             return
         self.device.write('MASK:AUTOSEEk:HITRatio ' + str(float(ratio)))
         return
@@ -107,7 +107,7 @@ class CSA8000(PyVisaDriver):
         vertical = bool(vertical)
 
         if ~(horizontal ^ vertical):
-            print "Exactly one parameter needs to be set to True"
+            print("Exactly one parameter needs to be set to True")
             return
 
         if horizontal:
@@ -130,7 +130,7 @@ class CSA8000(PyVisaDriver):
         log = bool(log)
 
         if ~(linear ^ log):
-            print "Exactly one parameter needs to be set to True"
+            print("Exactly one parameter needs to be set to True")
             return
 
         if linear:
@@ -143,7 +143,7 @@ class CSA8000(PyVisaDriver):
 
     def select_math_slot(self, num):
         if not (0 < int(num) < 9):
-            print "num must be between 1 and 8"
+            print("num must be between 1 and 8")
             return
         self.device.write('SELect:MATH' + str(int(num)) + ' ON')
         return

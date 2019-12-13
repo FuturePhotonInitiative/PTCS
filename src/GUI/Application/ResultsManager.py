@@ -35,7 +35,7 @@ class ResultsManager:
         return self.experiment_result_dict[key]
 
     def get_list_of_experiment_result_names(self):
-        return self.experiment_result_dict.keys()
+        return list(self.experiment_result_dict.keys())
 
     def make_new_experiment_result(self, exeriment_config_location, queue_result):
         now = datetime.datetime.today().strftime(TIMESTAMP_FORMAT)
@@ -66,7 +66,7 @@ class ResultsManager:
         return result
 
     def save_experiment_results(self):
-        for name in self.experiment_result_dict.keys():
+        for name in list(self.experiment_result_dict.keys()):
             self.save_experiment_result(name, self.experiment_result_dict[name])
 
     def save_queue_results(self):

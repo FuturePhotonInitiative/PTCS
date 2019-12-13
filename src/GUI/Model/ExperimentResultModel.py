@@ -114,8 +114,8 @@ class ExperimentResultsModel:
 
         self.experiments_results_files.append(text)
 
-        figure.text(0.0, 0.06, text[:len(text) / 2], ha='left')
-        figure.text(0.0, 0.02, text[len(text) / 2:], ha='left')
+        figure.text(0.0, 0.06, text[:(len(text) // 2)], ha='left')
+        figure.text(0.0, 0.02, text[(len(text) // 2):], ha='left')
 
         if autoscale is True:
             plt.autoscale()
@@ -151,6 +151,7 @@ class ExperimentResultsModel:
 
         # Plot all of the data points on one plot
         fig, ax = plt.subplots()
+
         im = ax.imshow(graph_data, aspect=aspect, extent=graph_extent, cmap=colormap, vmin=vmin, vmax=vmax)
 
         # Create colorbar for heat map to meet requirements for eyescan colorbar
@@ -162,7 +163,6 @@ class ExperimentResultsModel:
         if path == '':
             path = title
         plt.savefig(path.replace(' ', "_"))
-
         os.chdir(return_dir)
 
     def add_csv(self, file_name, data, column_labels=None, row_labels=None, title="",
@@ -171,15 +171,14 @@ class ExperimentResultsModel:
         if column_labels is not None:
             if row_labels is not None:
                 out_data += surround_character + title + surround_character + separator
-            out_data = separator.join(map(lambda s: surround_character + str(s) + surround_character,
-                                          column_labels))
+            out_data = separator.join([surround_character + str(s) + surround_character for s in column_labels])
             out_data += new_line
         for i in range(max(len(row_labels), len(data))):
             if row_labels is not None and len(row_labels) > i:
                 out_data += surround_character + row_labels[i] + surround_character + separator
             if len(data) > i:
                 if type(data[i]) is list:
-                    out_data += separator.join(map(lambda s: surround_character + str(s) + surround_character, data[i]))
+                    out_data += separator.join([surround_character + str(s) + surround_character for s in data[i]])
                 else:
                     out_data += surround_character + str(data[i]) + surround_character
                 # out_data += separator.join(map(lambda s: surround_character + str(s) + surround_character, data[i]))
@@ -204,15 +203,13 @@ class ExperimentResultsModel:
         out_data = ""
         if column_labels is not None:
             out_data += surround_character + title + surround_character + separator
-            out_data = separator.join(map(lambda s: surround_character + str(s) + surround_character,
-                                          column_labels))
+            out_data = separator.join([surround_character + str(s) + surround_character for s in column_labels])
             out_data += new_line
         for key in row_labels:
             out_data += surround_character + key + surround_character + separator
             if key in data_dict:
                 if type(data_dict[key]) is list:
-                    out_data += separator.join(map(lambda s: surround_character + str(s) + surround_character,
-                                                   data_dict[key]))
+                    out_data += separator.join([surround_character + str(s) + surround_character for s in data_dict[key]])
                 else:
                     out_data += surround_character + str(data_dict[key]) + surround_character
                 out_data += new_line

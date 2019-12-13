@@ -2,7 +2,7 @@ import os
 import threading
 import time
 
-from QueueRunner import QueueRunner
+from .QueueRunner import QueueRunner
 from src.GUI.Model.ExperimentQueue import ExperimentQueue
 from src.GUI.Model.ExperimentModel import Experiment
 
@@ -57,7 +57,7 @@ class QueueManager:
         for i in range(len(self.experiment_queue)):
             exp = self.experiment_queue.get_ith_experiment(i)
             output += "*" + exp.config_file_name.split("/")[-1][:-5] + "\n"
-            for field in (exp.config.data.keys() if exp.config.data else dict()):
+            for field in (list(exp.config.data.keys()) if exp.config.data else dict()):
                 output += str(exp.config.data[field]) + " // " + str(field) + "\n"
 
         with open(folder_path + "/Saved_Experiment_" + name, "w") as f:

@@ -36,7 +36,7 @@ class TSL_210H(PyVisaDriver):
 
     def set_wavelength(self, wavelength):
         if wavelength > self.max_wavelength or wavelength < self.min_wavelength:
-            print 'Wavelength out of range'
+            print('Wavelength out of range')
         else:
             wavelength = "{0:.3f}".format(float(wavelength))
             self.device.write('WA' + wavelength)
@@ -53,7 +53,7 @@ class TSL_210H(PyVisaDriver):
     def sweep_setup(self, start, end, step):
         if start < self.min_wavelength or start > self.max_wavelength or \
                 end < self.min_wavelength or start > self.max_wavelength:
-            print 'Wavelength out of range'
+            print('Wavelength out of range')
         else:
             self.sweep_start = start
             self.sweep_end = end
@@ -66,7 +66,7 @@ class TSL_210H(PyVisaDriver):
 
     def start_sweep(self):
         if self.sweep_start is None or self.sweep_end is None or self.sweep_step is None:
-            print 'Sweep not configured'
+            print('Sweep not configured')
         else:
             self.set_wavelength(self.sweep_start)
 

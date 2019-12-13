@@ -1,9 +1,9 @@
 {
-  "name": "Program IBERT (Tcl)",
+  "name": "Program VCU108 with IBERT (Tcl)",
   "tcl": "Prog_IBERT.tcl",
   "data" :
           {
             "speed": "2_5",
-			"IBERT_directory": "C:/EVT/PETB/Summer_2019/Vivado/Multispeed_IBERTs/Multispeed_Bitstreams"
+			"IBERT_directory": "C:\\EVT\\PIC Test Control Software\\PTCS\\IBERT_bitstreams"
           }
 }

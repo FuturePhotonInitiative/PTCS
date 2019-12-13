@@ -51,7 +51,7 @@ class Args:
             # Ada comments define actual comments
             name = tmp[1].split("--")[0].strip()
             # Remove things that weren't really arguments from the list (generally caused by whitespace)
-            args = filter(lambda arg: len(arg) > 0, args)
+            args = [arg for arg in args if len(arg) > 0]
             # Only return the to string of the list if there's more than one element
             if len(args) >= 2:
                 arg_list.append(name + "=" + str(args))
@@ -116,7 +116,7 @@ class Args:
         :return: the config file name
         """
         if self.parsed.configFile is None:
-            return raw_input("Enter config file name or nothing to exit: ")
+            return input("Enter config file name or nothing to exit: ")
         return self.parsed.configFile
 
     def get_param_file(self):

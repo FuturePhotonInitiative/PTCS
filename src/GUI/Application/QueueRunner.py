@@ -18,7 +18,6 @@ from src.GUI.Util.CONSTANTS import TEMP_DIR
 from src.GUI.Util.CONSTANTS import SCRIPTS_DIR
 from src.GUI.Util.CONSTANTS import PROJ_DIR
 from src.GUI.Util.CONSTANTS import VIVADO_LOCATION
-from src.GUI.Util.CONSTANTS import VIVADO_LOCATION
 
 
 class QueueRunner(Thread):
@@ -47,11 +46,11 @@ class QueueRunner(Thread):
         :return:
             Nothing
         """
-        print "Verifying devices..."
+        print("Verifying devices...")
         if not self.verify_devices():
-            print "\nA device was not connected properly. Aborting experiment.\n"
+            print("\nA device was not connected properly. Aborting experiment.\n")
             return
-        print "\n====================\nStarting the Queue\n====================\n"
+        print("\n====================\nStarting the Queue\n====================\n")
         self.queue_result.start_queue()
         # TODO catch any exceptions run by prober and try to continue, but only if a flag in the __init__ has been
         # set
@@ -88,7 +87,7 @@ class QueueRunner(Thread):
         i = 0
         while i < len(self.queue):
             self.current_experiment = self.queue.get_ith_experiment(i)
-            print(self.current_experiment.get_name())
+            print((self.current_experiment.get_name()))
             if self.current_experiment.get_name()[-5:] == '(Tcl)':
                 # Run a contiguous sequence of Tcl tests
                 tcl_end = i + 1
@@ -115,7 +114,7 @@ class QueueRunner(Thread):
         self.current_experiment = None
         self.queue_result.end_queue()
         self.queue_result.save()
-        print "\n====================\nQueue has finished\n====================\n"
+        print("\n====================\nQueue has finished\n====================\n")
 
     def run_tcl_tests(self, tcl_end, start_index=0):
         """
@@ -155,10 +154,10 @@ class QueueRunner(Thread):
                             else:
                                 words = line.split(' ')
                                 val = words[1]
-                                for k in self.queue.get_ith_experiment(i).config.data.keys():
+                                for k in list(self.queue.get_ith_experiment(i).config.data.keys()):
                                     if k == val:
                                         dt = self.queue.get_ith_experiment(i).config.data[k]
-                                        if isinstance(dt, str) or isinstance(dt, unicode):
+                                        if isinstance(dt, str) or isinstance(dt, str):
                                             dt = "\"" + dt + "\""
                                         line = words[0]+" "+words[1]+" " + str(dt) + "\n"
                     master_tcl += line

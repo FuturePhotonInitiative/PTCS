@@ -48,7 +48,7 @@ class Experiment:
             All of the keys currently set in the "Data" section of the experiment's configuration
         """
         if self.config.data:
-            return self.config.data.keys()
+            return list(self.config.data.keys())
         else:
             return []
 

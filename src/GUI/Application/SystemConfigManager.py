@@ -1,7 +1,7 @@
-from HardwareManager import HardwareManager
-from QueueManager import QueueManager
-from ExperimentsManager import ExperimentsManager
-from ResultsManager import ResultsManager
+from .HardwareManager import HardwareManager
+from .QueueManager import QueueManager
+from .ExperimentsManager import ExperimentsManager
+from .ResultsManager import ResultsManager
 from src.GUI.Application.UIController import UIController
 from src.GUI.Util import CONSTANTS
 

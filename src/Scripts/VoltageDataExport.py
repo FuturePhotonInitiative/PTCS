@@ -16,7 +16,7 @@ def main(data_map, experiment_result):
 	config = data_map['Config']
 	# create unique file with time stamp and name of experiment
 	identifier = time.strftime("%m%d%Y_%H%M%S", time.gmtime())+"_"+str(data_map['Config']['Name'].replace(' ', '_'))
-	print identifier
+	print(identifier)
 
 	# # create path for results if not existent
 	# if not os.path.exists("Results"):

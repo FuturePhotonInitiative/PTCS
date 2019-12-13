@@ -1,9 +1,7 @@
 import wx
-
-from Application.SystemConfigManager import SystemConfigManager
-from UI.MainFrame import MainFrame
-import Util.Globals as Globals
-
+from .Application.SystemConfigManager import SystemConfigManager
+from .UI.MainFrame import MainFrame
+from .Util import Globals
 
 def main():
     Globals.systemConfigManager = SystemConfigManager()

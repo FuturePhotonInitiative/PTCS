@@ -18,7 +18,7 @@ def main(data_map, experiment_result):
     gating_cycle_type = data_map["Config"]["data"]["gating_cycle_type"]
     eyescan_image_name = data_map["Config"]["data"]["eyescan_image_name"]
 
-    print(TEST_PRINT_HEADER + "Running the test. This will take 10 seconds...")
+    print((TEST_PRINT_HEADER + "Running the test. This will take 10 seconds..."))
 
     # PPG/ED
     bertwave.set_bitrate(bitrate)
@@ -60,8 +60,8 @@ def main(data_map, experiment_result):
                                         # at the next measurement pass
     bertwave.turn_off_output()
 
-    print(TEST_PRINT_HEADER + "Test completed.")
-    print(TEST_PRINT_HEADER + "Saving Data...")
+    print((TEST_PRINT_HEADER + "Test completed."))
+    print((TEST_PRINT_HEADER + "Saving Data..."))
 
     ber = dict()
 
@@ -72,12 +72,12 @@ def main(data_map, experiment_result):
     ber["inserted error count"] = bertwave.get_error_count_inserted()
     ber["omitted error count"] = bertwave.get_error_count_omitted()
 
-    experiment_result.add_csv_dict("error_rate_data", ber, ber.keys())
+    experiment_result.add_csv_dict("error_rate_data", ber, list(ber.keys()))
 
     bertwave.save_eye_screenshot_to_instrument()
     png_bytes = bertwave.get_last_screenshot_from_instrument()
     experiment_result.add_image_file(png_bytes, eyescan_image_name)
 
-    print(TEST_PRINT_HEADER + "Eye diagram output path: " + os.path.join(experiment_result.experiment_results_directory, eyescan_image_name))
+    print((TEST_PRINT_HEADER + "Eye diagram output path: " + os.path.join(experiment_result.experiment_results_directory, eyescan_image_name)))
 
-    print
+    print()

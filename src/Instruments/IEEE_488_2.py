@@ -1,4 +1,4 @@
-from PyVisaDriver import PyVisaDriver
+from .PyVisaDriver import PyVisaDriver
 
 
 class IEEE_488_2(PyVisaDriver):

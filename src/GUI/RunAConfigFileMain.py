@@ -24,10 +24,10 @@ def spawn_scripts(scripts, data_map, experiment_result):
     for script in scripts:
         threads = []  # TODO add multithreading support here
         module = script.source[:-3]
-        if module not in [i[0] for i in globals().items() if isinstance(i[1], types.ModuleType)]:
+        if module not in [i[0] for i in list(globals().items()) if isinstance(i[1], types.ModuleType)]:
             globals()[module] = imp.load_source(module, join(SCRIPTS_DIR, module + '.py'))
         [i[1] for i in inspect.getmembers(globals()[module], inspect.isfunction) if i[0] is 'main'][0](data_map, experiment_result)
-    print "Scripts Completed"
+    print("Scripts Completed")
     return
 
 
@@ -40,12 +40,12 @@ def main(args, config_manager=None, queue_result=None):
     :param queue_result: the QueueResult object to add run result data to
     :return: None
     """
-    from Application.SystemConfigManager import SystemConfigManager
+    from .Application.SystemConfigManager import SystemConfigManager
     if config_manager is None:
         config_manager = SystemConfigManager()
     results_manager = config_manager.get_results_manager()
 
-    from Model.QueueResultModel import QueueResultsModel
+    from .Model.QueueResultModel import QueueResultsModel
     if queue_result is None:
         queue_result = QueueResultsModel()
 
@@ -72,7 +72,7 @@ def main(args, config_manager=None, queue_result=None):
     config.initialize_data(data_map)
     arguments.add_parameters(data_map)
 
-    print("Running Experiment: " + config.name + "\n\n")
+    print(("Running Experiment: " + config.name + "\n\n"))
     experiment_result, experiment_result_name = \
         results_manager.make_new_experiment_result(file_name, queue_result)
 
@@ -90,4 +90,4 @@ def main(args, config_manager=None, queue_result=None):
 
     experiment_result.end_experiment()
     results_manager.save_experiment_result(experiment_result_name, experiment_result)
-    print 'Experiment complete, goodbye!'
+    print('Experiment complete, goodbye!')

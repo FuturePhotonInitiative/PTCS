@@ -55,7 +55,7 @@ class ConfigFile:
         copy = deepcopy(self)
         copy.experiment = [i.__dict__ for i in self.experiment]
         dct = copy.__dict__
-        for item in dct.keys():
+        for item in list(dct.keys()):
             if not dct[item]:
                 del dct[item]
         return dct
@@ -68,5 +68,5 @@ class ConfigFile:
         """
         if self.data:
             data_map['Data']['Initial'] = {}
-            for key in self.data.keys():
+            for key in list(self.data.keys()):
                 data_map['Data']['Initial'][key] = self.data[key]

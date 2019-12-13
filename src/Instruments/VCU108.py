@@ -23,11 +23,11 @@ class VCU108(PyVisaDriver):
         """
         data = []
         line = self.device.read()
-        print line
+        print(line)
         data.append(line)
         while self.device.bytes_in_buffer > 0:
             line = self.device.read()
-            print line
+            print(line)
             data.append(line)
         return data
 
@@ -51,7 +51,7 @@ class VCU108(PyVisaDriver):
             while "END" not in line:
                 try:
                     line = self.device.read()
-                    print line
+                    print(line)
                     data.append(line)
                 except pyvisa.VisaIOError:
                     continue
@@ -137,10 +137,10 @@ class VCU108(PyVisaDriver):
             return False
         else:
             if pin not in valid_pins:
-                print "Invalid pin sent."
+                print("Invalid pin sent.")
                 return False
             if port not in valid_ports:
-                print "Invalid port sent."
+                print("Invalid port sent.")
                 return False
             self.device.write("pek gpio read " + str(port) + " " + str(pin))
             return self.read_data()
@@ -158,10 +158,10 @@ class VCU108(PyVisaDriver):
             return False
         else:
             if pin not in valid_pins:
-                print "Invalid pin sent."
+                print("Invalid pin sent.")
                 return False
             if port not in valid_ports:
-                print "Invalid port sent."
+                print("Invalid port sent.")
                 return False
             self.device.write("pek gpio set " + str(port) + " " + str(pin))
             return self.read_data()
@@ -179,10 +179,10 @@ class VCU108(PyVisaDriver):
             return False
         else:
             if pin not in valid_pins:
-                print "Invalid pin sent."
+                print("Invalid pin sent.")
                 return False
             if port not in valid_ports:
-                print "Invalid port sent."
+                print("Invalid port sent.")
                 return False
             self.device.write("pek gpio clear " + str(port) + " " + str(pin))
             return self.read_data()
@@ -200,10 +200,10 @@ class VCU108(PyVisaDriver):
             return False
         else:
             if pin not in valid_pins:
-                print "Invalid pin sent."
+                print("Invalid pin sent.")
                 return False
             if port not in valid_ports:
-                print "Invalid port sent."
+                print("Invalid port sent.")
                 return False
             self.device.write("pek gpio toggle " + str(port) + " " + str(pin))
             return self.read_data()
@@ -223,13 +223,13 @@ class VCU108(PyVisaDriver):
             return False
         else:
             if pin not in valid_pins:
-                print "Invalid pin sent."
+                print("Invalid pin sent.")
                 return False
             if port not in valid_ports:
-                print "Invalid port sent."
+                print("Invalid port sent.")
                 return False
             if value not in valid_values:
-                print "Invalid port sent."
+                print("Invalid port sent.")
                 return False
             self.device.write("pek gpio write " + str(port) + " " + str(pin) + " " + str(value))
             return self.read_data()
@@ -257,7 +257,7 @@ class VCU108(PyVisaDriver):
             return False
         else:
             if channel not in valid_channels:
-                print "Channel not valid."
+                print("Channel not valid.")
                 return False
             self.device.write("adc read " + str(channel))
             return self.read_data()
@@ -311,7 +311,7 @@ class VCU108(PyVisaDriver):
             return False
         else:
             if match is None:
-                print "Enter a valid address"
+                print("Enter a valid address")
                 return False
             self.device.write("i2cwrite " + str(address) + " " + str(value))
             return self.read_data()
@@ -329,7 +329,7 @@ class VCU108(PyVisaDriver):
             return False
         else:
             if match is None:
-                print "Enter a valid address"
+                print("Enter a valid address")
                 return False
             self.device.write("i2cread " + str(address) + " " + str(value))
             return self.read_data()

@@ -143,7 +143,7 @@ class BOSA400(PyVisaDriver):
         command = 'sens:wav:stat?'
         response = self.device.query(command)
         check_response(command, response)
-        print response  # TODO finalize how to parse and return a number
+        print(response)  # TODO finalize how to parse and return a number
 
     def get_power(self):
         """
@@ -252,11 +252,11 @@ class BOSA400(PyVisaDriver):
         # take only enough points according to step
         # NOTE: BOSA does't change its sampling rate; it only changes it on the display
         original_size = numpy.size(n_trace_data, 0)
-        print 'orig: ', original_size
+        print('orig: ', original_size)
         target_size = int((end - start + 1) / float(step) + 1)
-        print 'targ: ', target_size
+        print('targ: ', target_size)
         skip_step = original_size / target_size
-        print 'skip: ', skip_step
+        print('skip: ', skip_step)
         return_data = n_trace_data[::skip_step]
 
         return return_data.astype(float).tolist()

@@ -98,4 +98,4 @@ class Polatis3000(PyVisaDriver):
 
     def get_zip_connections(self):
         connections = [re.sub('[(@)]', '', i).split(',') for i in self.get_all_connections().split("),(")]
-        return zip(connections[0], connections[1])
+        return list(zip(connections[0], connections[1]))

@@ -19,16 +19,14 @@ def main(data_map, experiment_result):
     #     reduced_data.append(new_list)
 
     samples = data_map['Data']['Collect']
-    for voltage in samples.keys():
+    for voltage in list(samples.keys()):
         new_list = [float(voltage), float(samples[voltage])]
         collected_data.append(new_list)
     reduced = data_map['Data']['Reduce']
-    for voltage in reduced.keys():
+    for voltage in list(reduced.keys()):
         new_list = [float(voltage), float(reduced[voltage])]
         reduced_data.append(new_list)
 
-
-    
     # Writing out collected data to csv
     experiment_result.add_csv("Collected_Data", collected_data, row_labels=[])
     # Writing out reduced data to csv

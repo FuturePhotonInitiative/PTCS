@@ -1,8 +1,8 @@
 import wx
 
-from ExperimentResults.ExperimentResultsPage import ExperimentResultsPage
-from Hardware.HardwarePage import HardwarePage
-from Queue.QueuePage import QueuePage
+from .ExperimentResults.ExperimentResultsPage import ExperimentResultsPage
+from .Hardware.HardwarePage import HardwarePage
+from .Queue.QueuePage import QueuePage
 
 from src.GUI.Util import CONSTANTS
 from src.GUI.UI.TestBuild.TestBuildPage import TestBuildPage

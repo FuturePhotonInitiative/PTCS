@@ -25,7 +25,7 @@ def main(data_map, experiment_result):
 		voltage_source.set_voltage(i)
 		# time.sleep(0.25)
 		if i % 1 == 0:
-			print "Applying " + str(i) + " volts"
+			print("Applying " + str(i) + " volts")
 		logic_analyzer.start_capture(False)
 
 		data_map['Data']['Collect'][str(i)] = logic_analyzer.get_bus_data('My Bus 1', False)
@@ -33,7 +33,7 @@ def main(data_map, experiment_result):
 	voltage_source.set_voltage(0)
 	voltage_source.set_output_switch(0)
 
-	print "Collection took: " + str(time.time() - start_time) + " seconds"
+	print("Collection took: " + str(time.time() - start_time) + " seconds")
 	# sys.exit("Done")
 	return
 

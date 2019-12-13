@@ -1,4 +1,4 @@
-set pattern "PRBS 31-bit"
+set pattern "Fast Clk"
 set error_injections 0
 set trigger_link 12
 set bit_count 10000000

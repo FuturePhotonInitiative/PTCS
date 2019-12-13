@@ -226,7 +226,7 @@ class AQ4321D(GPIBtoUSBAdapter):
 
     @staticmethod
     def _print(string):
-        print("ANDO-AQ4321D> " + string)
+        print(("ANDO-AQ4321D> " + string))
 
 # Code from the legacy driver that may be useful in the future:
 

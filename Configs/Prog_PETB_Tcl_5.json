@@ -1,4 +1,9 @@
 {
-  "name": "Program PETB 5 (Tcl)",
-  "tcl": "Prog_PETB_5.tcl"
+  "name": "Program VCU108 with PETB (Tcl)",
+  "tcl": "Prog_PETB.tcl",
+  "data" :
+          {
+            "speed": "2_5",
+			"PETB_directory": "C:\\EVT\\PIC Test Control Software\\PTCS\\PETB_bitstreams"
+          }
 }

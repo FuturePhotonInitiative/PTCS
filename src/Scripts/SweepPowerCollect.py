@@ -26,7 +26,7 @@ def main(data_map, results):
     laser.set_wavelength(laser_wavelength)
     orij = str(laser.get_optical_power())
     laser.set_optical_power(laser_power1)
-    print("switching power of the laser from " + orij + " to " + str(laser.get_optical_power()))
+    print(("switching power of the laser from " + orij + " to " + str(laser.get_optical_power())))
 
     laser.turn_laser_on()
     print("running first part")
@@ -37,7 +37,7 @@ def main(data_map, results):
     laser.turn_laser_off()
     orij = str(laser.get_optical_power())
     laser.set_optical_power(laser_power2)
-    print("switching power of the laser from " + orij + " to " + str(laser.get_optical_power()))
+    print(("switching power of the laser from " + orij + " to " + str(laser.get_optical_power())))
     laser.turn_laser_on()
     print("running second part")
 
