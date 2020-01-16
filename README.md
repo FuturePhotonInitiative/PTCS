@@ -14,7 +14,7 @@ PTCS is being developed by the Center for Detectors at Rochester Institute of Te
 PTCS is currently available from the [Future Photon Initiative public GitHub repository.](https://github.com/FuturePhotonInitiative/PTCS)
 
 ## User Guide
-The user facing guide for the project is EVT6 located in the EVT project formal documentation folder:
+The user guide for the project is EVT6 located in the EVT project formal documentation folder:
 \\hawk\RIDL\internal\projects\EVT\internal documents\Documentation.
 Start by reading this document as it gives an overview of the functionality of the software.
 
