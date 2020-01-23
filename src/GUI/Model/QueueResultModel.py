@@ -7,17 +7,13 @@ from src.GUI.Util.CONSTANTS import RESULTS_CONFIG_DIR
 
 
 class QueueResultsModel:
-    def __init__(self,
-                 start_datetime=Timestamp(),
-                 end_datetime=Timestamp(),
-                 experiments_results_locations=None,
-                 queue_result_config=None):
+    def __init__(self, experiments_results_locations=None, queue_result_config=None):
         self.time = None
         if queue_result_config is None:
             if experiments_results_locations is None:
                 experiments_results_locations = []
-            self.start_datetime = start_datetime
-            self.end_datetime = end_datetime
+            self.start_datetime = Timestamp()
+            self.end_datetime = Timestamp()
             self.experiments_results_locations = experiments_results_locations
         else:
             self.load_from_json(queue_result_config)
