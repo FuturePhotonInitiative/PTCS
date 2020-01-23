@@ -1,17 +1,15 @@
-import datetime
 import json
 import os
 
-from src.GUI.Util.Functions import clean_name_for_file
+from src.GUI.Util.Timestamp import Timestamp
 from src.GUI.Util.CONSTANTS import QUEUE_FILE_TITLE
-from src.GUI.Util.CONSTANTS import TIMESTAMP_FORMAT
 from src.GUI.Util.CONSTANTS import RESULTS_CONFIG_DIR
 
 
 class QueueResultsModel:
     def __init__(self,
-                 start_datetime=datetime.datetime.today().strftime(TIMESTAMP_FORMAT),
-                 end_datetime=datetime.datetime.today().strftime(TIMESTAMP_FORMAT),
+                 start_datetime=Timestamp(),
+                 end_datetime=Timestamp(),
                  experiments_results_locations=None,
                  queue_result_config=None):
         self.time = None
@@ -31,8 +29,8 @@ class QueueResultsModel:
             The name of the file to read from.  WARNING: The specified file will be overwritten
         """
         config_dict = json.load(open(filename))
-        self.start_datetime = datetime.datetime.strptime(config_dict["start_datetime"], TIMESTAMP_FORMAT)
-        self.end_datetime = datetime.datetime.strptime(config_dict["end_datetime"], TIMESTAMP_FORMAT)
+        self.start_datetime = Timestamp.from_str(config_dict["start_datetime"])
+        self.end_datetime = Timestamp.from_str(config_dict["end_datetime"])
         self.experiments_results_locations = config_dict["experiments_results_locations"]
 
     def export_to_json(self, filename, pretty_print=True):
@@ -46,8 +44,8 @@ class QueueResultsModel:
         None
         """
         config_dict = {}
-        config_dict["end_datetime"] = self.end_datetime
-        config_dict["start_datetime"] = self.start_datetime
+        config_dict["end_datetime"] = str(self.end_datetime)
+        config_dict["start_datetime"] = str(self.start_datetime)
         config_dict["experiments_results_locations"] = self.experiments_results_locations
         with open(filename, 'w') as config_file:
             json.dump(config_dict, config_file, indent=4 if pretty_print else None, default=str)
@@ -57,24 +55,23 @@ class QueueResultsModel:
 
     def get_name(self):
         now = self.start_datetime
-        name = QUEUE_FILE_TITLE + str(now)
-        name = clean_name_for_file(name)
+        name = QUEUE_FILE_TITLE + now.for_filename()
         return name
 
     def add_experiment_result(self, experiment_result_location):
         self.experiments_results_locations.append(experiment_result_location)
 
     def start_queue(self):
-        self.start_datetime = datetime.datetime.today().strftime(TIMESTAMP_FORMAT)
+        self.start_datetime = Timestamp()
 
     def end_queue(self):
-        self.end_datetime = datetime.datetime.today().strftime(TIMESTAMP_FORMAT)
+        self.end_datetime = Timestamp()
 
-    def set_start(self, start_datetime):
-        self.start_datetime = start_datetime
+    def set_start(self, start_datetime: str):
+        self.start_datetime = Timestamp.from_str(start_datetime)
 
-    def set_end(self, end_datetime):
-        self.end_datetime = end_datetime
+    def set_end(self, end_datetime: str):
+        self.end_datetime = Timestamp.from_str(end_datetime)
 
     def get_experiment_results_list(self):
         return self.experiments_results_locations
