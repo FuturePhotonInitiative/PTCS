@@ -253,8 +253,8 @@ class ExperimentResultsModel:
     def end_experiment(self):
         self.end_datetime = Timestamp()
 
-    def set_start(self, start_datetime: str):
-        self.start_datetime = Timestamp.from_str(start_datetime)
+    def set_start(self, start_datetime: Timestamp):
+        self.start_datetime = start_datetime
 
     def set_end(self, end_datetime):
         self.end_datetime = Timestamp.from_str(end_datetime)
