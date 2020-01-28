@@ -175,7 +175,7 @@ class QueueRunner(Thread):
                     if key not in master_experiment.config.experiment:
                         master_experiment.config.experiment.append(key)
         # Generate the script to run the Tcl script through the Vivado command line
-        tmp_file_name = TEMP_DIR + "\\tmp\\" + master_experiment.get_name().replace(" ", "_") + ".json"
+        tmp_file_name = os.path.join(TEMP_DIR, master_experiment.get_name().replace(" ", "_") + ".json")
         pyLoc = os.path.join(SCRIPTS_DIR, "script" + str(name) + ".py")
         exp = dict()
         exp['type'] = 'PY_SCRIPT'
@@ -188,22 +188,33 @@ class QueueRunner(Thread):
         copyfile(pyLoc, output_folder + "/script.py")
         master_experiment.config.experiment.append(ExperimentScript(exp))
         master_experiment.export_to_json(tmp_file_name)
-        # Run the experiment
-        RunAConfigFileMain.main(["RunAConfigFileMain.py", "-c", tmp_file_name], config_manager=Globals.systemConfigManager,
-                            queue_result=self.queue_result)
-        for i in range(start_index, tcl_end):
-            ex_name = clean_name_for_file(self.queue.get_ith_experiment(i).get_name())
-            if len(os.listdir(result_dir + "/" + name + "/" + ex_name + "_" + str(i+1))) == 0:
-                os.rmdir(result_dir + "/" + name + "/" + ex_name + "_" + str(i+1))
-        # Get rid of the annoying files Vivado creates
-        for fl in os.listdir("."):
-            try:
-                if fl.endswith(".jou") or fl.endswith(".log"):
-                    os.remove(fl)
-            except WindowsError:
-                pass
 
-        os.remove(pyLoc)
+        try:
+            # Run the experiment
+            RunAConfigFileMain.main(["RunAConfigFileMain.py", "-c", tmp_file_name],
+                                    config_manager=Globals.systemConfigManager,
+                                    queue_result=self.queue_result)
+        finally:
+            # remove files
+            for i in range(start_index, tcl_end):
+                ex_name = clean_name_for_file(self.queue.get_ith_experiment(i).get_name())
+                if len(os.listdir(result_dir + "/" + name + "/" + ex_name + "_" + str(i+1))) == 0:
+                    os.rmdir(result_dir + "/" + name + "/" + ex_name + "_" + str(i+1))
+
+            # Get rid of the annoying files Vivado creates
+            for fl in os.listdir("."):
+                try:
+                    if fl.endswith(".jou") or fl.endswith(".log"):
+                        os.remove(fl)
+                except WindowsError:
+                    pass
+
+            # remove the config file in the temp directory that we passed into the RunAConfigFileMain.main. The config
+            # would have been copied already into the results directory as Config.json
+            os.remove(tmp_file_name)
+
+            # delete the script that we put in the scripts directory to run
+            os.remove(pyLoc)
 
     def get_current_experiment(self):
         """
