@@ -6,3 +6,10 @@ class HardwareModel:
         self.driver = Driver
         self.type = Type
         self.default = Default
+
+    def uses_pyvisa(self):
+        """
+        If this does not use pyVISA, it is probably connected using an IP address, so self.type == "DIRECT"
+        :return:
+        """
+        return self.type == "VISA"

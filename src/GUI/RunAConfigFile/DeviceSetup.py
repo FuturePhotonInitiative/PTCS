@@ -8,6 +8,8 @@ import types
 
 from src.GUI.Util import CONSTANTS
 
+from src.GUI.Application.HardwareManager import HardwareManager
+
 
 class DeviceSetup:
 
@@ -57,21 +59,17 @@ class DeviceSetup:
 
         print("Finding Devices....")
 
-        with open(CONSTANTS.DEVICES_CONFIG) as d:
-            hardware_manager = json.load(d)
+        hardware_manager = HardwareManager(CONSTANTS.DEVICES_CONFIG)
         for device_key in config_file_devices:
-            if device_key not in list(hardware_manager.keys()):
+            if device_key not in hardware_manager.get_all_hardware_names():
                 print("Device not found in Devices.json: " + device_key)
             else:
                 connection = None
-                device_config = hardware_manager[device_key]
-                if str(device_config['Type']) == "VISA":
-                    connection = self.attach_VISA(str(device_key), str(device_config['Default']))
-                elif str(device_config['Type']) == "DIRECT" and "Default" in list(device_config.keys()):
-                    connection = str(device_config['Default'])
+                device_config = hardware_manager.get_hardware_object(device_key)
+                if device_config.uses_pyVISA():
+                    connection = self.attach_VISA(str(device_key), device_config.default)
                 else:
-                    connection = input("\'" + str(device_key) + "\' cannot be used with VISA, "
-                                                                    "Please enter connection info (eg. IP address): ")
+                    connection = str(device_config['Default'])
 
                 driver_file_name = str(device_config['Driver'])
 
