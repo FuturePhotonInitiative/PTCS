@@ -261,3 +261,6 @@ class ExperimentResultsModel:
 
     def get_experiment_results_file_list(self):
         return self.experiments_results_files
+
+    def get_results_dir(self):
+        return self.experiment_results_directory
