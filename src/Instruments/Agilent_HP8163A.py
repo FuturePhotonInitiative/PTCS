@@ -3,7 +3,7 @@ import struct
 from src.Instruments.IEEE_488_2 import IEEE_488_2
 
 
-class HP8163A(IEEE_488_2):
+class Agilent_HP8163A(IEEE_488_2):
     """
     This class models an Agilent HP8163A Lightwave Multimeter
     """

@@ -1,7 +1,7 @@
 from src.Instruments.PyVisaDriver import PyVisaDriver
 
 
-class Keithley2400(PyVisaDriver):
+class Keithley_2400(PyVisaDriver):
     """
     This class models a Keithley 2400 Source Meter
     """

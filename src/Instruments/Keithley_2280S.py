@@ -3,7 +3,7 @@ import time
 from src.Instruments.PyVisaDriver import PyVisaDriver
 
 
-class Keithley2280S(PyVisaDriver):
+class Keithley_2280S(PyVisaDriver):
     """
     This class models a Keithley 2280S Power Supply
     """

@@ -18,7 +18,7 @@ SAMPLE_RUN = "RUN"
 SAMPLE_NOT_RUN = "HOLD"
 
 
-class AnritsuMP2100A(IEEE_488_2):
+class Anritsu_MP2100A(IEEE_488_2):
 
     def __init__(self, device):
         IEEE_488_2.__init__(self)

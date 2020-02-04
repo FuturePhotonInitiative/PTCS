@@ -1,7 +1,7 @@
 from src.Instruments.PyVisaDriver import PyVisaDriver
 
 
-class HP6624A(PyVisaDriver):
+class Keysight_HP6624A(PyVisaDriver):
     """
     This class models a Keysight HP6624A Power Supply
     """

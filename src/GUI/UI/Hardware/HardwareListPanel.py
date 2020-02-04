@@ -24,7 +24,10 @@ class HardwareListPanel(DisplayPanel):
 
         # Adds all the hardware to the display
         for hardware in Globals.systemConfigManager.get_hardware_manager().get_all_hardware_names():
-            self.list_box.Append(hardware)
+            driver_name = Globals.systemConfigManager.get_hardware_manager().get_hardware_object(hardware).driver
+            index_of__ = driver_name.find("_")
+            driver_name = driver_name[:index_of__] + " " + driver_name[index_of__+1:]
+            self.list_box.Append("{} ({})".format(hardware, driver_name))
 
         self.sizer = wx.BoxSizer(wx.VERTICAL)
         self.SetSizer(self.sizer)

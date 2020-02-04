@@ -4,7 +4,7 @@ import numpy
 from src.Instruments.PyVisaDriver import PyVisaDriver
 
 
-class AQ6317(PyVisaDriver):
+class Ando_AQ6317(PyVisaDriver):
     """
     This class models an Ando AQ6317 optical spectrum analyzer.
 

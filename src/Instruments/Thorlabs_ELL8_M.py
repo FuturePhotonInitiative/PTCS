@@ -126,7 +126,7 @@ class ELL8(PyVisaDriver):
     """
 
 
-class ELL8_M(ELL8):
+class Thorlabs_ELL8_M(ELL8):
     """
     This class models an ELL8 rotation stage motor
     """

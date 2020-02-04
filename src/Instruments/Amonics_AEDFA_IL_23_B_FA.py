@@ -3,7 +3,7 @@ from time import sleep
 from src.Instruments.PyVisaDriver import PyVisaDriver
 
 
-class AEDFA_IL_23_B_FA(PyVisaDriver):
+class Amonics_AEDFA_IL_23_B_FA(PyVisaDriver):
     """
     This class models an Amonics EDFA.
     :warning: Baud rate in device needs to be set to 115200

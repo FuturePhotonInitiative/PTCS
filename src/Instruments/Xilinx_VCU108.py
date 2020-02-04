@@ -4,7 +4,7 @@ import pyvisa
 from src.Instruments.PyVisaDriver import PyVisaDriver
 
 
-class VCU108(PyVisaDriver):
+class Xilinx_VCU108(PyVisaDriver):
     """
     This class models a Xilinx VCU108 FPGA Evaluation Kit
     """

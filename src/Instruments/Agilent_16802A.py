@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 from src.Instruments.IPDriver import IPDriver
 
 
-class Agilent16802A(IPDriver):
+class Agilent_16802A(IPDriver):
     """
     This class models an Agilent 16802A Logic Analyzer
     """

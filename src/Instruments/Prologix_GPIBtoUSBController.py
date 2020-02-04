@@ -9,7 +9,7 @@ TERM_STRING_MAP = ["\r\n", "\r", "\n", ""]
 # should escape all '+' characters with an ESC ASCII character
 
 # all of these methods are private because a user using the GUI should not need to call these directly
-class GPIBtoUSBAdapter(PyVisaDriver):
+class Prologix_GPIBtoUSBController(PyVisaDriver):
     """
     This is the class that drives the yellow GPIB to USB adapter owned by the CFD.
     https://www.sparkfun.com/products/549
