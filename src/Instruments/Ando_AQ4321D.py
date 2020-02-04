@@ -1,4 +1,4 @@
-from src.Instruments.GPIBtoUSBAdapter import GPIBtoUSBAdapter
+from src.Instruments.Prologix_GPIBtoUSBController import Prologix_GPIBtoUSBController
 import time
 
 MIN_POWER = -20.0
@@ -19,10 +19,10 @@ THOUSANDTHS = .001
 TENTHS = .1
 
 
-class AQ4321D(GPIBtoUSBAdapter):
+class Ando_AQ4321D(Prologix_GPIBtoUSBController):
 
     def __init__(self, device):
-        GPIBtoUSBAdapter.__init__(self)
+        Prologix_GPIBtoUSBController.__init__(self)
         self.device = device
         self.name += "Ando AQ4321D laser"
 

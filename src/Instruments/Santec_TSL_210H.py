@@ -3,7 +3,7 @@ import time
 from src.Instruments.PyVisaDriver import PyVisaDriver
 
 
-class TSL_210H(PyVisaDriver):
+class Santec_TSL_210H(PyVisaDriver):
     """
     This class models a Santec TSL-201H Laser
     """

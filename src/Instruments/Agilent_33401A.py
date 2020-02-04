@@ -9,7 +9,7 @@ import pyvisa
 from src.Instruments.PyVisaDriver import PyVisaDriver
 
 
-class Agilent34401A(PyVisaDriver):
+class Agilent_34401A(PyVisaDriver):
     """
     This class models an Agilent 34401A Multimeter
     """

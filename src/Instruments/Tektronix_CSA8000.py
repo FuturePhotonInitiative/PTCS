@@ -1,7 +1,7 @@
 from src.Instruments.PyVisaDriver import PyVisaDriver
 
 
-class CSA8000(PyVisaDriver):
+class Tektronix_CSA8000(PyVisaDriver):
     """
     This class models an Tektronix CSA8000 Communications Signal Analyzer
     """

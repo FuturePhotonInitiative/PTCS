@@ -3,7 +3,7 @@ import re
 from src.Instruments.IEEE_488_2 import IEEE_488_2
 
 
-class AgilentDSO7000A(IEEE_488_2):
+class Agilent_DSO7000A(IEEE_488_2):
     """
     This class models an Agilent DSO7000A Oscilloscope.
     """

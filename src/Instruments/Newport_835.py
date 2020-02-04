@@ -1,10 +1,10 @@
-from src.Instruments.GPIBtoUSBAdapter import GPIBtoUSBAdapter
+from src.Instruments.Prologix_GPIBtoUSBController import Prologix_GPIBtoUSBController
 
 # the termination character sequence necessary for an instrument to read a command
 TERM_SEQUENCE = "X"
 
 
-class Newport835(GPIBtoUSBAdapter):
+class Newport_835(Prologix_GPIBtoUSBController):
     """
     This class models a Newport 835 Optical Power Meter
 
@@ -17,7 +17,7 @@ class Newport835(GPIBtoUSBAdapter):
     """
 
     def __init__(self, device):
-        GPIBtoUSBAdapter.__init__(self)
+        Prologix_GPIBtoUSBController.__init__(self)
         self.name += "Newport 835 Optical Power Meter"
         self.device = device
         self._become_controller()

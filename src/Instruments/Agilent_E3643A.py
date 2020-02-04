@@ -5,7 +5,7 @@ import time
 from src.Instruments.IEEE_488_2 import IEEE_488_2
 
 
-class AgilentE3643A(IEEE_488_2):
+class Agilent_E3643A(IEEE_488_2):
     """
     This class models an Agilent E3643A Power Supply
     """

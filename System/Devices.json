@@ -1,41 +1,41 @@
 {
   "Voltage_Source" : {
-    "Driver" : "AgilentE3643A",
+    "Driver" : "Agilent_E3643A",
     "Type" : "VISA",
     "Default" : "COM3"
   },
   "Logic_Analyzer" : {
-    "Driver" : "Agilent16802A",
+    "Driver" : "Agilent_16802A",
     "Type" : "DIRECT",
     "Default" : "129.21.172.198"
   },
   "Oscilloscope" : {
-    "Driver" : "AgilentDSO7000A",
+    "Driver" : "Agilent_DSO7000A",
     "Type" : "VISA",
     "Default" : "USB0::0x0957::0x1745::MY48260511::0::INSTR"
   },
   "VCU 108" : {
-    "Driver" : "VCU108",
+    "Driver" : "Xilinx_VCU108",
     "Type" : "VISA",
     "Default" : "COM8"
   },
   "BERT Analyzer": {
-    "Driver": "AnritsuMP2100A",
+    "Driver": "Anritsu_MP2100A",
     "Type": "VISA",
     "Default": "TCPIP::129.21.172.228::5001::SOCKET"
   },
-  "GPIB-USB": {
-    "Driver": "GPIBtoUSBAdapter",
+  "GPIB-USB Controller": {
+    "Driver": "Prologix_GPIBtoUSBController",
     "Type": "VISA",
     "Default": "COM16"
   },
   "Newport OPM": {
-    "Driver": "Newport835",
+    "Driver": "Newport_835",
     "Type": "VISA",
     "Default": "COM16"
   },
   "Laser Source": {
-    "Driver": "AQ4321D",
+    "Driver": "Ando_AQ4321D",
     "Type": "VISA",
     "Default": "COM16"
   }

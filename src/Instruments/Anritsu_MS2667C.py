@@ -1,7 +1,7 @@
 from src.Instruments.PyVisaDriver import PyVisaDriver
 
 
-class MS2667C(PyVisaDriver):
+class Anritsu_MS2667C(PyVisaDriver):
     """
     This class models an Anritsu MS2667C Spectrum Analyzer
     """

@@ -7,7 +7,7 @@ OK_MSG = 'OK'
 ERROR_BGN = 'Command'
 
 
-class BOSA400(PyVisaDriver):
+class Aragon_BOSA400(PyVisaDriver):
     """
     This class models an Aragon BOSA 400
     """

@@ -5,7 +5,7 @@ import re
 from src.Instruments.PyVisaDriver import PyVisaDriver
 
 
-class Polatis3000(PyVisaDriver):
+class Polatis_3000(PyVisaDriver):
     """
     This class models a Polatis 3000 Switch
     """
