@@ -47,7 +47,8 @@ DRIVERS_DIR = join(join(PROJ_DIR, "src"), "Instruments")
 RESULTS_DIR = join(PROJ_DIR, "Results")
 DEVICES_CONFIG = join(join(PROJ_DIR, "System"), "Devices.json")
 RESULTS_CONFIG_DIR = join(join(PROJ_DIR, "System"), "ResultsConfiguration")
-JSON_SCHEMA_FILE_NAME = join(join(PROJ_DIR, "System"), "ConfigFileValidationSchema.json")
+CONFIG_SCHEMA_FILE_NAME = join(join(PROJ_DIR, "System"), "ConfigFileValidationSchema.json")
+DEVICES_SCHEMA_FILE_NAME = join(join(PROJ_DIR, "System"), "DevicesFileValidationSchema.json")
 CUSTOM_TESTS_DIR = join(PROJ_DIR, "Custom_Tests")
 
 VIVADO_LOCATION = "C:/Xilinx/Vivado/2017.4/bin/vivado"

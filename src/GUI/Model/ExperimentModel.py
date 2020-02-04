@@ -1,6 +1,6 @@
 import json
 from src.GUI.Model.ConfigFile import ConfigFile
-from src.GUI.Util.CONSTANTS import JSON_SCHEMA_FILE_NAME
+from src.GUI.Util.CONSTANTS import CONFIG_SCHEMA_FILE_NAME
 
 
 class Experiment:
@@ -12,7 +12,7 @@ class Experiment:
             The experiment's configuration JSON file, from which its properties will be read
         """
         self.config_file_name = config_file
-        self.config = ConfigFile.from_json_file(config_file, JSON_SCHEMA_FILE_NAME)
+        self.config = ConfigFile.from_json_file(config_file, CONFIG_SCHEMA_FILE_NAME)
 
     def copy(self):
         return Experiment(self.config_file_name)

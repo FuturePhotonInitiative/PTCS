@@ -37,7 +37,7 @@ class SystemConfigManager:
         """
         if self.hardware_manager is None:
             self.hardware_manager = \
-                HardwareManager(CONSTANTS.DEVICES_CONFIG, CONSTANTS.DRIVERS_DIR)
+                HardwareManager(CONSTANTS.DEVICES_CONFIG)
         return self.hardware_manager
 
     def get_experiments_manager(self):

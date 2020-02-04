@@ -1,30 +1,29 @@
 import json
-import os
 
 from src.GUI.Model.HardwareModel import HardwareModel
 
+from jsonschema import validate
+
+from src.GUI.Util.CONSTANTS import DEVICES_SCHEMA_FILE_NAME
+
 
 class HardwareManager:
-    def __init__(self, hardware_config, driver_root):
+    def __init__(self, hardware_config):
         """
         Initializes the hardware manager with a list of drivers and configured hardware devices
         :param hardware_config:
             The .json file which holds the hardware configuration
-        :param driver_root:
-            The directory which holds all of the hardware drivers
         """
-        self.hardware_config = hardware_config
-        self.hardware_objects = {}
-        self.drivers = []
-        with open(hardware_config) as config_file:
-            self.hardware_dict = json.load(config_file)
-            for hardware_item in list(self.hardware_dict.keys()):
-                obj = HardwareModel(hardware_item,
-                               self.hardware_dict[hardware_item]['Driver'],
-                               self.hardware_dict[hardware_item]['Type'],
-                               self.hardware_dict[hardware_item]['Default'])
-                self.hardware_objects[hardware_item] = obj
-        self.drivers = os.listdir(driver_root)
+        self._hardware_objects = {}
+
+        with open(hardware_config) as f:
+            config = json.load(f)
+        with open(DEVICES_SCHEMA_FILE_NAME) as f:
+            schema = json.load(f)
+        validate(instance=config, schema=schema)
+
+        for key in config:
+            self._hardware_objects[key] = HardwareModel(**config[key])
 
     def get_hardware_object(self, name):
         """
@@ -33,55 +32,11 @@ class HardwareManager:
         :return:
             A Hardware object representing the configuration of the hardware with the given name
         """
-        return self.hardware_objects[name]
+        return self._hardware_objects[name]
 
     def get_all_hardware_names(self):
         """
         :return:
             A list of all of the names of hardware devices in the configuration file provided on initialization
         """
-        return list(self.hardware_objects.keys())
-
-    def get_drivers(self):
-        """
-        :return:
-            A list of all of the drivers in the Driver_Root directory provided at initialization
-        """
-        return self.drivers
-
-    def update_hardware_config(self, hardware_object, name=None, commit_changes=False):
-        """
-        Update the internal representation of the hardware configuration file
-        :param hardware_object:
-            The hardware object holding the updated values
-        :param name:
-            If provided, replace the hardware configuration with `name` with the configuration found in hardware_object
-        :param commit_changes:
-            If true, write the update to disk
-        :return:
-            None
-        """
-        if name is not None:
-            self.hardware_dict.pop(name)
-        self.hardware_dict[hardware_object.name] = {}
-        self.hardware_dict[hardware_object.name]['Driver'] = hardware_object.driver
-        self.hardware_dict[hardware_object.name]['Type'] = hardware_object.connection_type
-        self.hardware_dict[hardware_object.name]['Default'] = hardware_object.default_connection
-        if commit_changes:
-            self.commit_hardware_config_to_file()
-
-    def commit_hardware_config_to_file(self):
-        """
-        Write the current state of the hardware configuration to disk with the file name provided as hardware_config
-        at initialization
-        :return:
-            None
-        """
-        with open(self.hardware_config, "w") as config_file:
-            json.dump(self.hardware_dict, config_file)
-
-    def get_hardware(self):
-        return self.hardware_objects
-
-    def get_hardware_dictionary(self):
-        return self.hardware_dict
+        return list(self._hardware_objects.keys())

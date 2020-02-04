@@ -9,7 +9,7 @@ from src.GUI.RunAConfigFile.Args import Args
 from src.GUI.RunAConfigFile.DeviceSetup import DeviceSetup
 from src.GUI.Model.ConfigFile import ConfigFile
 from src.GUI.Util.CONSTANTS import SCRIPTS_DIR
-from src.GUI.Util.CONSTANTS import JSON_SCHEMA_FILE_NAME
+from src.GUI.Util.CONSTANTS import CONFIG_SCHEMA_FILE_NAME
 
 
 def spawn_scripts(scripts, data_map, experiment_result):
@@ -58,7 +58,7 @@ def main(args, config_manager=None, queue_result=None):
         print('Goodbye')
         sys.exit(1)
 
-    config = ConfigFile.from_json_file(file_name, JSON_SCHEMA_FILE_NAME)
+    config = ConfigFile.from_json_file(file_name, CONFIG_SCHEMA_FILE_NAME)
 
     data_map = {'Data': {}, 'Config': config.to_dict()}
 

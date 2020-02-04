@@ -1,0 +1,28 @@
+{
+  "type": "object",
+  "patternProperties": {
+
+    "^.+$": {
+      "type": "object",
+      "properties": {
+
+        "Driver": {
+          "type": "string"
+        },
+
+        "Type": {
+          "type": "string",
+          "enum": ["VISA", "DIRECT"]
+        },
+
+        "Default": {
+          "type": "string"
+        }
+
+      },
+      "required":["Driver", "Type", "Default"],
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}
