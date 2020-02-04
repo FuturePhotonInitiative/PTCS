@@ -44,12 +44,12 @@ class ExperimentListPanel(DisplayPanel):
 
         # Runs the selected function when an experiment is selected
         self.Bind(wx.EVT_TREE_SEL_CHANGED, self.selected)
-        self.Bind(wx.EVT_BUTTON, self.reload)
+        # self.Bind(wx.EVT_BUTTON, self.reload)
         # self.Bind(wx.EVT_TIMER, self.reload, self.Parent.Parent.Parent.Parent.timer)
 
-        self.timer = wx.Timer(self)
-        self.Bind(wx.EVT_TIMER, self.reload, self.timer)
-        self.timer.Start(5000)
+        # self.timer = wx.Timer(self)
+        # self.Bind(wx.EVT_TIMER, self.reload, self.timer)
+        # self.timer.Start(5000)
 
         self.reload(None)
 

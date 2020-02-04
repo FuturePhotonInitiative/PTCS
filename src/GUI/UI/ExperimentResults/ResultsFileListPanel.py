@@ -12,6 +12,7 @@ class ResultsFileListPanel(wx.StaticBox):
         wx.StaticBox.__init__(self, parent)
 
         self.result = None
+        self.displayed_files = []
 
         self.list_box = wx.ListBox(self, style=wx.LB_HSCROLL)
         self.list_box.SetBackgroundColour(CONSTANTS.LIST_PANEL_COLOR)
@@ -35,16 +36,25 @@ class ResultsFileListPanel(wx.StaticBox):
         :param result: The experiment who's results will be displayed
         """
         self.list_box.Clear()
+        self.displayed_files.clear()
         self.result = result
         if self.result is not None:
-            for fil in self.result.get_experiment_results_file_list():
-                self.list_box.Append(fil)
+            self.list_box.Append(self.result.get_results_dir())
+            self.displayed_files.append(self.result.get_results_dir())
+            leng = len(self.result.get_results_dir()) + 1
+
+            for root, dirs, files in os.walk(self.result.get_results_dir()):
+                for name in files:
+                    pat = os.path.join(root, name)
+                    self.list_box.Append(pat[leng:])
+                    self.displayed_files.append(pat)
 
     def on_result_select(self, event):
         """
         Opens the file selected using the operating system, then deselects the selection
         :param event: The event that caused the call
         """
-        file_name = self.result.get_experiment_results_file_list()[self.list_box.GetSelection()]
-        os.startfile("\"{}\"".format(file_name))
+        clicked_label_position = self.list_box.GetSelection()
+
+        os.startfile("\"{}\"".format(self.displayed_files[clicked_label_position]))
         self.list_box.Deselect(self.list_box.GetSelection())
