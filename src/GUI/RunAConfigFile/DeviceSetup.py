@@ -66,12 +66,12 @@ class DeviceSetup:
             else:
                 connection = None
                 device_config = hardware_manager.get_hardware_object(device_key)
-                if device_config.uses_pyVISA():
-                    connection = self.attach_VISA(str(device_key), device_config.default)
+                if device_config.uses_pyvisa():
+                    connection = self.attach_VISA(device_key, device_config.default)
                 else:
-                    connection = str(device_config['Default'])
+                    connection = device_config.default
 
-                driver_file_name = str(device_config['Driver'])
+                driver_file_name = device_config.driver
 
                 # instantiate a class based on the name of the file it is in.
                 if driver_file_name in drivers:
