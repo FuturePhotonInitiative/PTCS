@@ -52,6 +52,8 @@ class QueueManager:
         :return:
             The index of the saved queue
         """
+        if len(self.experiment_queue) == 0:
+            return False
         index = len(os.listdir(folder_path)) + 1
         output = ""
         for i in range(len(self.experiment_queue)):

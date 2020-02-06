@@ -139,12 +139,14 @@ class QueuePanel(DisplayPanel):
         Saves the queue.
         :param event: The triggering event.
         """
-        st = self.save_exp.GetValue().replace(" ", "_")
+        st = self.save_exp.GetValue().strip().replace(" ", "_")
         while os.path.isfile(os.path.join(SAVED_EXPERIMENTS_DIR, "Saved_Experiment_" + st)):
             st += "-"
-        Globals.systemConfigManager.get_queue_manager().save_queue_to_file(SAVED_EXPERIMENTS_DIR, st)
-        print(("Queue saved: " + st))
-        self.load_exp.Append(st.replace("_", " "))
+        result = Globals.systemConfigManager.get_queue_manager().save_queue_to_file(SAVED_EXPERIMENTS_DIR, st)
+
+        if result:
+            print(("Queue saved: " + st))
+            self.load_exp.Append(st.replace("_", " "))
 
     def load_queue(self, event):
         """
