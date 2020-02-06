@@ -28,6 +28,8 @@ set timer 0
 # if bit_count != 0: ignored
 # if bit_count == 0: waits 'timer' seconds before recording BER
 
+puts "The BERT has begun..."
+
 # Set channel properties
 set_property TX_PATTERN {$pattern} [get_hw_sio_links -of_objects [get_hw_sio_linkgroups {LINKGROUP_0}]]
 commit_hw_sio [get_hw_sio_links -of_objects [get_hw_sio_linkgroups {LINKGROUP_0}]]
@@ -133,5 +135,5 @@ puts $csvfile "Error Count,$errorcount12,$errorcount13,$errorcount14,$errorcount
 puts $csvfile "Bit-Error Ratio,$ber12,$ber13,$ber14,$ber15"
 close $csvfile
 
-puts "The data has been recorded in the file:"
+puts "The BERT data has been recorded in the file:"
 puts $output

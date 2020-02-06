@@ -65,5 +65,5 @@ run_hw_sio_scan [get_hw_sio_scans $xil_newScan]
 wait_on_hw_sio_scan [get_hw_sio_scans $xil_newScan]
 write_hw_sio_scan -force $output [get_hw_sio_scans "SCAN_$eyescan_ct"] 
 
-puts "The data has been recorded in the file:"
+puts "The Eyescan data has been recorded in the file:"
 puts $output
