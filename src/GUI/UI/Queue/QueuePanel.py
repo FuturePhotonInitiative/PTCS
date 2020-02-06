@@ -131,6 +131,9 @@ class QueuePanel(DisplayPanel):
         self.deselected(event)
         Globals.systemConfigManager.get_queue_manager().clear_queue()
 
+        ui_control = Globals.systemConfigManager.get_ui_controller()
+        ui_control.rebuild_queue_page()
+
     def save_queue(self, event):
         """
         Saves the queue.
@@ -148,10 +151,20 @@ class QueuePanel(DisplayPanel):
         Loads the queue in the load box.
         :param event: The triggering event.
         """
-        nm = self.load_exp.GetString(self.load_exp.GetSelection()).replace(" ", "_")
-        mgr = Globals.systemConfigManager.get_queue_manager()
-        mgr.clear_queue()
-        mgr.read_queue_from_file(os.path.join(SAVED_EXPERIMENTS_DIR, "Saved_Experiment_" + nm), CONFIGS)
+        saved_queue_name = self.load_exp.GetString(self.load_exp.GetSelection()).replace(" ", "_")
+
+        queue_manager = Globals.systemConfigManager.get_queue_manager()
+        experiments = queue_manager.read_queue_from_file(
+            os.path.join(SAVED_EXPERIMENTS_DIR, "Saved_Experiment_" + saved_queue_name)
+        )
+
+        # pretty much what add_experiment does, and it works well
+        for experiment in experiments:
+            queue_manager.add_to_queue(experiment)
+
+        ui_control = Globals.systemConfigManager.get_ui_controller()
+        ui_control.rebuild_queue_page()
+        #
 
     @staticmethod
     def get_loadable_experiments():

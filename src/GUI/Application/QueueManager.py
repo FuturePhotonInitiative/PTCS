@@ -64,13 +64,11 @@ class QueueManager:
             f.write(output)
         return index
 
-    def read_queue_from_file(self, file_path, config_root):
+    def read_queue_from_file(self, file_path):
         """
         Construct a queue from a file
         :param file_path:
-            The file to read from.
-        :param config_root:
-            The folder to read config files from.
+            The queue file to read from.
         :return:
             The constructed queue.
         """
@@ -103,8 +101,7 @@ class QueueManager:
                                 val = int(val)
                         exp.config.data[line[ind+4:-1]] = val
             rqueue.append(exp)
-        self.experiment_queue.queue.extend(rqueue)
-        return True
+        return rqueue
 
     @staticmethod
     def parse_units(s):
