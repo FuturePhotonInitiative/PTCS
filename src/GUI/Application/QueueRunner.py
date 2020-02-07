@@ -113,6 +113,8 @@ class QueueRunner(Thread):
         self.queue_result.end_queue()
         self.queue_result.save()
         print("\n====================\nQueue has finished\n====================\n")
+        Globals.systemConfigManager.get_ui_controller(). \
+            mainframe.experiment_results_page.experiment_list_panel.append_just_run_queue()
 
     def run_tcl_tests(self, tcl_end, start_index=0):
         """

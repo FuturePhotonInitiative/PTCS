@@ -27,9 +27,6 @@ class ResultsManager:
                     experiment_result_config=os.path.join(results_config_directory, config))
                 )
 
-    def get_list_of_queue_results(self):
-        pass
-
     def get_experiment_result(self, key):
         return self.experiment_result_dict[key]
 
