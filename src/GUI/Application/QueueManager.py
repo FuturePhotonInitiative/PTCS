@@ -1,6 +1,4 @@
 import os
-import threading
-import time
 
 from .QueueRunner import QueueRunner
 from src.GUI.Model.ExperimentQueue import ExperimentQueue

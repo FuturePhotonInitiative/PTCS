@@ -51,27 +51,39 @@ class ExperimentListPanel(DisplayPanel):
         # self.Bind(wx.EVT_TIMER, self.reload, self.timer)
         # self.timer.Start(5000)
 
-        self.reload(None)
+        self.load_queues()
 
     def set_up_ui_control(self, ui_control):
         pass
 
-    def reload(self, event=None):
+    def add_queue_to_view(self, queue_result):
         """
-        Reloads it self, updates if the Queue has changed
+        Adds a queue to the UI
+        :param queue_result: the queue result object
+        :return: the TreeRoot UI object created
         """
-        # print "RELOADING", self.root, self, event
-        if not self.root:
-            self.root = self.tree_box.AddRoot(CONSTANTS.EXPERIMENT_QUEUE_RESULT_ROOT)
-        # print self.tree_box.GetChildrenCount(self.root, recursively=False), len(Globals.systemConfigManager.get_results_manager().get_queue_results())
-        if self.tree_box.GetChildrenCount(self.root, recursively=False) != len(Globals.systemConfigManager.get_results_manager().get_queue_results()):
+        result_root = self.tree_box.AppendItem(self.root, queue_result.get_name())
+        for exp_result_name in queue_result.get_experiment_results_list():
+            self.tree_box.AppendItem(result_root, exp_result_name)
+        return result_root
 
-            self.tree_box.DeleteChildren(self.root)
-            for que_result in Globals.systemConfigManager.get_results_manager().get_queue_results():
-                que_root = self.tree_box.AppendItem(self.root, que_result.get_name())
-                for exp_result_name in que_result.get_experiment_results_list():
-                    self.tree_box.AppendItem(que_root, exp_result_name)
-            self.tree_box.ExpandAll()
+    def load_queues(self):
+        """
+        Populate the UI based on the queue results retrieved from the filesystem when the application started
+        """
+        self.root = self.tree_box.AddRoot(CONSTANTS.EXPERIMENT_QUEUE_RESULT_ROOT)
+        for que_result in Globals.systemConfigManager.get_results_manager().get_queue_results():
+            self.add_queue_to_view(que_result)
+        self.tree_box.ExpandAll()
+
+    def append_just_run_queue(self):
+        """
+        Will be called when a queue has just been finished running
+        Expands the control to make it visible to a user who does not know how to use tree views
+        """
+        queue_result = Globals.systemConfigManager.get_results_manager().get_queue_results()[-1]
+        result_root = self.add_queue_to_view(queue_result)
+        self.tree_box.Expand(result_root)
 
     def deselected(self, event):
         """

@@ -55,4 +55,3 @@ class MainFrame(wx.Frame):
         UI_controller = Globals.systemConfigManager.get_ui_controller()
         if UI_controller:
             UI_controller.fix_control_list()
-            UI_controller.rebuild_experiment_results_page()

@@ -15,15 +15,8 @@ class UIController:
         # self.mainframe.build_experiments_page.set_up_ui_control(self)
         self.mainframe.experiment_results_page.set_up_ui_control(self)
 
-    def rebuild_all_pages(self):
-        self.rebuild_queue_page()
-        self.rebuild_experiment_results_page()
-
     def rebuild_queue_page(self):
         self.mainframe.queue_page.reload_display_panel()
-
-    def rebuild_experiment_results_page(self):
-        self.mainframe.experiment_results_page.reload_display_panel()
 
     def add_control_to_text_list(self, control):
         if control is not None:
