@@ -5,5 +5,6 @@
           {
             "speed": "2_5",
 			"IBERT_directory": "C:\\EVT\\PIC Test Control Software\\PTCS\\IBERT_bitstreams"
-          }
+          },
+  "display_order": 2
 }
