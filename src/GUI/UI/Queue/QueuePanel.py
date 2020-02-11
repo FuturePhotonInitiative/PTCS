@@ -150,9 +150,12 @@ class QueuePanel(DisplayPanel):
 
     def load_queue(self, event):
         """
-        Loads the queue in the load box.
+        Loads the queue in the load box after clearing what was currently in the queue.
         :param event: The triggering event.
         """
+        self.deselected(event)
+        Globals.systemConfigManager.get_queue_manager().clear_queue()
+
         saved_queue_name = self.load_exp.GetString(self.load_exp.GetSelection()).replace(" ", "_")
 
         queue_manager = Globals.systemConfigManager.get_queue_manager()
