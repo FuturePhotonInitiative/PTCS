@@ -27,5 +27,6 @@
     "reading_units": "auto",
     "laser_power1": -20,
     "laser_power2": -10
-  }
+  },
+  "display_order": 10
 }

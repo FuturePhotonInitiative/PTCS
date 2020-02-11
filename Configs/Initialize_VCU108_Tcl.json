@@ -1,4 +1,5 @@
 {
   "name": "Initialize VCU 108 (Tcl)",
-  "tcl": "Initialize_VCU108.tcl"
+  "tcl": "Initialize_VCU108.tcl",
+  "display_order": 1
 }

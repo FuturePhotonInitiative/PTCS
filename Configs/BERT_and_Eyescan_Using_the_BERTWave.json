@@ -21,5 +21,6 @@
     "million_sample_limit": 1,
     "gating_cycle_type": "REPeat",
     "eyescan_image_name": "eyescan.png"
-  }
+  },
+  "display_order": 9
 }

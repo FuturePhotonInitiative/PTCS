@@ -27,5 +27,6 @@
     "sweep_wavelen_start": 1520,
     "sweep_wavelen_stop": 1530,
     "total_sweep_time": 10
-  }
+  },
+  "display_order": 11
 }

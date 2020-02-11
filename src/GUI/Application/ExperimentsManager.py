@@ -21,7 +21,7 @@ class ExperimentsManager:
         if not self.cache_is_valid:
             self.rebuild_available_experiments()
         names = list(self.available_experiments.keys())
-        names.sort()
+        names.sort(key=lambda exp: self.available_experiments[exp].config.display_order)
         return names
 
     def rebuild_available_experiments(self):

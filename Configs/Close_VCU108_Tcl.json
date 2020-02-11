@@ -1,4 +1,5 @@
 {
   "name": "Close VCU 108 (Tcl)",
-  "tcl": "Close_VCU108.tcl"
+  "tcl": "Close_VCU108.tcl",
+  "display_order": 7
 }

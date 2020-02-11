@@ -26,5 +26,6 @@
     "Final_Voltage": 3,
     "Step_Voltage": 0.5,
     "Oscilloscope_Channel": 1
-  }
+  },
+  "display_order": 13
 }
