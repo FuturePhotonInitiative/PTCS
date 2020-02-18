@@ -14,6 +14,9 @@ from src.GUI.Model.ExperimentScriptModel import ExperimentScript
 
 from src.GUI.Util.CONSTANTS import TEMP_DIR, SCRIPTS_DIR, PROJ_DIR, VIVADO_LOCATION, VIVADO_OUTPUT_FILE_NAME
 
+from watchdog.observers import Observer
+from watchdog.events import PatternMatchingEventHandler
+
 
 class QueueRunner(Thread):
     """
@@ -175,41 +178,33 @@ class QueueRunner(Thread):
                         master_experiment.config.experiment.append(key)
         # Generate the script to run the Tcl script through the Vivado command line
         tmp_file_name = os.path.join(TEMP_DIR, master_experiment.get_name().replace(" ", "_") + ".json")
-        pyLoc = os.path.join(SCRIPTS_DIR, "script" + str(name) + ".py")
         exp = dict()
         exp['type'] = 'PY_SCRIPT'
         exp['source'] = 'script' + str(name) + '.py'
         exp['order'] = 1
+
+        script_path = os.path.join(SCRIPTS_DIR, "script" + str(name) + ".py")
         vivado_output_file = os.path.join(output_folder, VIVADO_OUTPUT_FILE_NAME).replace("\\", "/")
-        with open(pyLoc, "w") as f:
+        self.write_python_script_combined_tcl_test(script_path, target_location, vivado_output_file)
 
-            f.write("import os\n")
-            f.write("\n")
-            f.write("def main(data_map, experiment_result):\n")
-            f.write("    os.system(")
-
-            f.write("\'{}\'".format(VIVADO_LOCATION))
-            f.write(" + ")
-            f.write("\'{}\'".format(" -mode tcl < "))
-            f.write(" + ")
-            f.write("\'\"{}\"\'".format(target_location))
-            f.write(" + ")
-            f.write("\'{}\'".format(" > "))
-            f.write(" + ")
-            f.write("\'{}\'".format(vivado_output_file))
-
-            f.write(")")
-
-        copyfile(pyLoc, output_folder + "/script.py")
+        copyfile(script_path, output_folder + "/script.py")
         master_experiment.config.experiment.append(ExperimentScript(exp))
         master_experiment.export_to_json(tmp_file_name)
 
+        # spawn a thread to watch for the output of Vivado
+        obs, opened_vivado_file = self.watch(vivado_output_file)
         try:
             # Run the experiment
             RunAConfigFileMain.main(["RunAConfigFileMain.py", "-c", tmp_file_name],
                                     config_manager=Globals.systemConfigManager,
                                     queue_result=self.queue_result)
         finally:
+            opened_vivado_file.close()
+
+            # stop and join observer
+            obs.stop()
+            obs.join()
+
             # remove files
             for i in range(start_index, tcl_end):
                 ex_name = clean_name_for_file(self.queue.get_ith_experiment(i).get_name())
@@ -229,7 +224,7 @@ class QueueRunner(Thread):
             os.remove(tmp_file_name)
 
             # delete the script that we put in the scripts directory to run
-            os.remove(pyLoc)
+            os.remove(script_path)
 
     def get_current_experiment(self):
         """
@@ -269,6 +264,40 @@ class QueueRunner(Thread):
         if devs is False:
             return False
         return True
+
+    @staticmethod
+    def write_python_script_combined_tcl_test(script_path, tcl_file, vivado_output_file):
+        with open(script_path, "w") as f:
+
+            f.write("import os\n")
+            f.write("\n")
+            f.write("def main(data_map, experiment_result):\n")
+            f.write("    os.system(")
+
+            f.write("\'{}\'".format(VIVADO_LOCATION))
+            f.write(" + ")
+            f.write("\'{}\'".format(" -mode tcl < "))
+            f.write(" + ")
+            f.write("\'\"{}\"\'".format(tcl_file))
+            f.write(" + ")
+            f.write("\'{}\'".format(" > "))
+            f.write(" + ")
+            f.write("\'{}\'".format(vivado_output_file))
+
+            f.write(")")
+
+    @staticmethod
+    def watch(file):
+        open(file, "w").close()  # create the file in the first place
+        f = open(file, "r")
+
+        path_to_file = os.path.dirname(file)
+        event_handler = PatternMatchingEventHandler(patterns=[file])
+        event_handler.on_modified = lambda event: print(f.read(), end="")
+        observer = Observer()
+        observer.schedule(event_handler, path_to_file)
+        observer.start()
+        return observer, f
 
     @staticmethod
     def add_test_series(base_exp, vary_param, start, count, step=1):
