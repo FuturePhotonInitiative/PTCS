@@ -60,6 +60,7 @@ class DeviceSetup:
         print("Finding Devices....")
 
         hardware_manager = HardwareManager(CONSTANTS.DEVICES_CONFIG)
+        error_happened = False
         for device_key in config_file_devices:
             if device_key not in hardware_manager.get_all_hardware_names():
                 print("Device not found in Devices.json: " + device_key)
@@ -67,7 +68,13 @@ class DeviceSetup:
                 connection = None
                 device_config = hardware_manager.get_hardware_object(device_key)
                 if device_config.uses_pyvisa():
-                    connection = self.attach_VISA(device_key, device_config.default)
+                    try:
+                        connection = self.attach_VISA(device_key, device_config.default)
+                    except pyvisa.VisaIOError:
+                        error_happened = True
+                        print("Unable to connect to " + device_key +
+                              ". Is the instrument connected to the computer on the anticipated port and turned on?")
+                        continue
                 else:
                     connection = device_config.default
 
@@ -85,4 +92,6 @@ class DeviceSetup:
                     print(("Error: Driver file '{}' for '{}' not found in the Driver Root directory '{}'".format(
                             driver_file_name, device_key, CONSTANTS.DRIVERS_DIR)))
                     sys.exit(1)
+        if error_happened:
+            return False
         return connected_devices
