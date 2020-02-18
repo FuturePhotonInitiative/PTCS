@@ -51,6 +51,8 @@ CONFIG_SCHEMA_FILE_NAME = join(join(PROJ_DIR, "System"), "ConfigFileValidationSc
 DEVICES_SCHEMA_FILE_NAME = join(join(PROJ_DIR, "System"), "DevicesFileValidationSchema.json")
 CUSTOM_TESTS_DIR = join(PROJ_DIR, "Custom_Tests")
 
+VIVADO_OUTPUT_FILE_NAME = "vivado_output.txt"
+
 VIVADO_LOCATION = "C:/Xilinx/Vivado/2017.4/bin/vivado"
 
 EXPERIMENT_QUEUE_RESULT_ROOT = "Experiment Queues"

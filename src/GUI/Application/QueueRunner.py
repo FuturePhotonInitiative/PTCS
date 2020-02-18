@@ -12,10 +12,7 @@ from src.GUI.RunAConfigFile.DeviceSetup import DeviceSetup
 from src.GUI.Model.ExperimentModel import Experiment
 from src.GUI.Model.ExperimentScriptModel import ExperimentScript
 
-from src.GUI.Util.CONSTANTS import TEMP_DIR
-from src.GUI.Util.CONSTANTS import SCRIPTS_DIR
-from src.GUI.Util.CONSTANTS import PROJ_DIR
-from src.GUI.Util.CONSTANTS import VIVADO_LOCATION
+from src.GUI.Util.CONSTANTS import TEMP_DIR, SCRIPTS_DIR, PROJ_DIR, VIVADO_LOCATION, VIVADO_OUTPUT_FILE_NAME
 
 
 class QueueRunner(Thread):
@@ -183,10 +180,26 @@ class QueueRunner(Thread):
         exp['type'] = 'PY_SCRIPT'
         exp['source'] = 'script' + str(name) + '.py'
         exp['order'] = 1
+        vivado_output_file = os.path.join(output_folder, VIVADO_OUTPUT_FILE_NAME).replace("\\", "/")
         with open(pyLoc, "w") as f:
-            f.write("import os\ndef main(data_map, experiment_result):\n\t" +
-                    "os.system('" + VIVADO_LOCATION + " -mode tcl < ' + '\""
-                    + target_location + "\"')")
+
+            f.write("import os\n")
+            f.write("\n")
+            f.write("def main(data_map, experiment_result):\n")
+            f.write("    os.system(")
+
+            f.write("\'{}\'".format(VIVADO_LOCATION))
+            f.write(" + ")
+            f.write("\'{}\'".format(" -mode tcl < "))
+            f.write(" + ")
+            f.write("\'\"{}\"\'".format(target_location))
+            f.write(" + ")
+            f.write("\'{}\'".format(" > "))
+            f.write(" + ")
+            f.write("\'{}\'".format(vivado_output_file))
+
+            f.write(")")
+
         copyfile(pyLoc, output_folder + "/script.py")
         master_experiment.config.experiment.append(ExperimentScript(exp))
         master_experiment.export_to_json(tmp_file_name)
@@ -253,6 +266,8 @@ class QueueRunner(Thread):
                 devs = device_setup.connect_devices(device_list, stack)
             except Exception:
                 return False
+        if devs is False:
+            return False
         return True
 
     @staticmethod
