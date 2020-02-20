@@ -88,3 +88,9 @@ class Experiment:
         """
         with open(filename, 'w') as f:
             json.dump(self.config.to_dict(), f, indent=4 if pretty_print else None)
+
+    def get_description(self):
+        return self.config.description
+
+    def get_devices(self):
+        return self.config.devices

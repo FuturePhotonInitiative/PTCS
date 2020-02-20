@@ -96,6 +96,32 @@ class ExperimentControlPanel(ControlPanel):
             self.variables_labels = {}
             self.variables_boxes = {}
 
+            # Display test description in the config file
+            if experiment.get_description:
+                desc_header = wx.StaticText(self, label="Test Description")
+                desc_header.SetFont(wx.Font().Bold())
+                self.sizer.Add(desc_header, 0, wx.ALIGN_CENTER | wx.ALL)
+                description_box = wx.StaticText(self, label=experiment.get_description())
+                description_box.Wrap(self.GetSize().width)
+                self.sizer.Add(description_box, 0, wx.EXPAND | wx.ALL)
+
+            # Display the instruments used in this test
+            devices_header = wx.StaticText(self, label="Devices Used")
+            devices_header.SetFont(wx.Font().Bold())
+            self.sizer.Add(devices_header, 0, wx.ALIGN_CENTER | wx.ALL)
+
+            devices_used = experiment.get_devices()
+            if devices_used:
+                for device in devices_used:
+                    self.sizer.Add(wx.StaticText(self, label=device), 0, wx.ALL)
+            else:
+                self.sizer.Add(wx.StaticText(self, label="No devices used"), 0, wx.ALL)
+
+            # Display the parameters able to be configured for this test
+            params_header = wx.StaticText(self, label="Configurable Parameters")
+            params_header.SetFont(wx.Font().Bold())
+            self.sizer.Add(params_header, 0, wx.ALIGN_CENTER | wx.ALL)
+
             # Add components (A Label and Textbox) for each of the experiments variables
             for variable in self.experiment.get_data_keys():
 
