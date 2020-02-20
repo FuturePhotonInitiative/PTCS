@@ -28,5 +28,6 @@
     "sweep_wavelen_stop": 1530,
     "total_sweep_time": 10
   },
-  "display_order": 11
+  "display_order": 11,
+  "description": "Sweep the wavelength of the laser while keeping the power constant. The optical power meter will detect this change"
 }

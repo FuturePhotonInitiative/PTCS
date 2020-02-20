@@ -1,5 +1,6 @@
 {
   "name": "Close VCU 108 (Tcl)",
   "tcl": "Close_VCU108.tcl",
-  "display_order": 7
+  "display_order": 7,
+  "description": "Closes the Vivado project and reset everything to defaults"
 }

@@ -28,5 +28,6 @@
     "laser_power1": -20,
     "laser_power2": -10
   },
-  "display_order": 10
+  "display_order": 10,
+  "description": "The lazer will sweep the power at a constant wavelength and the optical power meter will read the power difference"
 }

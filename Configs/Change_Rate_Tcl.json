@@ -1,10 +1,9 @@
 {
   "name": "Change Rate (Tcl)",
   "tcl": "Change_Rate.tcl",
-  "data" :
-          {
-            "link": 12,
-			"speed": 0
-          },
+  "data" : {
+    "link": 12,
+    "speed": 0
+  },
   "display_order": 6
 }

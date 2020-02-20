@@ -6,5 +6,6 @@
             "speed": "2_5",
 			"IBERT_directory": "C:\\EVT\\PIC Test Control Software\\PTCS\\IBERT_bitstreams"
           },
-  "display_order": 2
+  "display_order": 2,
+  "description": "Program the VCU108 with the IBERT test using Vivado"
 }
