@@ -41,8 +41,7 @@
     },
 
     "data": {
-      "type": ["object", "null"],
-      "additionalItems": { "type": "string" }
+      "type": ["object", "null"]
     },
 
     "tcl": {
@@ -53,6 +52,10 @@
       "type": "integer",
       "minimum": 1,
       "maximum": 1000000
+    },
+
+    "description": {
+      "type": "string"
     }
   },
   "required": ["name"],

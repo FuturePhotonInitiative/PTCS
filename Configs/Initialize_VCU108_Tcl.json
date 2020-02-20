@@ -1,5 +1,6 @@
 {
   "name": "Initialize VCU 108 (Tcl)",
   "tcl": "Initialize_VCU108.tcl",
-  "display_order": 1
+  "display_order": 1,
+  "description": "Connects to and initializes the VCU108 using Vivado to be ready to run tests on it"
 }

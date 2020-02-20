@@ -1,25 +1,23 @@
 {
   "name": "Eyescan (Tcl)",
   "tcl": "Eyescan_Procedure.tcl",
-  "devices":
-              [
-                "VCU 108"
-              ],
-  "experiment" :
-              [
-                {
-                  "type":"PY_SCRIPT",
-                  "source": "EyescanTclReduce.py",
-                  "order":  2
-                }
-              ],
-  "data" :
-          {
-            "link":12,
-			"pattern":"Fast Clk",
-			"horz_incr":1,
-			"vert_incr":1,
-			"Results":""
-          },
-  "display_order": 5
+  "devices": [
+    "VCU 108"
+  ],
+  "experiment" : [
+    {
+      "type":"PY_SCRIPT",
+      "source": "EyescanTclReduce.py",
+      "order":  2
+    }
+  ],
+  "data" : {
+    "link":12,
+    "pattern":"Fast Clk",
+    "horz_incr":1,
+    "vert_incr":1,
+    "Results":""
+  },
+  "display_order": 5,
+  "description": "Run an eyescan on the VCU108 using Vivado"
 }

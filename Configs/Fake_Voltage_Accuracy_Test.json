@@ -1,5 +1,5 @@
 {
-  "name": "Fake Voltage Accuracy Test (no instruments used)",
+  "name": "Fake Voltage Accuracy Test",
   "experiment": [
     {
       "type": "PY_SCRIPT",
@@ -20,5 +20,6 @@
   "data": {
     "Levels": 10
   },
-  "display_order": 14
+  "display_order": 14,
+  "description": "This test does not use any instruments, it just prints out things like it was running an actual test on the instruments"
 }

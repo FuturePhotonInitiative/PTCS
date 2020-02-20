@@ -27,5 +27,6 @@
     "Step_Voltage": 0.5,
     "Oscilloscope_Channel": 1
   },
-  "display_order": 13
+  "display_order": 13,
+  "description": "Use the voltage source to output certain voltages, and have the oscilloscope read these voltages. This is not too useful of a test, but it is just a basis test to show that it is possible to talk to instruments"
 }

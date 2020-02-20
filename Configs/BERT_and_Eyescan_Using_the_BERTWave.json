@@ -22,5 +22,6 @@
     "gating_cycle_type": "REPeat",
     "eyescan_image_name": "eyescan.png"
   },
-  "display_order": 9
+  "display_order": 9,
+  "description": "This test runs a BERT and eyescan on an electrical loopback on the BERTWave"
 }

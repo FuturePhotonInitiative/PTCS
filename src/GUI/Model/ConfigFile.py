@@ -13,7 +13,7 @@ class ConfigFile:
     The object is then possibly manipulated and then possibly dumped to a file
     """
 
-    def __init__(self, name, experiment=None, devices=None, data=None, tcl=None, display_order=1000000):
+    def __init__(self, name, experiment=None, devices=None, data=None, tcl=None, display_order=1000000, description=None):
         if experiment is None:
             experiment = []
         self.name = name
@@ -27,6 +27,7 @@ class ConfigFile:
         self.data = data
         self.tcl = tcl
         self.display_order = display_order
+        self.description = description
 
     @classmethod
     def from_json_file(cls, file_name, schema_name):

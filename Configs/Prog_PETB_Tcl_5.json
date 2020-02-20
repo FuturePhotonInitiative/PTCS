@@ -6,5 +6,6 @@
             "speed": "2_5",
 			"PETB_directory": "C:\\EVT\\PIC Test Control Software\\PTCS\\PETB_bitstreams"
           },
-  "display_order": 3
+  "display_order": 3,
+  "description": "Program the PETB through the VCU108 using Vivado"
 }
