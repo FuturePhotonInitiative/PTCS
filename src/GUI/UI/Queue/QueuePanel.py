@@ -30,11 +30,13 @@ class QueuePanel(DisplayPanel):
 
         self.save_button = wx.Button(self)
         self.save_button.SetLabelText("Save Queue")
+        self.save_button.Disable()
 
         self.load_button = wx.Button(self)
         self.load_button.SetLabelText("Load Queue")
 
         self.save_exp = wx.TextCtrl(self)
+        self.save_exp.Disable()
 
         self.load_exp = wx.Choice(self, choices=self.get_loadable_experiments())
 
@@ -66,6 +68,8 @@ class QueuePanel(DisplayPanel):
         # Adds all the experiments in the application queue to the display list
         self.reload()
 
+        self.Bind(wx.EVT_TEXT, self.text)
+
         # Runs deselected on a double click or when escape is pressed
         self.Bind(wx.EVT_KEY_DOWN, self.deselected)
         self.Bind(wx.EVT_LISTBOX_DCLICK, self.deselected)
@@ -81,10 +85,18 @@ class QueuePanel(DisplayPanel):
 
     def reload(self):
         """
-        Reloads the display list with the current Queue contents
+        Reloads the display list with the current Queue contents, and sets the enabled state of the save queue box
         """
+        experiments = Globals.systemConfigManager.get_queue_manager().get_experiment_names()
+        if len(experiments) > 0:
+            self.save_button.Enable()
+            self.save_exp.Enable()
+        else:
+            self.save_button.Enable(False)
+            self.save_exp.Enable(False)
+
         self.list_box.Clear()
-        for experiment in Globals.systemConfigManager.get_queue_manager().get_experiment_names():
+        for experiment in experiments:
             self.list_box.Append(experiment)
 
     def deselected(self, event):
@@ -137,13 +149,17 @@ class QueuePanel(DisplayPanel):
         :param event: The triggering event.
         """
         st = self.save_exp.GetValue().strip().replace(" ", "_")
-        while os.path.isfile(os.path.join(SAVED_EXPERIMENTS_DIR, "Saved_Experiment_" + st)):
-            st += "-"
-        result = Globals.systemConfigManager.get_queue_manager().save_queue_to_file(SAVED_EXPERIMENTS_DIR, st)
+        if os.path.isfile(os.path.join(SAVED_EXPERIMENTS_DIR, "Saved_Experiment_" + st)):
+            dialog = wx.MessageDialog(None, "A queue with that name already exists. Would you like to overwrite it?", "Overwrite Queue", wx.YES_NO | wx.NO_DEFAULT)
+            result = dialog.ShowModal()
+            if result == wx.ID_NO:
+                return
+        save_result = Globals.systemConfigManager.get_queue_manager().save_queue_to_file(SAVED_EXPERIMENTS_DIR, st)
 
-        if result:
+        if save_result:
             print(("Queue saved: " + st))
             self.load_exp.Append(st.replace("_", " "))
+            self.save_exp.Clear()
 
     def load_queue(self, event):
         """
@@ -167,6 +183,13 @@ class QueuePanel(DisplayPanel):
         ui_control = Globals.systemConfigManager.get_ui_controller()
         ui_control.rebuild_queue_page()
         #
+
+    def text(self, event):
+        in_text_box = self.save_exp.GetLineText(0)
+        if len(in_text_box) > 0:
+            self.save_button.Enable()
+        else:
+            self.save_button.Enable(False)
 
     @staticmethod
     def get_loadable_experiments():
