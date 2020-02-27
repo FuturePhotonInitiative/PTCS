@@ -2,7 +2,7 @@ import wx
 import os
 
 from src.GUI.UI.DisplayPanel import DisplayPanel
-from src.GUI.Util.CONSTANTS import LIST_PANEL_COLOR, LIST_PANEL_FOREGROUND_COLOR, SAVED_EXPERIMENTS_DIR, CONFIGS
+from src.GUI.Util.CONSTANTS import LIST_PANEL_COLOR, LIST_PANEL_FOREGROUND_COLOR, SAVED_QUEUES_DIR
 import src.GUI.Util.Globals as Globals
 
 
@@ -13,17 +13,14 @@ class QueuePanel(DisplayPanel):
     def __init__(self, parent):
         """
         Sets up the Queue Panel
-        :param parent: The parent to display the panel on
+        :param parent: The tab to display the panel on
         """
         DisplayPanel.__init__(self, parent)
 
-        self.list_box = wx.ListBox(self)
-        # self.list_box_sizer = wx.BoxSizer(wx.HORIZONTAL)
-        # self.list_box_sizer.Add(self.list_box, 5)
+        self.queue_list_box = wx.ListBox(self)
+
         self.run_button = wx.Button(self)
         self.run_button.SetLabelText("Run Queue")
-        # self.run_button_sizer = wx.BoxSizer(wx.HORIZONTAL)
-        # self.sizer.Add(self.list_box_sizer, 5)
 
         self.clear_button = wx.Button(self)
         self.clear_button.SetLabelText("Clear Queue")
@@ -34,15 +31,16 @@ class QueuePanel(DisplayPanel):
 
         self.load_button = wx.Button(self)
         self.load_button.SetLabelText("Load Queue")
+        self.load_button.Disable()
 
-        self.save_exp = wx.TextCtrl(self)
-        self.save_exp.Disable()
+        self.save_text_box = wx.TextCtrl(self)
+        self.save_text_box.Disable()
 
-        self.load_exp = wx.Choice(self, choices=self.get_loadable_experiments())
+        self.load_choice_box = wx.Choice(self, choices=self.get_loadable_queues())
 
         self.sizer = wx.BoxSizer(wx.VERTICAL)
         self.SetSizer(self.sizer)
-        self.sizer.Add(self.list_box, 5, wx.EXPAND | wx.ALL)
+        self.sizer.Add(self.queue_list_box, 5, wx.EXPAND | wx.ALL)
 
         self.midbar = wx.BoxSizer(wx.HORIZONTAL)
         self.midbar.Add(self.clear_button, 1, wx.EXPAND | wx.ALL)
@@ -52,8 +50,8 @@ class QueuePanel(DisplayPanel):
         self.btn_sizer.Add(self.load_button, 1, wx.EXPAND | wx.ALL)
 
         self.input_sizer = wx.BoxSizer(wx.VERTICAL)
-        self.input_sizer.Add(self.save_exp, 1, wx.EXPAND | wx.ALL)
-        self.input_sizer.Add(self.load_exp, 1, wx.EXPAND | wx.ALL)
+        self.input_sizer.Add(self.save_text_box, 1, wx.EXPAND | wx.ALL)
+        self.input_sizer.Add(self.load_choice_box, 1, wx.EXPAND | wx.ALL)
 
         self.midbar.Add(self.btn_sizer, 0.5, wx.EXPAND | wx.ALL)
         self.midbar.Add(self.input_sizer, 0.5, wx.EXPAND | wx.ALL)
@@ -62,13 +60,14 @@ class QueuePanel(DisplayPanel):
         self.sizer.Add(self.run_button, 2, wx.EXPAND | wx.ALL)
 
         # Sets up the colors display Constants are in Util.CONSTANTS
-        self.list_box.SetBackgroundColour(LIST_PANEL_COLOR)
-        self.list_box.SetForegroundColour(LIST_PANEL_FOREGROUND_COLOR)
+        self.queue_list_box.SetBackgroundColour(LIST_PANEL_COLOR)
+        self.queue_list_box.SetForegroundColour(LIST_PANEL_FOREGROUND_COLOR)
 
         # Adds all the experiments in the application queue to the display list
         self.reload()
 
-        self.Bind(wx.EVT_TEXT, self.text)
+        self.Bind(wx.EVT_TEXT, self.check_save_button_state)
+        self.load_choice_box.Bind(wx.EVT_CHOICE, self.check_load_button_state)
 
         # Runs deselected on a double click or when escape is pressed
         self.Bind(wx.EVT_KEY_DOWN, self.deselected)
@@ -90,14 +89,14 @@ class QueuePanel(DisplayPanel):
         experiments = Globals.systemConfigManager.get_queue_manager().get_experiment_names()
         if len(experiments) > 0:
             self.save_button.Enable()
-            self.save_exp.Enable()
+            self.save_text_box.Enable()
         else:
-            self.save_button.Enable(False)
-            self.save_exp.Enable(False)
+            self.save_button.Disable()
+            self.save_text_box.Disable()
 
-        self.list_box.Clear()
+        self.queue_list_box.Clear()
         for experiment in experiments:
-            self.list_box.Append(experiment)
+            self.queue_list_box.Append(experiment)
 
     def deselected(self, event):
         """
@@ -106,8 +105,8 @@ class QueuePanel(DisplayPanel):
         """
         self.GetParent().render_control_panel(None)
         if (not isinstance(event, wx.KeyEvent)) or event.GetKeyCode() == wx.WXK_ESCAPE:
-            for selected in self.list_box.GetSelections():
-                self.list_box.Deselect(selected)
+            for selected in self.queue_list_box.GetSelections():
+                self.queue_list_box.Deselect(selected)
 
     def selected(self, event):
 
@@ -117,7 +116,7 @@ class QueuePanel(DisplayPanel):
         """
 
         queue_manager = Globals.systemConfigManager.get_queue_manager()
-        selected_experiment = queue_manager.get_ith_experiment(self.list_box.GetSelection())
+        selected_experiment = queue_manager.get_ith_experiment(self.queue_list_box.GetSelection())
         self.GetParent().render_control_panel(selected_experiment)
         pass
 
@@ -148,18 +147,18 @@ class QueuePanel(DisplayPanel):
         Saves the queue.
         :param event: The triggering event.
         """
-        st = self.save_exp.GetValue().strip().replace(" ", "_")
-        if os.path.isfile(os.path.join(SAVED_EXPERIMENTS_DIR, "Saved_Experiment_" + st)):
+        st = self.save_text_box.GetValue().strip().replace(" ", "_")
+        if os.path.isfile(os.path.join(SAVED_QUEUES_DIR, "Saved_Queue_" + st)):
             dialog = wx.MessageDialog(None, "A queue with that name already exists. Would you like to overwrite it?", "Overwrite Queue", wx.YES_NO | wx.NO_DEFAULT)
             result = dialog.ShowModal()
             if result == wx.ID_NO:
                 return
-        save_result = Globals.systemConfigManager.get_queue_manager().save_queue_to_file(SAVED_EXPERIMENTS_DIR, st)
+        save_result = Globals.systemConfigManager.get_queue_manager().save_queue_to_file(SAVED_QUEUES_DIR, st)
 
         if save_result:
             print(("Queue saved: " + st))
-            self.load_exp.Append(st.replace("_", " "))
-            self.save_exp.Clear()
+            self.load_choice_box.Append(st.replace("_", " "))
+            self.save_text_box.Clear()
 
     def load_queue(self, event):
         """
@@ -169,11 +168,11 @@ class QueuePanel(DisplayPanel):
         self.deselected(event)
         Globals.systemConfigManager.get_queue_manager().clear_queue()
 
-        saved_queue_name = self.load_exp.GetString(self.load_exp.GetSelection()).replace(" ", "_")
+        saved_queue_name = self.load_choice_box.GetString(self.load_choice_box.GetSelection()).replace(" ", "_")
 
         queue_manager = Globals.systemConfigManager.get_queue_manager()
         experiments = queue_manager.read_queue_from_file(
-            os.path.join(SAVED_EXPERIMENTS_DIR, "Saved_Experiment_" + saved_queue_name)
+            os.path.join(SAVED_QUEUES_DIR, "Saved_Queue_" + saved_queue_name)
         )
 
         # pretty much what add_experiment does, and it works well
@@ -184,26 +183,39 @@ class QueuePanel(DisplayPanel):
         ui_control.rebuild_queue_page()
         #
 
-    def text(self, event):
-        in_text_box = self.save_exp.GetLineText(0)
+    def check_save_button_state(self, event):
+        """
+        When text has been entered anywhere in this UI component. Change the save button to visible or invisible
+        :param event: The event object
+        """
+        # handle save queue box text entered
+        in_text_box = self.save_text_box.GetLineText(0)
         if len(in_text_box) > 0:
             self.save_button.Enable()
         else:
-            self.save_button.Enable(False)
+            self.save_button.Disable()
+
+    def check_load_button_state(self, event):
+        """
+        Enable the load queue button when the user selects a choice. The UI will start with no choices being selected
+        :param event: The event object
+        :return:
+        """
+        self.load_button.Enable()
 
     @staticmethod
-    def get_loadable_experiments():
+    def get_loadable_queues():
         """
         Gets possible experiments to load.
         :return: A list of loadable experiments.
         """
         res = []
         try:
-            for fl in os.listdir(SAVED_EXPERIMENTS_DIR):
-                res.append(fl[17:].replace("_", " "))
+            for fl in os.listdir(SAVED_QUEUES_DIR):
+                res.append(fl[12:].replace("_", " "))
         except WindowsError as e:
             if e.errno == 2:
-                os.mkdir(SAVED_EXPERIMENTS_DIR)
+                os.mkdir(SAVED_QUEUES_DIR)
             else:
                 raise e
         return res
