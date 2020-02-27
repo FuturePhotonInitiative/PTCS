@@ -46,45 +46,11 @@ class ExperimentControlPanel(ControlPanel):
         # Renders the panel with the given experiment
         self.render(experiment)
 
-    def set_up_ui_control(self, ui_control):
-        if ui_control is None:
-            ui_control = Globals.systemConfigManager.get_ui_controller()
-        if ui_control:
-            controls_to_add = []
-
-            controls_to_add.extend(self.variables_labels)
-
-            controls_to_add.append(self.choice_box)
-            controls_to_add.append(self.show_source_button)
-            controls_to_add.append(self.remove_button)
-            controls_to_add.append(self.add_button)
-            # print "ADD BUTTON:", self.add_button
-
-
-            for control in controls_to_add:
-                ui_control.add_control_to_text_list(control)
-
-    def clean_up_ui_control(self):
-        ui_control = Globals.systemConfigManager.get_ui_controller()
-        if ui_control:
-            controls_to_add = []
-
-            controls_to_add.extend(self.variables_labels)
-
-            controls_to_add.append(self.choice_box)
-            controls_to_add.append(self.show_source_button)
-            controls_to_add.append(self.remove_button)
-            controls_to_add.append(self.add_button)
-
-            for control in controls_to_add:
-                ui_control.remove_control_from_text_list(control)
-
     def render(self, experiment):
         """
         Sets up the panel with an experiment and it's components
         :param experiment: The experiment to render the page with
         """
-        self.clean_up_ui_control()
         if experiment is not None and experiment != self.experiment:
 
             # Set the new experiment to the experiment to be worked with
@@ -172,7 +138,6 @@ class ExperimentControlPanel(ControlPanel):
         elif experiment is None:
             # if there is no experiment given, render with no experiment
             self.render_without_experiment()
-        self.set_up_ui_control(None)
 
     def render_without_experiment(self):
         """

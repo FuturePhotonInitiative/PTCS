@@ -27,9 +27,6 @@ class ResultsFileListPanel(wx.StaticBox):
 
         self.render(None)
 
-    def set_up_ui_control(self, ui_control):
-        pass
-
     def render(self, result):
         """
         Renders the panel with an experiment, adds all of the experiments results files to the display

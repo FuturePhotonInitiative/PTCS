@@ -79,9 +79,6 @@ class QueuePanel(DisplayPanel):
         self.load_button.Bind(wx.EVT_BUTTON, self.load_queue)
         self.clear_button.Bind(wx.EVT_BUTTON, self.clear_queue)
 
-    def set_up_ui_control(self, ui_control):
-        ui_control.add_control_to_text_list(self.run_button)
-
     def reload(self):
         """
         Reloads the display list with the current Queue contents

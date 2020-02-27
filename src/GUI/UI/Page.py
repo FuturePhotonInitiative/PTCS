@@ -47,10 +47,6 @@ class Page(wx.Panel):
     def reload_display_panel(self):
         self.display_panel.reload()
 
-    def set_up_ui_control(self, ui_control):
-        self.display_panel.set_up_ui_control(ui_control)
-        self.control_panel.set_up_ui_control(ui_control)
-
     def set_display(self,
                    display_panel,
                    display_title=None,

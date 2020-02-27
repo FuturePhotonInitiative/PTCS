@@ -40,9 +40,6 @@ class HardwareListPanel(DisplayPanel):
         # Renders the selected hardware config
         self.Bind(wx.EVT_LISTBOX, self.selected)
 
-    def set_up_ui_control(self, ui_control):
-        pass
-
     def reload(self):
         """
         Reloads the list of hardware names

@@ -42,17 +42,15 @@ class ExperimentOutputPanel(ControlPanel):
         # Renders the panel with the given experiment
         self.Bind(wx.EVT_BUTTON, self.change_mode)
 
-    def set_up_ui_control(self, ui_control):
-        if ui_control is None:
-            ui_control = Globals.systemConfigManager.get_ui_controller()
-        ui_control.redirectSTDout(self.out_text_field)
-
     def render(self, obj):
         """
         Sets up the panel with an experiment and it's components
         :param experiment: The experiment to render the page with
         """
         pass
+
+    def output_to_text_field(self, ui_control):
+        ui_control.redirectSTDout(self.out_text_field)
 
     def change_mode(self, evt):
         ui_control = Globals.systemConfigManager.get_ui_controller()
