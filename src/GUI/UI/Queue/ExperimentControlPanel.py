@@ -97,13 +97,12 @@ class ExperimentControlPanel(ControlPanel):
             self.variables_boxes = {}
 
             # Display test description in the config file
-            if experiment.get_description:
-                desc_header = wx.StaticText(self, label="Test Description")
-                desc_header.SetFont(wx.Font().Bold())
-                self.sizer.Add(desc_header, 0, wx.ALIGN_CENTER | wx.ALL)
-                description_box = wx.StaticText(self, label=experiment.get_description())
-                description_box.Wrap(self.GetSize().width)
-                self.sizer.Add(description_box, 0, wx.EXPAND | wx.ALL)
+            desc_header = wx.StaticText(self, label="Test Description")
+            desc_header.SetFont(wx.Font().Bold())
+            self.sizer.Add(desc_header, 0, wx.ALIGN_CENTER | wx.ALL)
+            description_box = wx.StaticText(self, label=str(experiment.get_description()))  # if description is None, say "None", dont error out
+            description_box.Wrap(self.GetSize().width)
+            self.sizer.Add(description_box, 0, wx.EXPAND | wx.ALL)
 
             # Display the instruments used in this test
             devices_header = wx.StaticText(self, label="Devices Used")
