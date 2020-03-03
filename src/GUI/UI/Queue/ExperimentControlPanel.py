@@ -66,7 +66,8 @@ class ExperimentControlPanel(ControlPanel):
             desc_header = wx.StaticText(self, label="Test Description")
             desc_header.SetFont(wx.Font().Bold())
             self.sizer.Add(desc_header, 0, wx.ALIGN_CENTER | wx.ALL)
-            description_box = wx.StaticText(self, label=str(experiment.get_description()))  # if description is None, say "None", dont error out
+            # if description is None, say "None", dont error out
+            description_box = wx.StaticText(self, label=str(experiment.get_description()))
             description_box.Wrap(self.GetSize().width)
             self.sizer.Add(description_box, 0, wx.EXPAND | wx.ALL)
 
@@ -154,20 +155,24 @@ class ExperimentControlPanel(ControlPanel):
         self.label = wx.StaticText(self)
         self.label.SetLabelText("Pre-Defined Tests")
         self.label.SetFont(wx.Font(wx.FontInfo(30)))
+
         self.choice_box = wx.Choice(self,
                     choices=Globals.systemConfigManager.get_experiments_manager().get_available_experiments_names())
         self.choice_box.SetFont(wx.Font(wx.FontInfo(22)))
-        # self.UI_control.add_control_to_text_list(self.choice_box)
+        self.choice_box.Bind(wx.EVT_CHOICE, lambda e: self.add_button.Enable())
+
+        # add button should be disabled to start, and the font should be quite large
         self.add_button = wx.Button(self, label="Add")
+        if self.choice_box.GetSelection() == -1:
+            self.add_button.Disable()
         self.add_button.SetFont(wx.Font(wx.FontInfo(30)))
-        # self.UI_control.add_control_to_text_list(self.add_button)
+
         self.sizer.Add(self.label, 1, wx.ALIGN_BOTTOM)
         self.sizer.Add(self.choice_box, 1, wx.SHAPED | wx.ALL)
         self.sizer.Add(self.add_button, 1, wx.EXPAND | wx.ALL)
 
         self.add_button.Bind(wx.EVT_BUTTON, self.add_experiment)
         self.sizer.Layout()
-        # self.UI_control.fix_control_list()
 
     def update_variable(self, evt):
         """
