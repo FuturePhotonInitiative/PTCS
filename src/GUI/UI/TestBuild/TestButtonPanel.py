@@ -22,7 +22,7 @@ class TestButtonPanel(ControlPanel):
 
         # Button names
         names = ["IF", "ELSE", "END", "LOOP", "PARAMETER", "SET", "PRINT",
-                 "SAVE", "START TIMER", "GET TIMER", "DEVICE CALL", "DEVICE READ"]
+                 "SAVE", "START\nTIMER", "GET\nTIMER", "DEVICE\nCALL", "DEVICE\nREAD"]
 
         # Button patterns
         patterns = [["IF", "[STR]", "[OP]", "[STR]"],
