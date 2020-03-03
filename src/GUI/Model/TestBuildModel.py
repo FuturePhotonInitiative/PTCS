@@ -169,6 +169,8 @@ def parse_input(lines):
             rv += "while " + line[1] + " " + line[2] + " " + line[3] + ":"
             indent_count += 1
         elif iden == "PARAMETER":
+            if " " in line[1]:
+                return "Parameter names cannot have a space in them"
             rv += "parameter " + line[1]
             if line[2] != "":
                 rv += " (default " + line[2] + ")"
