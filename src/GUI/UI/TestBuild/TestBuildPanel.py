@@ -150,8 +150,9 @@ class TestBuildPanel(DisplayPanel):
         save_box = wx.TextEntryDialog(self, "Experiment name", "Enter experiment name")
         while True:
             if save_box.ShowModal() == wx.ID_OK:
-                test_name = save_box.GetValue().replace(" ", "_")
-                if Globals.systemConfigManager.get_experiments_manager().get_experiment_from_name(test_name) is None:
+                orij_test_name = save_box.GetValue()
+                test_name = orij_test_name.replace(" ", "_")
+                if Globals.systemConfigManager.get_experiments_manager().get_experiment_from_name(test_name) is None and test_name + ".json" not in os.listdir(CONSTANTS.CONFIGS):
                     self.continue_save(test_name, parsed_test)
                     break
                 else:
@@ -166,7 +167,7 @@ class TestBuildPanel(DisplayPanel):
                         self.continue_save(test_name, parsed_test)
                         break
                     else:
-                        save_box.SetValue(test_name)
+                        save_box.SetValue(orij_test_name)
             else:
                 break
 
