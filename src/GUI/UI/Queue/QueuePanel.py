@@ -45,21 +45,21 @@ class QueuePanel(DisplayPanel):
         self.sizer.Add(self.queue_list_box, 5, wx.EXPAND | wx.ALL)
 
         self.midbar = wx.BoxSizer(wx.HORIZONTAL)
-        self.midbar.Add(self.clear_button, 1, wx.EXPAND | wx.ALL)
+        self.midbar.Add(self.clear_button, 0, wx.CENTER | wx.ALL)
 
         self.btn_sizer = wx.BoxSizer(wx.VERTICAL)
-        self.btn_sizer.Add(self.save_button, 1, wx.EXPAND | wx.ALL)
-        self.btn_sizer.Add(self.load_button, 1, wx.EXPAND | wx.ALL)
+        self.btn_sizer.Add(self.save_button, 0, wx.CENTER | wx.ALL)
+        self.btn_sizer.Add(self.load_button, 0, wx.CENTER | wx.ALL)
 
         self.input_sizer = wx.BoxSizer(wx.VERTICAL)
-        self.input_sizer.Add(self.save_text_box, 1, wx.EXPAND | wx.ALL)
-        self.input_sizer.Add(self.load_choice_box, 1, wx.EXPAND | wx.ALL)
+        self.input_sizer.Add(self.save_text_box, 0, wx.EXPAND | wx.ALL)
+        self.input_sizer.Add(self.load_choice_box, 0, wx.EXPAND | wx.ALL)
 
-        self.midbar.Add(self.btn_sizer, 0.5, wx.EXPAND | wx.ALL)
-        self.midbar.Add(self.input_sizer, 0.5, wx.EXPAND | wx.ALL)
+        self.midbar.Add(self.btn_sizer, 0, wx.CENTER | wx.ALL)
+        self.midbar.Add(self.input_sizer, 0, wx.CENTER | wx.ALL)
 
         self.sizer.Add(self.midbar, 1, wx.EXPAND | wx.ALL)
-        self.sizer.Add(self.run_button, 2, wx.EXPAND | wx.ALL)
+        self.sizer.Add(self.run_button, 0, wx.CENTER, wx.ALL)
 
         # Sets up the colors display Constants are in Util.CONSTANTS
         self.queue_list_box.SetBackgroundColour(LIST_PANEL_COLOR)
