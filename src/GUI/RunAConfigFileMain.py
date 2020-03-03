@@ -1,14 +1,10 @@
-import inspect
 import sys
-import types
 import contextlib2
-import imp
-from os.path import join
+import importlib
 
 from src.GUI.RunAConfigFile.Args import Args
 from src.GUI.RunAConfigFile.DeviceSetup import DeviceSetup
 from src.GUI.Model.ConfigFile import ConfigFile
-from src.GUI.Util.CONSTANTS import SCRIPTS_DIR
 from src.GUI.Util.CONSTANTS import CONFIG_SCHEMA_FILE_NAME
 
 
@@ -22,11 +18,16 @@ def spawn_scripts(scripts, data_map, experiment_result):
     :return: None
     """
     for script in scripts:
-        threads = []  # TODO add multithreading support here
-        module = script.source[:-3]
-        if module not in [i[0] for i in list(globals().items()) if isinstance(i[1], types.ModuleType)]:
-            globals()[module] = imp.load_source(module, join(SCRIPTS_DIR, module + '.py'))
-        [i[1] for i in inspect.getmembers(globals()[module], inspect.isfunction) if i[0] is 'main'][0](data_map, experiment_result)
+        file_name = script.source[:-3]
+        file_module_name = "src.Scripts." + file_name
+
+        script_module = __import__(file_module_name, fromlist=["main"])
+        if file_module_name in sys.modules:
+            script_module = importlib.reload(script_module)
+
+        script_main_func = getattr(script_module, "main")
+        script_main_func(data_map, experiment_result)
+
     print("Scripts Completed")
     return
 
