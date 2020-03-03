@@ -23,9 +23,11 @@ class QueuePanel(DisplayPanel):
         self.run_button = wx.Button(self)
         self.run_button.SetLabelText("Run Queue")
         self.run_button.SetFont(wx.Font(wx.FontInfo(30)))
+        self.run_button.Disable()
 
         self.clear_button = wx.Button(self)
         self.clear_button.SetLabelText("Clear Queue")
+        self.clear_button.Disable()
 
         self.save_button = wx.Button(self)
         self.save_button.SetLabelText("Save Queue")
@@ -92,9 +94,13 @@ class QueuePanel(DisplayPanel):
         if len(experiments) > 0:
             self.save_button.Enable()
             self.save_text_box.Enable()
+            self.run_button.Enable()
+            self.clear_button.Enable()
         else:
             self.save_button.Disable()
             self.save_text_box.Disable()
+            self.run_button.Disable()
+            self.clear_button.Disable()
 
         self.queue_list_box.Clear()
         for experiment in experiments:

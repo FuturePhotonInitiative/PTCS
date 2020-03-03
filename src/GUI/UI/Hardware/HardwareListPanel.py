@@ -16,7 +16,8 @@ class HardwareListPanel(DisplayPanel):
         """
         DisplayPanel.__init__(self, parent)
 
-        self.list_box = wx.ListBox(self)
+        self.list_box = wx.ListBox(self, style=wx.LB_HSCROLL)
+        self.list_box.SetFont(wx.Font(wx.FontInfo(12)))
         # Setting up display for the Hardware list panel
         # Display constants can be found in Util.CONSTANTS
         self.list_box.SetBackgroundColour(CONSTANTS.LIST_PANEL_COLOR)

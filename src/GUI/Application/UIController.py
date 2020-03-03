@@ -23,7 +23,8 @@ class UIController:
         When a test is built using the GUI, it puts a config file in the configs directory. This method tells the
         experiments drop-down to refresh itself
         """
-        self.mainframe.queue_page.control_panel.render_without_experiment()
+        if isinstance(self.mainframe.queue_page.control_panel, ExperimentControlPanel):
+            self.mainframe.queue_page.control_panel.render_without_experiment()
 
     def switch_queue_to_running(self):
         control_panel = ExperimentOutputPanel(self.mainframe.queue_page)
