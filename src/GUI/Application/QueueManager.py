@@ -60,7 +60,7 @@ class QueueManager:
             for field in (list(exp.config.data.keys()) if exp.config.data else dict()):
                 output += str(exp.config.data[field]) + " // " + str(field) + "\n"
 
-        with open(folder_path + "/Saved_Experiment_" + name, "w") as f:
+        with open(folder_path + "/Saved_Queue_" + name, "w") as f:
             f.write(output)
         return index
 

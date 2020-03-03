@@ -53,9 +53,6 @@ class ExperimentListPanel(DisplayPanel):
 
         self.load_queues()
 
-    def set_up_ui_control(self, ui_control):
-        pass
-
     def add_queue_to_view(self, queue_result):
         """
         Adds a queue to the UI
