@@ -66,14 +66,9 @@ class TestBuildPanel(DisplayPanel):
                                     (self.reduce_y_range_text),
                                     (self.reduce_y_max, wx.ALL)])
 
-        # Saving area
-        self.save_sizer = wx.BoxSizer(wx.HORIZONTAL)
         self.save_button = wx.Button(self)
         self.save_button.SetLabelText("Save As")
-        self.save_button.Bind(wx.EVT_BUTTON, self.save)
-        self.save_field = wx.TextCtrl(self)
-        self.save_sizer.Add(self.save_button, wx.EXPAND | wx.ALL)
-        self.save_sizer.Add(self.save_field, wx.EXPAND | wx.ALL)
+        self.save_button.Bind(wx.EVT_BUTTON, self.on_save)
 
         self.list_box = wx.ListBox(self)
 
@@ -99,9 +94,9 @@ class TestBuildPanel(DisplayPanel):
 
         # Putting everything together and setting the ratios
         self.sizer = wx.BoxSizer(wx.VERTICAL)
+        self.sizer.Add(self.save_button, 1, wx.ALL)
         self.sizer.Add(self.reduce_x_line, 1, wx.EXPAND | wx.ALL)
         self.sizer.Add(self.reduce_y_line, 1, wx.EXPAND | wx.ALL)
-        self.sizer.Add(self.save_sizer, 1, wx.EXPAND | wx.ALL)
         self.sizer.Add(self.list_box, 15, wx.EXPAND | wx.ALL)
         self.sizer.Add(self.delete_button, 1, wx.EXPAND | wx.ALL)
         self.sizer.Add(self.input_line, 1, wx.EXPAND | wx.ALL)
@@ -145,20 +140,42 @@ class TestBuildPanel(DisplayPanel):
         # This sort exists so that the test parser will match longer functions before shorter ones and not break
         self.fcs.sort(key=lambda fn: fn[0], reverse=True)
 
-    def save(self, event):
-        """
-        Save the current test.
-        :param event: The triggering event. This function triggers when the "save" button is pressed.
-        """
+    def on_save(self, event):
         # Parse the test into a text file
-        ip = build.parse_input([p[0] for p in self.lines])
-        if isinstance(ip, str):
-            wx.MessageBox(ip, "Error saving file", wx.OK)
+        parsed_test = build.parse_input([p[0] for p in self.lines])
+        if isinstance(parsed_test, str):
+            wx.MessageBox(parsed_test, "Error saving file", wx.OK)
             return
-        test_name = self.save_field.GetLineText(0)
-        test_v = test_name.replace(" ", "_")
-        ip.insert(0, "Test- " + test_name)
-        config, script = build.parse_lines(ip, test_v, self.fcs)
+
+        save_box = wx.TextEntryDialog(self, "Experiment name", "Enter experiment name")
+        while True:
+            if save_box.ShowModal() == wx.ID_OK:
+                test_name = save_box.GetValue().replace(" ", "_")
+                if Globals.systemConfigManager.get_experiments_manager().get_experiment_from_name(test_name) is None:
+                    self.continue_save(test_name, parsed_test)
+                    break
+                else:
+                    dialog = wx.MessageDialog(
+                        None,
+                        "An experiment with that name already exists. Would you like to overwrite it?",
+                        "Overwrite Existing Experiment?",
+                        wx.YES_NO | wx.NO_DEFAULT
+                    )
+                    result = dialog.ShowModal()
+                    if result == wx.ID_YES:
+                        self.continue_save(test_name, parsed_test)
+                        break
+                    else:
+                        save_box.SetValue(test_name)
+            else:
+                break
+
+        save_box.Destroy()
+
+    def continue_save(self, test_name, parsed_test):
+        test_v = test_name
+        parsed_test.insert(0, "Test- " + test_name)
+        config, script = build.parse_lines(parsed_test, test_v, self.fcs)
         # If reduction was selected, add the reduction script with the appropriate parameters to the config
         if self.reduce_checkbox.GetValue() or self.csv_checkbox.GetValue():
             config['experiment'].append({
@@ -190,9 +207,7 @@ class TestBuildPanel(DisplayPanel):
             os.mkdir(CONSTANTS.CUSTOM_TESTS_DIR)
         # Save the test file
         with open(os.path.join(CONSTANTS.CUSTOM_TESTS_DIR, test_v + ".txt"), "w") as f:
-            f.writelines([l + "\n" for l in ip])
-        # Clear the save field so the user knows the saving was successful
-        self.save_field.Clear()
+            f.writelines([l + "\n" for l in parsed_test])
         Globals.systemConfigManager.experiments_manager.cache_is_valid = False
         Globals.systemConfigManager.get_ui_controller().test_added_to_config_directory()
 
