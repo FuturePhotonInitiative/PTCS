@@ -157,8 +157,10 @@ class ExperimentControlPanel(ControlPanel):
         self.label.SetFont(wx.Font(wx.FontInfo(30)))
         self.choice_box = wx.Choice(self,
                     choices=Globals.systemConfigManager.get_experiments_manager().get_available_experiments_names())
+        self.choice_box.SetFont(wx.Font(wx.FontInfo(22)))
         # self.UI_control.add_control_to_text_list(self.choice_box)
         self.add_button = wx.Button(self, label="Add")
+        self.add_button.SetFont(wx.Font(wx.FontInfo(30)))
         # self.UI_control.add_control_to_text_list(self.add_button)
         self.sizer.Add(self.label, 1, wx.ALIGN_BOTTOM)
         self.sizer.Add(self.choice_box, 1, wx.SHAPED | wx.ALL)

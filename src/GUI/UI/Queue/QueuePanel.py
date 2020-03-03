@@ -17,10 +17,12 @@ class QueuePanel(DisplayPanel):
         """
         DisplayPanel.__init__(self, parent)
 
-        self.queue_list_box = wx.ListBox(self)
+        self.queue_list_box = wx.ListBox(self, style=wx.LB_HSCROLL)
+        self.queue_list_box.SetFont(wx.Font(wx.FontInfo(12)))
 
         self.run_button = wx.Button(self)
         self.run_button.SetLabelText("Run Queue")
+        self.run_button.SetFont(wx.Font(wx.FontInfo(30)))
 
         self.clear_button = wx.Button(self)
         self.clear_button.SetLabelText("Clear Queue")
