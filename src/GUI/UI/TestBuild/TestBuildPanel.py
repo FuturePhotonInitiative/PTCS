@@ -152,6 +152,9 @@ class TestBuildPanel(DisplayPanel):
         """
         # Parse the test into a text file
         ip = build.parse_input([p[0] for p in self.lines])
+        if isinstance(ip, str):
+            wx.MessageBox(ip, "Error saving file", wx.OK)
+            return
         test_name = self.save_field.GetLineText(0)
         test_v = test_name.replace(" ", "_")
         ip.insert(0, "Test- " + test_name)
