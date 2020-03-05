@@ -1,25 +1,27 @@
+from src.GUI.Util.Functions import clean_name_for_file
 """
 This file contains functions used in the logic of building tests.
 It has one function to parse a text file into a test, and one to generate a text file from output from the GUI.
 """
 
 
-def parse_lines(lines, output_file, functions):
+def parse_lines(lines, test_name, functions):
     """
     Parse a test description file and produce a JSON config and a Python script.
     :param lines: The lines to be parsed.
-    :param output_file: The output file name.
+    :param test_name: The output file name that the user entered. May have spaces in it.
     :param functions: The function names. In the form of a triple:
         (human-readable name to use in file, number of arguments, actual function name in the driver)
     :return: A corresponding JSON config and Python script.
     """
+    output_filename = clean_name_for_file(test_name)
     # Set up the config
     config = dict()
-    config['name'] = output_file.replace("_", " ")
+    config['name'] = test_name
     config['devices'] = []
     config['experiment'] = [{
                   "type": "PY_SCRIPT",
-                  "source": output_file + ".py",
+                  "source": output_filename + ".py",
                   "order":  1
                 }
     ]
