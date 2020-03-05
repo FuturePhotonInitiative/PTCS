@@ -2,6 +2,8 @@ import wx
 import json
 import inspect
 import os
+import re
+from src.GUI.Util.Functions import clean_name_for_file
 
 from src.GUI.UI.DisplayPanel import DisplayPanel
 from src.GUI.Util import CONSTANTS
@@ -66,14 +68,10 @@ class TestBuildPanel(DisplayPanel):
                                     (self.reduce_y_range_text),
                                     (self.reduce_y_max, wx.ALL)])
 
-        # Saving area
-        self.save_sizer = wx.BoxSizer(wx.HORIZONTAL)
         self.save_button = wx.Button(self)
         self.save_button.SetLabelText("Save As")
-        self.save_button.Bind(wx.EVT_BUTTON, self.save)
-        self.save_field = wx.TextCtrl(self)
-        self.save_sizer.Add(self.save_button, wx.EXPAND | wx.ALL)
-        self.save_sizer.Add(self.save_field, wx.EXPAND | wx.ALL)
+        self.save_button.Bind(wx.EVT_BUTTON, self.on_save)
+        self.save_button.Disable()
 
         self.list_box = wx.ListBox(self)
 
@@ -99,9 +97,9 @@ class TestBuildPanel(DisplayPanel):
 
         # Putting everything together and setting the ratios
         self.sizer = wx.BoxSizer(wx.VERTICAL)
+        self.sizer.Add(self.save_button, 1, wx.ALL)
         self.sizer.Add(self.reduce_x_line, 1, wx.EXPAND | wx.ALL)
         self.sizer.Add(self.reduce_y_line, 1, wx.EXPAND | wx.ALL)
-        self.sizer.Add(self.save_sizer, 1, wx.EXPAND | wx.ALL)
         self.sizer.Add(self.list_box, 15, wx.EXPAND | wx.ALL)
         self.sizer.Add(self.delete_button, 1, wx.EXPAND | wx.ALL)
         self.sizer.Add(self.input_line, 1, wx.EXPAND | wx.ALL)
@@ -145,20 +143,67 @@ class TestBuildPanel(DisplayPanel):
         # This sort exists so that the test parser will match longer functions before shorter ones and not break
         self.fcs.sort(key=lambda fn: fn[0], reverse=True)
 
-    def save(self, event):
+    def on_save(self, event):
         """
-        Save the current test.
-        :param event: The triggering event. This function triggers when the "save" button is pressed.
+        Parse the test into a text file. The return value may be an error. If so, display the error message box
+        If not, ask the user what to save the test as. If cancel or x is selected, the user is taken back to the
+        test build screen. If OK is selected, then the entered file name is checked for validity. If it is not valid,
+        an error message box shows up and the user is given the opportunity to change the filename just entered to be
+        valid.
+        Finally if the filename is valid, it checks to see if a test with that name exists already, either the
+        filename itself, or the test name within the config file. If so, the user is prompted if they want to overwrite
+        the existing file or not. If not, the user is given the opportunity to change the filename.
+        If the filename was not already used to begin with, or the user wants to overwrite the file, the save
+        functionality is continued in the function continue_save()
         """
-        # Parse the test into a text file
-        ip = build.parse_input([p[0] for p in self.lines])
-        if isinstance(ip, str):
-            wx.MessageBox(ip, "Error saving file", wx.OK)
+        parsed_test = build.parse_input([p[0] for p in self.lines])
+        if isinstance(parsed_test, str):
+            wx.MessageBox(parsed_test, "Error saving file", wx.OK)
             return
-        test_name = self.save_field.GetLineText(0)
-        test_v = test_name.replace(" ", "_")
-        ip.insert(0, "Test- " + test_name)
-        config, script = build.parse_lines(ip, test_v, self.fcs)
+
+        save_box = wx.TextEntryDialog(self, "Experiment name", "Enter experiment name")
+        while True:
+            if save_box.ShowModal() == wx.ID_OK:
+                entered_text = save_box.GetValue()
+                pattern = re.compile("^[\\w ]+$")
+                if re.match(pattern, entered_text):
+                    clean_filename = clean_name_for_file(entered_text)
+                    if Globals.systemConfigManager.get_experiments_manager().get_experiment_from_name(entered_text) \
+                            is None and clean_filename + ".json" not in os.listdir(CONSTANTS.CONFIGS):
+                        self.continue_save(entered_text, parsed_test)
+                        break
+                    else:
+                        dialog = wx.MessageDialog(
+                            None,
+                            "An experiment with that name already exists. Would you like to overwrite it?",
+                            "Overwrite Existing Experiment?",
+                            wx.YES_NO | wx.NO_DEFAULT
+                        )
+                        result = dialog.ShowModal()
+                        if result == wx.ID_YES:
+                            self.continue_save(entered_text, parsed_test)
+                            break
+                        else:
+                            save_box.SetValue(entered_text)
+                else:
+                    wx.MessageBox("Name must not be empty and only contain alphanumeric characters underscores "
+                                  "and/or spaces",
+                                  "Error saving file", wx.OK)
+                    save_box.SetValue(entered_text)
+            else:
+                break
+
+        save_box.Destroy()
+
+    def continue_save(self, test_name, parsed_test):
+        """
+        Continuation of the saving task after the users input test name is validated.
+        :param test_name: The test name entered from the user. May have spaces in it
+        :param parsed_test: The parsed text into custom test representation
+        """
+        output_filename = clean_name_for_file(test_name)
+        parsed_test.insert(0, "Test- " + test_name)
+        config, script = build.parse_lines(parsed_test, test_name, self.fcs)
         # If reduction was selected, add the reduction script with the appropriate parameters to the config
         if self.reduce_checkbox.GetValue() or self.csv_checkbox.GetValue():
             config['experiment'].append({
@@ -181,18 +226,16 @@ class TestBuildPanel(DisplayPanel):
             config['data']['Csv?'] = False
 
         # Save the config file
-        with open(os.path.join(CONSTANTS.CONFIGS, test_v + ".json"), "w") as f:
+        with open(os.path.join(CONSTANTS.CONFIGS, output_filename + ".json"), "w") as f:
             json.dump(config, f)
         # Save the script file
-        with open(os.path.join(CONSTANTS.SCRIPTS_DIR, test_v + ".py"), "w") as f:
+        with open(os.path.join(CONSTANTS.SCRIPTS_DIR, output_filename + ".py"), "w") as f:
             f.write(script)
         if not os.path.exists(CONSTANTS.CUSTOM_TESTS_DIR):
             os.mkdir(CONSTANTS.CUSTOM_TESTS_DIR)
         # Save the test file
-        with open(os.path.join(CONSTANTS.CUSTOM_TESTS_DIR, test_v + ".txt"), "w") as f:
-            f.writelines([l + "\n" for l in ip])
-        # Clear the save field so the user knows the saving was successful
-        self.save_field.Clear()
+        with open(os.path.join(CONSTANTS.CUSTOM_TESTS_DIR, output_filename + ".txt"), "w") as f:
+            f.writelines([l + "\n" for l in parsed_test])
         Globals.systemConfigManager.experiments_manager.cache_is_valid = False
         Globals.systemConfigManager.get_ui_controller().test_added_to_config_directory()
 
@@ -209,7 +252,7 @@ class TestBuildPanel(DisplayPanel):
 
     def add_symbol(self, event, pattern):
         """
-        Add a new line to the test.
+        Add a new line to the test, and make the save button visible
         :param event: The triggering event. This is called, with the pattern parameter through a lambda, by the
         buttons in the TestButtonPanel.
         :param pattern: The pattern of element types.
@@ -223,6 +266,8 @@ class TestBuildPanel(DisplayPanel):
         else:
             self.list_box.Append(output)
             self.lines.append([[k.replace("[STR]", "???").replace("[OP]", "-?-") for k in pattern], pattern])
+
+        self.save_button.Enable()
 
     def load_on_click(self, event):
         """
@@ -353,7 +398,7 @@ class TestBuildPanel(DisplayPanel):
 
     def delete_line(self, event):
         """
-        Delete a line.
+        Delete a line, and disable the save button if there are no lines in the test
         :param event: The triggering event. This occurs when the "delete" button is pressed.
         """
         i = self.list_box.GetSelection()
@@ -364,6 +409,9 @@ class TestBuildPanel(DisplayPanel):
             self.lines.pop(i)
             self.load_input_line([])
             self.update_valid = True
+
+        if self.list_box.GetCount() == 0:
+            self.save_button.Disable()
 
     def load_input_line(self, line):
         """
