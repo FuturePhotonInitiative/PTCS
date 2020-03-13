@@ -10,16 +10,16 @@ class IEEE_488_2(PyVisaDriver):
         PyVisaDriver.__init__(self)
         self.name += " that can communicate using IEEE 488.2 common commands - "
 
-    def identify(self):
+    def check_connected(self):
         """
-        Identifies itself using IDN query
-        :return:
+        Use the IEEE 488.2 defined *IDN? query to see if the instrument is actually connected.
+        :return: If it is actually connected, it will return a value, so return True. If not, it will timeout and raise an exception, so return False.
         """
-        if self.check_connected():
+        try:
             identity = self.device.query("*IDN?")
-            return identity
-        else:
-            raise Exception('Serial communication port is not open.')
+            return True
+        except Exception:
+            return False
 
     def reset(self):
         """

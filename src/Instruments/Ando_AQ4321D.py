@@ -36,11 +36,15 @@ class Ando_AQ4321D(Prologix_GPIBtoUSBController):
         # strip the terminating \r\n off the message when querying the instrument
         device.read_termination = "\r\n"
 
-    def identify(self):
+    def check_connected(self):
         """
         :return: Instrument information. This device does not fully conform to IEEE-488.2 though
         """
-        return self._query_device("*IDN?")
+        try:
+            self._query_device("*IDN?")
+            return True
+        except Exception:
+            return False
 
     def turn_message_delimiters_on(self):
         """
