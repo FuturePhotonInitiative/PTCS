@@ -28,6 +28,17 @@ class Prologix_GPIBtoUSBController(PyVisaDriver):
         PyVisaDriver.__init__(self)
         self.name += " that is connected using a GPIB to USB Adapter - "
 
+    def check_connected(self):
+        """
+        Just queries a random value on the adapter to see if it is actually connected
+        :return: True if the device returned a value from the query, False if the query timed out
+        """
+        try:
+            self._query_current_mode()
+        except Exception:
+            return False
+        return True
+
     def _get_gpib_termination_string(self):
         """
         :return: the termination characters that will be added to every message sent to the instrument

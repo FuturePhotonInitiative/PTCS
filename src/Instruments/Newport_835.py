@@ -54,6 +54,13 @@ class Newport_835(Prologix_GPIBtoUSBController):
             "20W": "R11"
         }
 
+    def check_connected(self):
+        try:
+            self.get_wavelength()
+            return True
+        except Exception:
+            return False
+
     def get_wavelength(self):
         """
         :return: the wavelength being detected in the form WAVE[n]nnn

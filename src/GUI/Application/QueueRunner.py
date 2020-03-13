@@ -44,9 +44,8 @@ class QueueRunner(Thread):
         :return:
             Nothing
         """
-        print("Verifying devices...")
         if not self.verify_devices():
-            print("\nA device was not connected properly. Aborting experiment.\n")
+            print("\nAborting experiment since all devices were not successfully connected.\n")
             return
         print("\n====================\nStarting the Queue\n====================\n")
         self.queue_result.start_queue()
@@ -250,8 +249,11 @@ class QueueRunner(Thread):
         with contextlib2.ExitStack() as stack:
             device_setup = DeviceSetup()
             try:
-                devs = device_setup.connect_devices(device_list, stack)
-            except Exception:
+                devices = device_setup.connect_devices(device_list, stack)
+                if not devices:
+                    return False
+            except Exception as e:
+                print(e)
                 return False
         return True
 

@@ -24,10 +24,6 @@ class EVTDriver(metaclass=abc.ABCMeta):
     def check_connected(self):
         pass
 
-    @abc.abstractmethod
-    def who_am_i(self):
-        pass
-
     def what_can_i(self):
         """
         :return: all the methods that are able to be run by this class and all the classes that extend it that are not

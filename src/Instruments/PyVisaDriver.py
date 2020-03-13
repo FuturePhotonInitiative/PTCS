@@ -24,7 +24,8 @@ class PyVisaDriver(EVTDriver):
         """
         Close the device connection
         """
-        self.device.close()
+        if self.device:
+            self.device.close()
 
     def who_am_i(self):
         if self.check_connected():
@@ -33,6 +34,12 @@ class PyVisaDriver(EVTDriver):
             return self.name + " DISCONNECTED"
 
     def check_connected(self):
+        """
+        Every implementing class should reimplement this method. This will be called to query the instrument to see if
+        the instrument will return back a known value. If the connection times out, we know the instrument is really
+        not connected.
+        :return: true if PyVisa interacted with an intermediary adapter, false if this object was not established correctly.
+        """
         if not self.device:
             return False
         try:
