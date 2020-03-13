@@ -1,5 +1,4 @@
 import re
-import pyvisa
 
 from src.Instruments.PyVisaDriver import PyVisaDriver
 
@@ -14,7 +13,22 @@ class Xilinx_VCU108(PyVisaDriver):
         self.device = device
         self.name += "VCU108"
 
+        self.device.write_termination = "\r"
+        self.device.baud_rate = 115200
+
         self._locked = False
+
+    def vcu108_gpio_toggle(self, pin):
+        if not isinstance(pin, int):
+            print("AAAA")
+            return
+        # self.send_command_read_data("vcu108 gpio toggle {}".format(pin))
+        self.device.write("vcu108 gpio toggle {}".format(pin))
+        while True:
+                b = self.device.read_bytes(1)
+                print(str(b) + " " + str(ord(b)))
+                if self.device.bytes_in_buffer == 0:
+                    break
 
     def read_data(self):
         """
@@ -23,46 +37,17 @@ class Xilinx_VCU108(PyVisaDriver):
         """
         data = []
         line = self.device.read()
-        print(line)
+        print(line, end="")
         data.append(line)
         while self.device.bytes_in_buffer > 0:
             line = self.device.read()
-            print(line)
+            print(line, end="")
             data.append(line)
         return data
 
-    def eyescan(self, range_value=0, scale_factor=0, horizontal=127, vertical=512, drp=0, step=2):
-        """
-        Eyescan test
-        :param range_value: range for eyescan
-        :param scale_factor: scaling factor for eyescan
-        :param horizontal: horizontal boundary
-        :param vertical: vertical boundary
-        :param drp: choice of drp
-        :param step: step size of voltages
-        :return: data, all data from command, will need to be parsed later
-        """
-        data = []
-        line = ""
-        if not self.check_connected():
-            return False
-        else:
-            self.device.write("petb eyescan "+str(range_value)+" "+str(scale_factor)+" "+str(horizontal)+" "+str(vertical)+" "+str(drp)+" "+str(step))
-            while "END" not in line:
-                try:
-                    line = self.device.read()
-                    print(line)
-                    data.append(line)
-                except pyvisa.VisaIOError:
-                    continue
-            return data
-
-    def raw_command(self, command):
-        if not self.check_connected():
-            return False
-        else:
-            self.device.write(command)
-            return self.read_data()
+    def send_command_read_data(self, command):
+        self.device.write(command)
+        return self.read_data()
 
     def petb_read(self, pin):
         """

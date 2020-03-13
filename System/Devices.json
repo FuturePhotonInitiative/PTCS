@@ -17,7 +17,7 @@
   "VCU 108" : {
     "Driver" : "Xilinx_VCU108",
     "Type" : "VISA",
-    "Default" : "COM8"
+    "Default" : "COM7"
   },
   "BERT Analyzer": {
     "Driver": "Anritsu_MP2100A",
