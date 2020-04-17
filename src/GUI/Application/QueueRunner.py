@@ -250,7 +250,7 @@ class QueueRunner(Thread):
             device_setup = DeviceSetup()
             try:
                 devices = device_setup.connect_devices(device_list, stack)
-                if not devices:
+                if devices is None:
                     return False
             except Exception as e:
                 print(e)
